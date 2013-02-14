@@ -1,0 +1,37 @@
+# Numerical factor to be applied to the sky-averaged astrometric errors for the
+# different astrometric parameters as function of ecliptic latitude β, excluding
+# the effect of the variation of the number of transits over the sky. The
+# quantity Nobs in column 4 denotes the end-of-mission number of focal-plane
+# passages for AF, BP, and RP (both fields of view combined). For RVS, the
+# number of focal-plane passages is reduced by a factor of 4/7. The transit
+# numbers in column 4 are based on an assumed 6.2% dead time / data loss, which
+# is the absolute minimum. A more realistic data loss to consider is ~10% for
+# stars brighter than 13th magnitude, increasing to ~20% for stars around
+# magnitude 20.
+
+# Note: the variation with ecliptic latitude β of the number of focal-plane
+# passages is not included in the factors in the last five columns and needs to
+# be accounted for as well! This table provides the numerical factors including
+# this effect.
+# |sin(beta)|     beta_min [deg]     beta_max [deg]     N_obs     alpha*     delta     pi     mu-alpha*     mu-delta
+  0.025                0.0                 2.9           61       0.920     0.666    1.045     0.651        0.478
+  0.075                2.9                 5.7           61       0.916     0.667    1.044     0.648        0.478
+  0.125                5.7                 8.6           62       0.907     0.667    1.043     0.642        0.478
+  0.175                8.6                11.5           62       0.898     0.668    1.041     0.636        0.479
+  0.225               11.5                14.5           63       0.887     0.672    1.042     0.628        0.482
+  0.275               14.5                17.5           65       0.881     0.675    1.044     0.624        0.485
+  0.325               17.5                20.5           66       0.871     0.678    1.046     0.618        0.488
+  0.375               20.5                23.6           68       0.853     0.679    1.046     0.607        0.489
+  0.425               23.6                26.7           71       0.833     0.682    1.048     0.594        0.490
+  0.475               26.7                30.0           75       0.814     0.689    1.053     0.581        0.495
+  0.525               30.0                33.4           80       0.786     0.697    1.058     0.563        0.498
+  0.575               33.4                36.9           87       0.751     0.708    1.067     0.536        0.502
+  0.625               36.9                40.5           98       0.717     0.725    1.088     0.513        0.515
+  0.675               40.5                44.4          122       0.679     0.774    1.154     0.484        0.545
+  0.725               44.4                48.6          144       0.646     0.822    1.156     0.451        0.573
+  0.775               48.6                53.1          106       0.656     0.738    0.943     0.457        0.515
+  0.825               53.1                58.2           93       0.668     0.711    0.852     0.467        0.496
+  0.875               58.2                64.2           85       0.679     0.695    0.789     0.473        0.486
+  0.925               64.2                71.8           80       0.686     0.686    0.741     0.479        0.478
+  0.975               71.8                90.0           75       0.684     0.690    0.700     0.479        0.479
+  Mean                 0.0                90.0           81       0.787     0.699    1.000     0.556        0.496
