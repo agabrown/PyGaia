@@ -41,7 +41,7 @@ setup(
                         "scipy"
                      ],
     classifiers=[
-        "Development Status :: 4 Beta",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",
