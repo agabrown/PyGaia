@@ -1,0 +1,19 @@
+To install this package in your site-wide python installation use:
+
+python setup.py install
+
+If you do not have root access the following should work:
+
+python setup.py install --user
+
+The installation will then end up in the ~/.local folder
+
+WARNING: the setup uses the distribute_setup package which requires a network
+connection. If you do not have a network connection try commenting out the
+lines:
+
+from distribute_setup import use_setuptools
+use_setuptools()
+
+in the setup.py script. The installation should then still be possible with the
+commands given above.
