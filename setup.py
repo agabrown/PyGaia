@@ -26,7 +26,7 @@ setup(
     version=pygaia.__version__,
     author="Anthony Brown",
     author_email="brown@strw.leidenuniv.nl",
-    url="",
+    url="https://github.com/agabrown/PyGaia",
     license="MIT",
     packages=["pygaia", "pygaia.errors", "pygaia.astrometry", "pygaia.photometry", "pygaia.plot"],
     description="A Python package for basic Gaia data simulation, manipulation, and analysis",
