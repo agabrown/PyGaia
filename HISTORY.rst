@@ -1,5 +1,10 @@
 .. :changelog:
 
+0.2 (February 2013)
++++++++++++++++++++
+
+- Problems in setup.py fixed as well is bugs in the error simulation code.
+
 0.1 (February 2013)
 +++++++++++++++++++
 

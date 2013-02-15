@@ -2,6 +2,7 @@ __all__ = ['parallaxErrorSkyAvg', 'parallaxErrorSkyAvgAltStartGate', 'positionEr
            'properMotionErrorSkyAvg', 'parallaxError', 'positionError', 'properMotionError']
 
 from numpy import sqrt, sin, array, floor
+from scipy import isscalar
 from utils import calcZ, calcZAltStartGate
 from numpy import genfromtxt
 from pkg_resources import resource_stream
@@ -34,9 +35,16 @@ def errorScalingFactor(observable, beta):
 
   Numerical factors to apply to the errors of the given observable.
   """
-  indices = array(floor(abs(sin(beta))*_numStepsSinBeta), dtype=int)
-  indices[(indices==_numStepsSinBeta)] = _numStepsSinBeta-1
-  return _astrometricErrorFactors[observable][indices]
+  if isscalar(beta):
+    index=int(floor(abs(sin(beta))*_numStepsSinBeta))
+    if index == _numStepsSinBeta:
+      return _astrometricErrorFactors[observable][_numStepsSinBeta-1]
+    else:
+      return _astrometricErrorFactors[observable][index]
+  else:
+    indices = array(floor(abs(sin(beta))*_numStepsSinBeta), dtype=int)
+    indices[(indices==_numStepsSinBeta)] = _numStepsSinBeta-1
+    return _astrometricErrorFactors[observable][indices]
 
 def parallaxErrorSkyAvg(G, vmini):
   """
@@ -78,7 +86,6 @@ def parallaxError(G, vmini, beta):
   The parallax error in micro-arcseconds.
   """
   return parallaxErrorSkyAvg(G, vmini)*errorScalingFactor('parallax',beta)
-
 
 def parallaxErrorSkyAvgAltStartGate(G, vmini):
   """
