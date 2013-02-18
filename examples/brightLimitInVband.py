@@ -3,11 +3,15 @@ For a given G-band bright limit for Gaia detection/confirmation, plot the bright
 function of (V-I).
 """
 
+from pygaia.photometry.transformations import gminvFromVmini
 import numpy as np
-import argparse
 import matplotlib.pyplot as plt
 from matplotlib import rc
-from pygaia.photometry.transformations import gminvFromVmini
+try:
+  import argparse
+except ImportError:
+  raise ImportError("""The argparse module does not seem to be available.\n Either upgrade to python 2.7
+  or adapt the script to using the optparse module instead.""")
 
 # Configure matplotlib
 rc('text', usetex=True)

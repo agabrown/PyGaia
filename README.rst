@@ -22,6 +22,24 @@ Documentation
 All classes and methods/functions are documented so use the python help()
 function to find out more. More extensive documentation will follow.
 
+Installation notes
+------------------
+
+This package was developed in a python 2.7 environment and you may experience
+problems if you have an older version installed. In particular the scripts in
+the *examples* folder will not run because they expect the argparse module to be
+present.
+
+The following python packages are required:
+
+* `numpy <http://www.numpy.org/>`_
+* `scipy <http://www.scipy.org/>`_
+
+For the plotting tools:
+
+* `matplotlib <http://matplotlib.org/>`_
+* `Basemap toolkit for matplotlib <http://matplotlib.org/basemap/>`_
+
 Attribution
 -----------
 

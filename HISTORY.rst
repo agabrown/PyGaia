@@ -1,5 +1,11 @@
 .. :changelog:
 
+0.3 (February 2013)
++++++++++++++++++++
+
+- Added documentation on installation requirements. Added the handling of an
+  ImportError for the argparse module to the example scripts.
+
 0.2 (February 2013)
 +++++++++++++++++++
 

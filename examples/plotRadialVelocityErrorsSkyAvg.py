@@ -13,7 +13,11 @@ from pygaia.photometry.utils import vminiFromSpt
 from os import environ as env
 from matplotlib import rc
 from matplotlib.colors import hsv_to_rgb
-import argparse
+try:
+  import argparse
+except ImportError:
+  raise ImportError("""The argparse module does not seem to be available.\n Either upgrade to python 2.7
+  or adapt the script to using the optparse module instead.""")
 
 # Configure matplotlib
 rc('text', usetex=True)

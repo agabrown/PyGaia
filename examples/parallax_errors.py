@@ -8,7 +8,11 @@ from pygaia.photometry.transformations import gminvFromVmini
 from pygaia.errors.astrometric import parallaxErrorSkyAvg
 
 from os import environ as env
-import argparse
+try:
+  import argparse
+except ImportError:
+  raise ImportError("""The argparse module does not seem to be available.\n Either upgrade to python 2.7
+  or adapt the script to using the optparse module instead.""")
 
 def calcParallaxError(args):
   """
@@ -24,7 +28,7 @@ def calcParallaxError(args):
   print "V = {0}".format(gmag-gminv)
   print "(V-I) = {0}".format(vmini)
   print "(G-V) = {0}".format(gminv)
-  print u"\u03C3 = {0} \u03BCas".format(sigmaPar)
+  print "standard error = {0} muas".format(sigmaPar)
 
 def parseCommandLineArguments():
   """

@@ -11,7 +11,7 @@ in particular its Coordination Unit 2 (CU2).
 pygaia requires numpy and scipy.
 """
 
-__version__ = "0.2"
+__version__ = "0.3"
 
 try:
     import numpy

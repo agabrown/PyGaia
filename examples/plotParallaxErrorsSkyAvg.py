@@ -12,7 +12,11 @@ from pygaia.photometry.transformations import gminvFromVmini
 
 from os import environ as env
 from matplotlib import rc
-import argparse
+try:
+  import argparse
+except ImportError:
+  raise ImportError("""The argparse module does not seem to be available.\n Either upgrade to python 2.7
+  or adapt the script to using the optparse module instead.""")
 
 # Configure matplotlib
 rc('text', usetex=True)
