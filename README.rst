@@ -14,7 +14,14 @@ Unit 2 (CU2).
 
 This toolkit is basically an implementation of the performance models for Gaia
 which are publicly available at:
-`<http://www.rssd.esa.int/index.php?project=GAIA&page=Science_Performance>`_.
+`<http://www.rssd.esa.int/index.php?project=GAIA&page=Science_Performance>`_. In
+addition much of the material in chapter 4 of the book `Astrometry for
+Astrophysics: Methods, Models, and Applications (2012, van Altena et al.)
+<http://www.cambridge.org/9780521519205>`_ is implemented.
+
+Note that the code in this package is *not intended for accurate astrometry
+applications*, such as predicting in detail astrometric paths of stars on the
+sky, or transforming between observation epochs.
 
 Documentation
 -------------
