@@ -1,5 +1,10 @@
 .. :changelog:
 
+0.31 (February 2013)
+++++++++++++++++++++
+
+- Updated README. TODO added.
+
 0.3 (February 2013)
 +++++++++++++++++++
 

@@ -1,4 +1,4 @@
-include README.rst HISTORY.rst AUTHORS.rst INSTALL LICENSE 
+include README.rst HISTORY.rst AUTHORS.rst INSTALL LICENSE TODO
 include distribute_setup.py
 recursive-include examples *.py
 recursive-include pygaia/data *.txt
