@@ -1,10 +1,12 @@
 __all__ = ['CoordinateTransformation', 'Transformations']
 
-from vectorastrometry import sphericalToCartesian, cartesianToSpherical, elementaryRotationMatrix
+from vectorastrometry import sphericalToCartesian, cartesianToSpherical, elementaryRotationMatrix, \
+    normalTriad
 from pygaia.utils import enum, degreesToRadians, radiansToDegrees
 
 from numpy import ones_like, array, pi, cos, sin
-from numpy import dot, transpose
+from numpy import dot, transpose, cross, vstack, diag, sqrt
+from numpy.linalg import norm
 
 # Obliquity of the Ecliptic (arcsec)
 _obliquityOfEcliptic = degreesToRadians(84381.41100/3600.0)
@@ -135,3 +137,65 @@ class CoordinateTransformation:
     xrot, yrot, zrot = self.transformCartesianCoordinates(x, y, z)
     r, phirot, thetarot = cartesianToSpherical(xrot, yrot, zrot)
     return phirot, thetarot
+
+  def transformProperMotions(self, phi, theta, muphistar, mutheta):
+    """
+    Converts proper motions from one reference system to another, using the prescriptions in section
+    1.5.3 of the Hipparcos Explanatory Volume 1 (equations 1.5.18, 1.5.19).
+
+    Parameters
+    ----------
+
+    phi       - The longitude-like angle of the position of the source (radians).
+    theta     - The latitude-like angle of the position of the source (radians).
+    muphistar - Value of the proper motion in the longitude-like angle, multiplied by cos(theta).
+    mutheta   - Value of the proper motion in the latitude-like angle.
+
+    Returns
+    -------
+
+    muphistarrot - Value of the transformed proper motion in the longitude-like angle.
+    muthetarot   - Value of the transformed proper motion in the latitude-like angle.
+    """
+    c, s = sefl._getJacobian(phi,theta)
+    return c*muphistar+s*mutheta, c*mutheta-s*muphistar
+
+  def _getJacobian(self, phi, theta):
+    """
+    Calculates the Jacobian for the transformation of the position errors and proper motion errors
+    between coordinate systems. This Jacobian is also the rotation matrix for the transformation of
+    proper motions. See section 1.5.3 of the Hipparcos Explanatory Volume 1 (equation 1.5.20).
+
+    Parameters
+    ----------
+
+    phi       - The longitude-like angle of the position of the source (radians).
+    theta     - The latitude-like angle of the position of the source (radians).
+
+    Returns
+    -------
+
+    jacobian - The Jacobian matrix corresponding to (phi, theta) and the currently desired coordinate
+               system transformation.
+    """
+
+    p, q, r = normalTriad(phi, theta)
+
+    zRot = self.rotationMatrix[:,2]
+    zRotAll = zRot
+    if (p.ndim == 2):
+      for i in range(p.shape[1]-1):
+        zRotAll = vstack((zRotAll,zRot))
+    pRot = cross(zRotAll, transpose(r))
+    if (p.ndim == 2):
+      normPRot = sqrt(diag(dot(pRot,transpose(pRot))))
+      for i in range(pRot.shape[0]):
+        pRot[i,:] = pRot[i,:]/normPRot[i]
+    else:
+      pRot = pRot/norm(pRot)
+    qRot = cross(transpose(r), pRot)
+
+    if (p.ndim == 2):
+      return diag(dot(pRot,p)), diag(dot(pRot,q))
+    else:
+      return dot(pRot,p), dot(pRot,q)
