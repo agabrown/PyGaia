@@ -1,6 +1,6 @@
 .. :changelog:
 
-0.4 (March 2013)
+0.4 (April 2013)
 ++++++++++++++++
 
 - Added transformation of proper motions and of position and proper motion errors.
