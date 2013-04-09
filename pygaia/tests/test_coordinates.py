@@ -8,8 +8,10 @@ from numpy.random import rand
 
 from pygaia.astrometry.coordinates import CoordinateTransformation
 from pygaia.astrometry.coordinates import Transformations
-from pygaia.astrometry.vectorastrometry import cartesianToSpherical
+from pygaia.astrometry.vectorastrometry import cartesianToSpherical, astrometryToPhaseSpace,\
+    phaseSpaceToAstrometry
 
+import sys
 class test_coordinates(TestCase):
 
   def setUp(self):
@@ -151,3 +153,27 @@ class test_coordinates(TestCase):
     phi=6.38/180.0*pi
     result = 0.4971*sin(galat)+0.8677*sin(galon-phi)*cos(galat)
     assert_array_almost_equal(result, sin(betaEcl), decimal=2)
+
+  def test_transformProperMotions(self):
+    """
+    Verify the correct implementation of the direct transformation of proper motions.
+    """
+    ct = CoordinateTransformation(Transformations.ICRS2GAL)
+    nTests = 100
+    phi = 2.0*pi*rand(nTests)
+    theta = -pi/2.0+pi*rand(nTests)
+    parallax = rand(nTests)*99.0+1.0
+    muphistar = -30.0+60.0*rand(nTests)
+    mutheta = -30.0+60.0*rand(nTests)
+    vrad = -200.0+400.0*rand(nTests)
+
+    x,y,z,vx,vy,vz = astrometryToPhaseSpace(phi,theta,parallax,muphistar,mutheta,vrad)
+    xrot, yrot, zrot = ct.transformCartesianCoordinates(x,y,z)
+    vxrot, vyrot, vzrot = ct.transformCartesianCoordinates(vx,vy,vz)
+    phiRot, thetaRot, parRot, muphistarRotExpected, muthetaRotExpected, vradRot = \
+        phaseSpaceToAstrometry(xrot, yrot, zrot, vxrot, vyrot, vzrot)
+
+    muphistarRot, muthetaRot = ct.transformProperMotions(phi, theta, muphistar, mutheta)
+
+    assert_array_almost_equal(muphistarRotExpected, muphistarRot, decimal=2)
+    assert_array_almost_equal(muthetaRotExpected, muthetaRot, decimal=2)

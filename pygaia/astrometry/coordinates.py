@@ -157,7 +157,7 @@ class CoordinateTransformation:
     muphistarrot - Value of the transformed proper motion in the longitude-like angle.
     muthetarot   - Value of the transformed proper motion in the latitude-like angle.
     """
-    c, s = sefl._getJacobian(phi,theta)
+    c, s = self._getJacobian(phi,theta)
     return c*muphistar+s*mutheta, c*mutheta-s*muphistar
 
   def _getJacobian(self, phi, theta):
@@ -181,7 +181,8 @@ class CoordinateTransformation:
 
     p, q, r = normalTriad(phi, theta)
 
-    zRot = self.rotationMatrix[:,2]
+    # z-axis of new coordinate system expressed in terms of old system
+    zRot = self.rotationMatrix[2,:]
     zRotAll = zRot
     if (p.ndim == 2):
       for i in range(p.shape[1]-1):
@@ -193,7 +194,6 @@ class CoordinateTransformation:
         pRot[i,:] = pRot[i,:]/normPRot[i]
     else:
       pRot = pRot/norm(pRot)
-    qRot = cross(transpose(r), pRot)
 
     if (p.ndim == 2):
       return diag(dot(pRot,p)), diag(dot(pRot,q))
