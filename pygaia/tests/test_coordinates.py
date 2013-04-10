@@ -2,8 +2,8 @@
 Unit tests for the coordinates module.
 """
 
-from numpy.testing import TestCase, assert_allclose, assert_array_almost_equal
-from numpy import pi, array, transpose, cos, sin
+from numpy.testing import TestCase, assert_allclose, assert_array_almost_equal, assert_almost_equal
+from numpy import pi, array, transpose, cos, sin, sqrt, diag, zeros, dot
 from numpy.random import rand
 
 from pygaia.astrometry.coordinates import CoordinateTransformation
@@ -177,3 +177,93 @@ class test_coordinates(TestCase):
 
     assert_array_almost_equal(muphistarRotExpected, muphistarRot, decimal=2)
     assert_array_almost_equal(muthetaRotExpected, muthetaRot, decimal=2)
+
+    #
+    # Test scalar version of method.
+    #
+    for i in range(nTests):
+      muphistarRot, muthetaRot = ct.transformProperMotions(phi[i], theta[i], muphistar[i], mutheta[i])
+
+      assert_almost_equal(muphistarRotExpected[i], muphistarRot, decimal=2)
+      assert_almost_equal(muthetaRotExpected[i], muthetaRot, decimal=2)
+
+  def test_transformSkyCoordinateErrors(self):
+    """
+    Verify that the transformed covariance matrix for the positions remains a covariance matrix.
+    """
+    ct = CoordinateTransformation(Transformations.ICRS2GAL)
+    nTests = 100
+    phi = 2.0*pi*rand(nTests)
+    theta = -pi/2.0+pi*rand(nTests)
+    sigPhiStar, sigTheta, rhoPhiTheta = self._generateRandomCovarianceMatrices(nTests)
+
+    sigPhiStarRot, sigThetaRot, rhoPhiThetaRot = ct.transformSkyCoordinateErrors(phi, theta, sigPhiStar,
+        sigTheta, rhoPhiTheta=rhoPhiTheta)
+    for i in range(nTests):
+      self.assertGreater(sigPhiStarRot[i], 0.0)
+      self.assertGreater(sigThetaRot[i], 0.0)
+      self.assertTrue(-1<=rhoPhiTheta[i] and rhoPhiTheta[i]<=1)
+
+    sigPhiStarRot, sigThetaRot, rhoPhiThetaRot = ct.transformSkyCoordinateErrors(phi, theta, sigPhiStar,
+        sigTheta)
+    for i in range(nTests):
+      self.assertGreater(sigPhiStarRot[i], 0.0)
+      self.assertGreater(sigThetaRot[i], 0.0)
+      self.assertTrue(-1<=rhoPhiTheta[i] and rhoPhiTheta[i]<=1)
+
+  def test_transformProperMotionErrors(self):
+    """
+    Verify that the transformed covariance matrix for the proper motions remains a covariance matrix.
+    """
+    ct = CoordinateTransformation(Transformations.ICRS2GAL)
+    nTests = 100
+    phi = 2.0*pi*rand(nTests)
+    theta = -pi/2.0+pi*rand(nTests)
+    sigPhiStar, sigTheta, rhoPhiTheta = self._generateRandomCovarianceMatrices(nTests)
+
+    sigPhiStarRot, sigThetaRot, rhoPhiThetaRot = ct.transformProperMotionErrors(phi, theta, sigPhiStar,
+        sigTheta, rhoMuPhiMuTheta=rhoPhiTheta)
+    for i in range(nTests):
+      self.assertGreater(sigPhiStarRot[i], 0.0)
+      self.assertGreater(sigThetaRot[i], 0.0)
+      self.assertTrue(-1<=rhoPhiTheta[i] and rhoPhiTheta[i]<=1)
+
+    sigPhiStarRot, sigThetaRot, rhoPhiThetaRot = ct.transformProperMotionErrors(phi, theta, sigPhiStar,
+        sigTheta)
+    for i in range(nTests):
+      self.assertGreater(sigPhiStarRot[i], 0.0)
+      self.assertGreater(sigThetaRot[i], 0.0)
+      self.assertTrue(-1<=rhoPhiTheta[i] and rhoPhiTheta[i]<=1)
+
+  def _generateRandomCovarianceMatrices(self, num):
+    """
+    Generate random covariance matrices through the transformation of diagonal positive definite
+    matrices.
+
+    Parameters
+    ----------
+    
+    num - Number of matrices to generate.
+
+    Returns
+    -------
+
+    sigma1 - Square root of variance of first variable.
+    sigma2 - Square root of variance of second variable.
+    rho12  - Correlation coefficient between errors on variables 1 and 2
+    """
+    varDiag1 = rand(num)*99.0+1.0
+    varDiag2 = rand(num)*99.0+1.0
+    rotAngle = 2.0*pi*rand(num)
+    sigma1 = zeros(num)
+    sigma2 = zeros(num)
+    rho12 = zeros(num)
+    for i in range(num): 
+      rotationMatrix=array([[cos(rotAngle[i]), sin(rotAngle[i])], [-sin(rotAngle[i]),
+        cos(rotAngle[i])]])
+      covMatrix = dot(rotationMatrix,dot(diag([varDiag1[i],varDiag2[i]]),transpose(rotationMatrix)))
+      sigma1[i] = sqrt(covMatrix[0,0])
+      sigma2[i] = sqrt(covMatrix[1,1])
+      rho12[i] = covMatrix[0,1]/(sigma1[i]*sigma2[i])
+
+    return sigma1, sigma2, rho12

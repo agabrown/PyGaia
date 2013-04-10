@@ -4,9 +4,10 @@ from vectorastrometry import sphericalToCartesian, cartesianToSpherical, element
     normalTriad
 from pygaia.utils import enum, degreesToRadians, radiansToDegrees
 
-from numpy import ones_like, array, pi, cos, sin
+from numpy import ones_like, array, pi, cos, sin, zeros_like
 from numpy import dot, transpose, cross, vstack, diag, sqrt
 from numpy.linalg import norm
+from scipy import isscalar
 
 # Obliquity of the Ecliptic (arcsec)
 _obliquityOfEcliptic = degreesToRadians(84381.41100/3600.0)
@@ -160,7 +161,7 @@ class CoordinateTransformation:
     c, s = self._getJacobian(phi,theta)
     return c*muphistar+s*mutheta, c*mutheta-s*muphistar
 
-  def transformSkyCoordinateErrors(self, phi, theta, sigPhiStar, sigTheta, rhoPhiTheta):
+  def transformSkyCoordinateErrors(self, phi, theta, sigPhiStar, sigTheta, rhoPhiTheta=0):
     """
     Converts the sky coordinate errors from one reference system to another, including the covariance
     term. Equations (1.5.4) and (1.5.20) from section 1.5 in the Hipparcos Explanatory Volume 1 are used.
@@ -174,7 +175,12 @@ class CoordinateTransformation:
                   sexagesimal units, including cos(latitude) term)
     sigTheta    - Standard error in the latitude-like angle of the position of the source (radians or
                   sexagesimal units)
-    rhoPhiTheta - Correlation coefficient of the position errors.
+
+    Keywords (optional)
+    -------------------
+
+    rhoPhiTheta - Correlation coefficient of the position errors. Set to zero if this keyword is not
+                  provided.
 
     Retuns
     ------
@@ -184,43 +190,20 @@ class CoordinateTransformation:
     sigThetaRot    - The transformed standard error in the latitude-like angle.
     rhoPhiThetaRot - The transformed correlation coefficient.
     """
+    if isscalar(rhoPhiTheta):
+      rhoPhiTheta=zeros_like(sigTheta)
     c, s = self._getJacobian(phi,theta)
     cSqr = c*c
     sSqr = s*s
     covar = sigPhiStar*sigTheta*rhoPhiTheta
     varPhiStar = sigPhiStar*sigPhiStar
     varTheta = sigTheta*sigTheta
-    varPhiRot = cSqr*(varPhiStar+covar)+sSqr*(varTheta+covar)
-    varThetaRot = sSqr*(varPhiStar+covar)+cSqr*(varTheta+covar)
+    varPhiRot = cSqr*varPhiStar+sSqr*varTheta+2.0*covar*c*s
+    varThetaRot = sSqr*varPhiStar+cSqr*varTheta-2.0*covar*c*s
     covarRot = (cSqr-sSqr)*covar+c*s*(varTheta-varPhiStar)
     return sqrt(varPhiStar), sqrt(varTheta), covarRot/sqrt(varPhiStar*varTheta)
 
-  def transformSkyCoordinateErrors(self, phi, theta, sigPhiStar, sigTheta):
-    """
-    Converts the sky coordinate errors from one reference system to another, assuming a zero covariance
-    term. Equations (1.5.4) and (1.5.20) from section 1.5 in the Hipparcos Explanatory Volume 1 are used.
-
-    Parameters
-    ----------
-
-    phi         - The longitude-like angle of the position of the source (radians).
-    theta       - The latitude-like angle of the position of the source (radians).
-    sigPhiStar  - Standard error in the longitude-like angle of the position of the source (radians or
-                  sexagesimal units, including cos(latitude) term)
-    sigTheta    - Standard error in the latitude-like angle of the position of the source (radians or
-                  sexagesimal units)
-
-    Retuns
-    ------
-    
-    sigPhiRotStar  - The transformed standard error in the longitude-like angle (including
-                     cos(latitude) factor)
-    sigThetaRot    - The transformed standard error in the latitude-like angle.
-    rhoPhiThetaRot - The transformed correlation coefficient (typically not zero after transformation!).
-    """
-    return self.transformSkyCoordinateErrors(phi, theta, sigPhiStar, sigTheta, np.zeros_like(sigTheta))
-
-  def transformProperMotionErrors(self, phi, theta, sigMuPhiStar, sigMuTheta, rhoMuPhiMuTheta):
+  def transformProperMotionErrors(self, phi, theta, sigMuPhiStar, sigMuTheta, rhoMuPhiMuTheta=0):
     """
     Converts the proper motion errors from one reference system to another, including the covariance
     term. Equations (1.5.4) and (1.5.20) from section 1.5 in the Hipparcos Explanatory Volume 1 are used.
@@ -232,7 +215,12 @@ class CoordinateTransformation:
     theta           - The latitude-like angle of the position of the source (radians).
     sigMuPhiStar    - Standard error in the proper motion in the longitude-like direction.
     sigMuTheta      - Standard error in the proper motion in the latitude-like direction.
-    rhoMuPhiMuTheta - Correlation coefficient of the proper motion errors.
+
+    Keywords (optional)
+    -------------------
+
+    rhoMuPhiMuTheta - Correlation coefficient of the proper motion errors. Set to zero if this 
+                      keyword is not provided.
 
     Retuns
     ------
@@ -241,29 +229,8 @@ class CoordinateTransformation:
     sigMuThetaRot      - The transformed standard error in the proper motion in the longitude direction.
     rhoMuPhiMuThetaRot - The transformed correlation coefficient.
     """
-    return self.transformSkyCoordinateErrors(phi, theta, sigMuPhiStar, sigMuTheta, rhoMuPhiMuTheta)
-
-  def transformProperMotionErrors(self, phi, theta, sigMuPhiStar, sigMuTheta):
-    """
-    Converts the proper motion errors from one reference system to another, assuming a zero covariance
-    term. Equations (1.5.4) and (1.5.20) from section 1.5 in the Hipparcos Explanatory Volume 1 are used.
-
-    Parameters
-    ----------
-
-    phi             - The longitude-like angle of the position of the source (radians).
-    theta           - The latitude-like angle of the position of the source (radians).
-    sigMuPhiStar    - Standard error in the proper motion in the longitude-like direction.
-    sigMuTheta      - Standard error in the proper motion in the latitude-like direction.
-
-    Retuns
-    ------
-    
-    sigMuPhiRotStar    - The transformed standard error in the proper motion in the longitude direction.
-    sigMuThetaRot      - The transformed standard error in the proper motion in the longitude direction.
-    rhoMuPhiMuThetaRot - The transformed correlation coefficient (typically not zero after transformation!).
-    """
-    return self.transformSkyCoordinateErrors(phi, theta, sigMuPhiStar, sigMuTheta, np.zeros_like(sigMuTheta))
+    return self.transformSkyCoordinateErrors(phi, theta, sigMuPhiStar, sigMuTheta,
+        rhoPhiTheta=rhoMuPhiMuTheta)
 
   def _getJacobian(self, phi, theta):
     """
