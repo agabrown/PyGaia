@@ -1,5 +1,10 @@
 .. :changelog:
 
+0.5 (May 2013)
+++++++++++++++
+
+- Added utilities for obtaining absolute magnitudes of stars in V and G.
+
 0.4 (April 2013)
 ++++++++++++++++
 
