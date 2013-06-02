@@ -31,12 +31,11 @@ rc('ytick.minor', size='6')
 rc('lines', linewidth=2)
 rc('axes', linewidth=2)
 
-def reArrange(array, indices):
-  return [array[i] for i in indices]
-
 def makePlot(args):
   """
-  Make the plot with parallax horizons.
+  Make the plot with parallax horizons. The plot shows V-band magnitude vs distance for a number of
+  spectral types and over the range 5.7<G<20. In addition a set of crudely drawn contours show the points
+  where 0.1, 1, and 10 per cent relative parallax accracy are reached.
 
   Parameters
   ----------
@@ -70,6 +69,7 @@ def makePlot(args):
     relParErr = parallaxErrorSkyAvg(gmags,vmini)*distances/1.0e6
     observed = (gmags>=5.7) & (gmags<=20.0)
     relParErrObs = relParErr[observed]
+    # Identify the points where the relative parallax accuracy is 0.1, 1, or 10 per cent.
     if (relParErrObs.min()<0.001):
       index = len(relParErrObs[relParErrObs<=0.001])
       pointOnePercD.append(distances[observed][index])
@@ -87,32 +87,34 @@ def makePlot(args):
       vabsTenPerc.append(vabsFromSpt(spt))
     plt.semilogx(distances[observed], vmags[observed], '-', label=spt, color=hsv_to_rgb(hsv)[0,0,:])
 
+  # Draw the "contours" of constant relative parallax accuracy.
   pointOnePercD = np.array(pointOnePercD)
   pointOnePercV = np.array(pointOnePercV)
   indices = np.argsort(vabsPointOnePerc)
-  plt.semilogx(pointOnePercD[indices],pointOnePercV[indices],'k')
-  plt.text(pointOnePercD[indices][-1],pointOnePercV[indices][-1],"$0.1$\\%", ha='right')
+  plt.semilogx(pointOnePercD[indices],pointOnePercV[indices],'k--')
+  plt.text(pointOnePercD[indices][-1]*0.8,pointOnePercV[indices][-1]+0.3,"$0.1$\\%", ha='right', size=14,
+      bbox=dict(boxstyle="round, pad=0.5", ec=(0.0, 0.0, 0.0), fc=(1.0, 1.0, 1.0),))
 
   onePercD = np.array(onePercD)
   onePercV = np.array(onePercV)
   indices = np.argsort(vabsOnePerc)
-  plt.semilogx(onePercD[indices],onePercV[indices],'k')
-  plt.text(onePercD[indices][-1],onePercV[indices][-1],"$1$\\%", ha='right')
+  plt.semilogx(onePercD[indices],onePercV[indices],'k--')
+  plt.text(onePercD[indices][-1]*0.8,onePercV[indices][-1]+0.3,"$1$\\%", ha='right', size=14,
+      bbox=dict(boxstyle="round, pad=0.5", ec=(0.0, 0.0, 0.0), fc=(1.0, 1.0, 1.0),))
 
   tenPercD = np.array(tenPercD)
   tenPercV = np.array(tenPercV)
   indices = np.argsort(vabsTenPerc)
-  plt.semilogx(tenPercD[indices],tenPercV[indices],'k')
-  plt.text(tenPercD[indices][-1],tenPercV[indices][-1],"$10$\\%", ha='right')
+  plt.semilogx(tenPercD[indices],tenPercV[indices],'k--')
+  plt.text(tenPercD[indices][-1]*0.8,tenPercV[indices][-1]+0.3,"$10$\\%", ha='right', size=14,
+      bbox=dict(boxstyle="round, pad=0.5", ec=(0.0, 0.0, 0.0), fc=(1.0, 1.0, 1.0),))
 
   plt.title('Parallax relative accuracy horizons')
 
   plt.xlabel('Distance [pc]')
   plt.ylabel('V')
   plt.grid()
-  leg=plt.legend(loc=0)
-  for t in leg.get_texts():
-    t.set_fontsize(12)
+  leg=plt.legend(loc=4, fontsize=12, labelspacing=0.5)
   
   basename='ParallaxHorizons'
   if (args['pdfOutput']):
