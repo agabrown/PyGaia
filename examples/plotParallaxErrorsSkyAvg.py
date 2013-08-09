@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 from pygaia.errors.astrometric import parallaxErrorSkyAvg, parallaxErrorSkyAvgAltStartGate
+from pygaia.errors.astrometric import parallaxMinErrorSkyAvg, parallaxMaxErrorSkyAvg
 from pygaia.photometry.utils import vminiFromSpt
 from pygaia.photometry.transformations import gminvFromVmini
 
@@ -45,22 +46,16 @@ def makePlot(args):
   vmagM6V=gmag-gminvFromVmini(vminiM6V)
   
   sigparB1V=parallaxErrorSkyAvg(gmag,vminiB1V)
-  sigparB1VBrightBox=1.156*sigparB1V
-  indices=(sigparB1VBrightBox<14.0)
-  sigparB1VBrightBox[indices]=14.0
-  sigparB1VAltStartGate=parallaxErrorSkyAvgAltStartGate(gmag,vminiB1V)
+  sigparB1Vmin=parallaxMinErrorSkyAvg(gmag,vminiB1V)
+  sigparB1Vmax=parallaxMaxErrorSkyAvg(gmag,vminiB1V)
   
   sigparG2V=parallaxErrorSkyAvg(gmag,vminiG2V)
-  sigparG2VBrightBox=1.156*sigparG2V
-  indices=(sigparG2VBrightBox<14.0)
-  sigparG2VBrightBox[indices]=14.0
-  sigparG2VAltStartGate=parallaxErrorSkyAvgAltStartGate(gmag,vminiG2V)
+  sigparG2Vmin=parallaxMinErrorSkyAvg(gmag,vminiG2V)
+  sigparG2Vmax=parallaxMaxErrorSkyAvg(gmag,vminiG2V)
   
   sigparM6V=parallaxErrorSkyAvg(gmag,vminiM6V)
-  sigparM6VBrightBox=1.156*sigparM6V
-  indices=(sigparM6VBrightBox<14.0)
-  sigparM6VBrightBox[indices]=14.0
-  sigparM6VAltStartGate=parallaxErrorSkyAvgAltStartGate(gmag,vminiM6V)
+  sigparM6Vmin=parallaxMinErrorSkyAvg(gmag,vminiM6V)
+  sigparM6Vmax=parallaxMaxErrorSkyAvg(gmag,vminiM6V)
   
   fig=plt.figure(figsize=(10,6.5))
   
@@ -75,8 +70,8 @@ def makePlot(args):
     plt.semilogy(vmagB1V, sigparB1V, 'b', label='B1V')
     #plt.semilogy(vmagG2V, sigparG2V, 'g', label='G2V')
     plt.semilogy(vmagM6V, sigparM6V, 'r', label='M6V')
-    plt.fill_between(vmagB1V, 0.7*sigparB1V, sigparB1VBrightBox, color='b', alpha=0.3)
-    plt.fill_between(vmagM6V, 0.7*sigparM6V, sigparM6VBrightBox, color='r', alpha=0.3)
+    plt.fill_between(vmagB1V, sigparB1Vmin, sigparB1Vmax, color='b', alpha=0.3)
+    plt.fill_between(vmagM6V, sigparM6Vmin, sigparM6Vmax, color='r', alpha=0.3)
     plt.xlim((5,22.5))
     plt.ylim((4,1000))
     plt.text(17.5,190,'B1V',color='b')

@@ -19,10 +19,14 @@ _numStepsSinBeta = len(_astrometricErrorFactors['sinBeta'])
 _scalingForPositions = {'Total':0.743, 'AlphaStar':0.787, 'Delta':0.699}
 _scalingForProperMotions = {'Total':0.526, 'AlphaStar':0.556, 'Delta':0.496}
 
+# The upper band of the parallax errors at the bright end
+_parallaxErrorMaxBright = 14.0
+
 def errorScalingFactor(observable, beta):
   """
   Look up the numerical factors to apply to the sky averaged parallax error in order to obtain error
-  values taking the Ecliptic latitude and the number of transits into account.
+  values for a given astrometric parameter, taking the Ecliptic latitude and the number of transits into
+  account.
 
   Parameters
   ----------
@@ -63,6 +67,44 @@ def parallaxErrorSkyAvg(G, vmini):
   """
   z=calcZ(G)
   return sqrt(9.3 + 658.1*z + 4.568*z*z)*(0.986 + (1.0 - 0.986)*vmini)
+
+def parallaxMaxErrorSkyAvg(G, vmini):
+  """
+  Calculate the maximum sky averaged parallax error from G and (V-I). At the bright end the parallax
+  error is at least 14 muas due to the gating scheme.
+
+  Parameters
+  ----------
+
+  G     - Value(s) of G-band magnitude.
+  vmini - Value(s) of (V-I) colour.
+
+  Returns
+  -------
+
+  The maximum parallax error in micro-arcseconds.
+  """
+  errors = _astrometricErrorFactors["parallax"].max()*parallaxErrorSkyAvg(G, vmini)
+  indices = (errors<_parallaxErrorMaxBright)
+  errors[indices]=_parallaxErrorMaxBright
+  return errors
+
+def parallaxMinErrorSkyAvg(G, vmini):
+  """
+  Calculate the minimum sky averaged parallax error from G and (V-I).
+
+  Parameters
+  ----------
+
+  G     - Value(s) of G-band magnitude.
+  vmini - Value(s) of (V-I) colour.
+
+  Returns
+  -------
+
+  The minimum parallax error in micro-arcseconds.
+  """
+  return _astrometricErrorFactors["parallax"].min()*parallaxErrorSkyAvg(G, vmini)
 
 def parallaxError(G, vmini, beta):
   """
@@ -172,6 +214,52 @@ def properMotionErrorSkyAvg(G, vmini):
   parallaxError = parallaxErrorSkyAvg(G, vmini)
   return _scalingForProperMotions['AlphaStar']*parallaxError, \
          _scalingForProperMotions['Delta']*parallaxError
+
+def properMotionMinErrorSkyAvg(G, vmini):
+  """
+  Calculate the minimum sky averaged proper motion errors from G and (V-I).
+
+  NOTE! THE ERRORS ARE FOR PROPER MOTIONS IN THE ICRS (I.E., RIGHT ASCENSION, DECLINATION). MAKE SURE
+  YOUR SIMULATED ASTROMETRY IS ALSO ON THE ICRS.
+
+  Parameters
+  ----------
+
+  G     - Value(s) of G-band magnitude.
+  vmini - Value(s) of (V-I) colour.
+
+  Returns
+  -------
+
+  The minimum error in mu_alpha* and the error in mu_delta, in that order, in micro-arcsecond/year.
+  """
+  parallaxError = parallaxErrorSkyAvg(G, vmini)
+  return _astrometricErrorFactors['muAlphaStar'].min()*parallaxError, \
+         _astrometricErrorFactors['muDelta'].min()*parallaxError
+
+def properMotionMaxErrorSkyAvg(G, vmini):
+  """
+  Calculate the maximum sky averaged proper motion errors from G and (V-I).
+
+  NOTE! THE ERRORS ARE FOR PROPER MOTIONS IN THE ICRS (I.E., RIGHT ASCENSION, DECLINATION). MAKE SURE
+  YOUR SIMULATED ASTROMETRY IS ALSO ON THE ICRS.
+
+  Parameters
+  ----------
+
+  G     - Value(s) of G-band magnitude.
+  vmini - Value(s) of (V-I) colour.
+
+  Returns
+  -------
+
+  The maximum error in mu_alpha* and the error in mu_delta, in that order, in micro-arcsecond/year.
+  """
+  parallaxError = parallaxErrorSkyAvg(G, vmini)
+  indices = (parallaxError<_parallaxErrorMaxBright)
+  parallaxError[indices] = _parallaxErrorMaxBright
+  return _astrometricErrorFactors['muAlphaStar'].max()*parallaxError, \
+         _astrometricErrorFactors['muDelta'].max()*parallaxError
 
 def properMotionError(G, vmini, beta):
   """

@@ -3,7 +3,11 @@
 0.5 (May 2013)
 ++++++++++++++
 
-- Added utilities for obtaining absolute magnitudes of stars in V and G.
+- Utilities for obtaining absolute magnitudes of stars in V and G.
+- Functions to obtain the upper and lower bounds on the astrometric
+  parameter errors (accounting for variations across the sky).
+- Proper motion error plot.
+- Parallax horizon plot.
 
 0.4 (April 2013)
 ++++++++++++++++
