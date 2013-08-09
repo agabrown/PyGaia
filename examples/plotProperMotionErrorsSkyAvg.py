@@ -6,7 +6,7 @@
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-from pygaia.errors.astrometric import properMotionErrorSkyAvg, properMotionMinErrorSkyAvg, properMotionMaxErrorSkyAvg
+from pygaia.errors.astrometric import properMotionErrorSkyAvg, properMotionMinError, properMotionMaxError
 from pygaia.photometry.utils import vminiFromSpt
 from pygaia.photometry.transformations import gminvFromVmini
 
@@ -47,23 +47,23 @@ def makePlot(args):
 
   sigmualphaB1V, sigmudeltaB1V = properMotionErrorSkyAvg(gmag,vminiB1V)
   sigmuB1V = np.sqrt(0.5*sigmualphaB1V**2+0.5*sigmudeltaB1V**2)
-  sigmualphaB1V, sigmudeltaB1V = properMotionMinErrorSkyAvg(gmag,vminiB1V)
+  sigmualphaB1V, sigmudeltaB1V = properMotionMinError(gmag,vminiB1V)
   sigmuB1Vmin = np.sqrt(0.5*sigmualphaB1V**2+0.5*sigmudeltaB1V**2)
-  sigmualphaB1V, sigmudeltaB1V = properMotionMaxErrorSkyAvg(gmag,vminiB1V)
+  sigmualphaB1V, sigmudeltaB1V = properMotionMaxError(gmag,vminiB1V)
   sigmuB1Vmax = np.sqrt(0.5*sigmualphaB1V**2+0.5*sigmudeltaB1V**2)
   
   sigmualphaG2V, sigmudeltaG2V = properMotionErrorSkyAvg(gmag,vminiG2V)
   sigmuG2V = np.sqrt(0.5*sigmualphaG2V**2+0.5*sigmudeltaG2V**2)
-  sigmualphaG2V, sigmudeltaG2V = properMotionMinErrorSkyAvg(gmag,vminiG2V)
+  sigmualphaG2V, sigmudeltaG2V = properMotionMinError(gmag,vminiG2V)
   sigmuG2Vmin = np.sqrt(0.5*sigmualphaG2V**2+0.5*sigmudeltaG2V**2)
-  sigmualphaG2V, sigmudeltaG2V = properMotionMaxErrorSkyAvg(gmag,vminiG2V)
+  sigmualphaG2V, sigmudeltaG2V = properMotionMaxError(gmag,vminiG2V)
   sigmuG2Vmax = np.sqrt(0.5*sigmualphaG2V**2+0.5*sigmudeltaG2V**2)
   
   sigmualphaM6V, sigmudeltaM6V = properMotionErrorSkyAvg(gmag,vminiM6V)
   sigmuM6V = np.sqrt(0.5*sigmualphaM6V**2+0.5*sigmudeltaM6V**2)
-  sigmualphaM6V, sigmudeltaM6V = properMotionMinErrorSkyAvg(gmag,vminiM6V)
+  sigmualphaM6V, sigmudeltaM6V = properMotionMinError(gmag,vminiM6V)
   sigmuM6Vmin = np.sqrt(0.5*sigmualphaM6V**2+0.5*sigmudeltaM6V**2)
-  sigmualphaM6V, sigmudeltaM6V = properMotionMaxErrorSkyAvg(gmag,vminiM6V)
+  sigmualphaM6V, sigmudeltaM6V = properMotionMaxError(gmag,vminiM6V)
   sigmuM6Vmax = np.sqrt(0.5*sigmualphaM6V**2+0.5*sigmudeltaM6V**2)
   
   fig=plt.figure(figsize=(10,6.5))
@@ -73,7 +73,8 @@ def makePlot(args):
     plt.semilogy(gmag, sigmuG2V, 'g', label='G2V')
     plt.semilogy(gmag, sigmuM6V, 'r', label='M6V')
     plt.xlim((5,20))
-    plt.ylim((4,400))
+    plt.ylim((1,500))
+    plt.legend(loc=4)
   else:
     ax=fig.add_subplot(111)
     plt.semilogy(vmagB1V, sigmuB1V, 'b', label='B1V')

@@ -6,8 +6,8 @@
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-from pygaia.errors.astrometric import parallaxErrorSkyAvg, parallaxErrorSkyAvgAltStartGate
-from pygaia.errors.astrometric import parallaxMinErrorSkyAvg, parallaxMaxErrorSkyAvg
+from pygaia.errors.astrometric import parallaxErrorSkyAvg
+from pygaia.errors.astrometric import parallaxMinError, parallaxMaxError
 from pygaia.photometry.utils import vminiFromSpt
 from pygaia.photometry.transformations import gminvFromVmini
 
@@ -46,16 +46,16 @@ def makePlot(args):
   vmagM6V=gmag-gminvFromVmini(vminiM6V)
   
   sigparB1V=parallaxErrorSkyAvg(gmag,vminiB1V)
-  sigparB1Vmin=parallaxMinErrorSkyAvg(gmag,vminiB1V)
-  sigparB1Vmax=parallaxMaxErrorSkyAvg(gmag,vminiB1V)
+  sigparB1Vmin=parallaxMinError(gmag,vminiB1V)
+  sigparB1Vmax=parallaxMaxError(gmag,vminiB1V)
   
   sigparG2V=parallaxErrorSkyAvg(gmag,vminiG2V)
-  sigparG2Vmin=parallaxMinErrorSkyAvg(gmag,vminiG2V)
-  sigparG2Vmax=parallaxMaxErrorSkyAvg(gmag,vminiG2V)
+  sigparG2Vmin=parallaxMinError(gmag,vminiG2V)
+  sigparG2Vmax=parallaxMaxError(gmag,vminiG2V)
   
   sigparM6V=parallaxErrorSkyAvg(gmag,vminiM6V)
-  sigparM6Vmin=parallaxMinErrorSkyAvg(gmag,vminiM6V)
-  sigparM6Vmax=parallaxMaxErrorSkyAvg(gmag,vminiM6V)
+  sigparM6Vmin=parallaxMinError(gmag,vminiM6V)
+  sigparM6Vmax=parallaxMaxError(gmag,vminiM6V)
   
   fig=plt.figure(figsize=(10,6.5))
   
@@ -64,7 +64,8 @@ def makePlot(args):
     plt.semilogy(gmag, sigparG2V, 'g', label='G2V')
     plt.semilogy(gmag, sigparM6V, 'r', label='M6V')
     plt.xlim((5,20))
-    plt.ylim((4,400))
+    plt.ylim((4,1000))
+    plt.legend(loc=4)
   else:
     ax=fig.add_subplot(111)
     plt.semilogy(vmagB1V, sigparB1V, 'b', label='B1V')

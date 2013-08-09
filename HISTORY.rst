@@ -4,8 +4,8 @@
 ++++++++++++++
 
 - Utilities for obtaining absolute magnitudes of stars in V and G.
-- Functions to obtain the upper and lower bounds on the astrometric
-  parameter errors (accounting for variations across the sky).
+- Functions to obtain the upper and lower bounds on the astrometric parameter
+  errors (corresponding to the sky regions with best/worst astrometric errors).
 - Proper motion error plot.
 - Parallax horizon plot.
 
