@@ -44,7 +44,7 @@ def makePlot(args):
   """
   distances = 10.0**np.linspace(1,6,10001)
 
-  spts = ['B0I', 'B1V', 'G2V', 'M0V', 'M6V', 'M0III']
+  spts = ['B0I', 'B1V', 'G2V', 'K4V', 'M0V', 'M6V', 'K1III', 'M0III']
   pointOnePercD = []
   pointOnePercV = []
   onePercD = []
@@ -86,27 +86,33 @@ def makePlot(args):
       tenPercV.append(vmags[observed][index])
       vabsTenPerc.append(vabsFromSpt(spt))
     plt.semilogx(distances[observed], vmags[observed], '-', label=spt, color=hsv_to_rgb(hsv)[0,0,:])
+    if (spt!='B0I'):
+      plt.text(distances[observed][-1], vmags[observed][-1], spt, horizontalalignment='center',
+          verticalalignment='bottom', fontsize=12)
+    else:
+      plt.text(distances[observed][-1]-1.0e5, vmags[observed][-1], spt, horizontalalignment='right',
+          verticalalignment='bottom', fontsize=12)
 
   # Draw the "contours" of constant relative parallax accuracy.
   pointOnePercD = np.array(pointOnePercD)
   pointOnePercV = np.array(pointOnePercV)
   indices = np.argsort(vabsPointOnePerc)
   plt.semilogx(pointOnePercD[indices],pointOnePercV[indices],'k--')
-  plt.text(pointOnePercD[indices][-1]*0.8,pointOnePercV[indices][-1]+0.3,"$0.1$\\%", ha='right', size=14,
+  plt.text(pointOnePercD[indices][-1]*1.2,pointOnePercV[indices][-1]-2.5,"$0.1$\\%", ha='right', size=14,
       bbox=dict(boxstyle="round, pad=0.5", ec=(0.0, 0.0, 0.0), fc=(1.0, 1.0, 1.0),))
 
   onePercD = np.array(onePercD)
   onePercV = np.array(onePercV)
   indices = np.argsort(vabsOnePerc)
   plt.semilogx(onePercD[indices],onePercV[indices],'k--')
-  plt.text(onePercD[indices][-1]*0.8,onePercV[indices][-1]+0.3,"$1$\\%", ha='right', size=14,
+  plt.text(onePercD[indices][-1]*1.2,onePercV[indices][-1]-2.5,"$1$\\%", ha='right', size=14,
       bbox=dict(boxstyle="round, pad=0.5", ec=(0.0, 0.0, 0.0), fc=(1.0, 1.0, 1.0),))
 
   tenPercD = np.array(tenPercD)
   tenPercV = np.array(tenPercV)
   indices = np.argsort(vabsTenPerc)
   plt.semilogx(tenPercD[indices],tenPercV[indices],'k--')
-  plt.text(tenPercD[indices][-1]*0.8,tenPercV[indices][-1]+0.3,"$10$\\%", ha='right', size=14,
+  plt.text(tenPercD[indices][-1]*1.2,tenPercV[indices][-1]-2.5,"$10$\\%", ha='right', size=14,
       bbox=dict(boxstyle="round, pad=0.5", ec=(0.0, 0.0, 0.0), fc=(1.0, 1.0, 1.0),))
 
   plt.title('Parallax relative accuracy horizons')
@@ -114,7 +120,7 @@ def makePlot(args):
   plt.xlabel('Distance [pc]')
   plt.ylabel('V')
   plt.grid()
-  leg=plt.legend(loc=4, fontsize=12, labelspacing=0.5)
+  #leg=plt.legend(loc=4, fontsize=12, labelspacing=0.5)
   
   basename='ParallaxHorizons'
   if (args['pdfOutput']):
