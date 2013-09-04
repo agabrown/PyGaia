@@ -23,7 +23,7 @@ except ImportError:
 
 # Configure matplotlib
 rc('text', usetex=True)
-rc('font', family='serif', size=16)
+rc('font', family='serif', size=18)
 rc('xtick.major', size='12')
 rc('xtick.minor', size='6')
 rc('ytick.major', size='12')
@@ -55,7 +55,7 @@ def makePlot(args):
   vabsOnePerc = []
   vabsTenPerc = []
 
-  fig=plt.figure(figsize=(10,6.5))
+  fig=plt.figure(figsize=(11,7.8))
   deltaHue = 240.0/(len(spts)-1)
   hues = (240.0-np.arange(len(spts))*deltaHue)/360.0
   hsv=np.zeros((1,1,3))
@@ -88,39 +88,39 @@ def makePlot(args):
     plt.semilogx(distances[observed], vmags[observed], '-', label=spt, color=hsv_to_rgb(hsv)[0,0,:])
     if (spt!='B0I'):
       plt.text(distances[observed][-1], vmags[observed][-1], spt, horizontalalignment='center',
-          verticalalignment='bottom', fontsize=12)
+          verticalalignment='bottom', fontsize=14)
     else:
       plt.text(distances[observed][-1]-1.0e5, vmags[observed][-1], spt, horizontalalignment='right',
-          verticalalignment='bottom', fontsize=12)
+          verticalalignment='bottom', fontsize=14)
 
   # Draw the "contours" of constant relative parallax accuracy.
   pointOnePercD = np.array(pointOnePercD)
   pointOnePercV = np.array(pointOnePercV)
   indices = np.argsort(vabsPointOnePerc)
   plt.semilogx(pointOnePercD[indices],pointOnePercV[indices],'k--')
-  plt.text(pointOnePercD[indices][-1]*1.2,pointOnePercV[indices][-1]-2.5,"$0.1$\\%", ha='right', size=14,
-      bbox=dict(boxstyle="round, pad=0.5", ec=(0.0, 0.0, 0.0), fc=(1.0, 1.0, 1.0),))
+  plt.text(pointOnePercD[indices][-1]*1.2,pointOnePercV[indices][-1]-2.5,"$0.1$\\%", ha='right', size=16,
+      bbox=dict(boxstyle="round, pad=0.3", ec=(0.0, 0.0, 0.0), fc=(1.0, 1.0, 1.0),))
 
   onePercD = np.array(onePercD)
   onePercV = np.array(onePercV)
   indices = np.argsort(vabsOnePerc)
   plt.semilogx(onePercD[indices],onePercV[indices],'k--')
-  plt.text(onePercD[indices][-1]*1.2,onePercV[indices][-1]-2.5,"$1$\\%", ha='right', size=14,
-      bbox=dict(boxstyle="round, pad=0.5", ec=(0.0, 0.0, 0.0), fc=(1.0, 1.0, 1.0),))
+  plt.text(onePercD[indices][-1]*1.2,onePercV[indices][-1]-2.5,"$1$\\%", ha='right', size=16,
+      bbox=dict(boxstyle="round, pad=0.3", ec=(0.0, 0.0, 0.0), fc=(1.0, 1.0, 1.0),))
 
   tenPercD = np.array(tenPercD)
   tenPercV = np.array(tenPercV)
   indices = np.argsort(vabsTenPerc)
   plt.semilogx(tenPercD[indices],tenPercV[indices],'k--')
-  plt.text(tenPercD[indices][-1]*1.2,tenPercV[indices][-1]-2.5,"$10$\\%", ha='right', size=14,
-      bbox=dict(boxstyle="round, pad=0.5", ec=(0.0, 0.0, 0.0), fc=(1.0, 1.0, 1.0),))
+  plt.text(tenPercD[indices][-1]*1.2,tenPercV[indices][-1]-2.5,"$10$\\%", ha='right', size=16,
+      bbox=dict(boxstyle="round, pad=0.3", ec=(0.0, 0.0, 0.0), fc=(1.0, 1.0, 1.0),))
 
-  plt.title('Parallax relative accuracy horizons')
+  plt.title('Parallax relative accuracy horizons (no extinction)')
 
   plt.xlabel('Distance [pc]')
   plt.ylabel('V')
   plt.grid()
-  #leg=plt.legend(loc=4, fontsize=12, labelspacing=0.5)
+  #leg=plt.legend(loc=4, fontsize=14, labelspacing=0.5)
   
   basename='ParallaxHorizons'
   if (args['pdfOutput']):
