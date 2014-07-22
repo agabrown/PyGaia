@@ -1,7 +1,14 @@
 .. :changelog:
 
+0.6 (July 2014)
++++++++++++++++
+
+- Warning on upcoming changes in performance predictions, following the Gaia
+  commissioning period
+- radial velocity horizons plot in examples folder
+
 0.5 (August 2013)
-++++++++++++++
++++++++++++++++++
 
 - Utilities for obtaining absolute magnitudes of stars in V and G.
 - Functions to obtain the upper and lower bounds on the astrometric parameter
