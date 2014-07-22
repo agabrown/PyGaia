@@ -23,6 +23,11 @@ Note that the code in this package is *not intended for accurate astrometry
 applications*, such as predicting in detail astrometric paths of stars on the
 sky, or transforming between observation epochs.
 
+THE CURRENT VERSION OF THE CODE (0.6) CALCULATES THE PRE-LAUNCH PERFORMANCE
+PREDICTIONS FOR GAIA. AS OF 2014-07-18 THE PERFORMANCE NUMBERS ARE UNDER REVISION
+FOLLOWING THE GAIA COMMISSIONING PERIOD. THE PYGAIA CODE WILL BE UPDATED
+ACCORDINGLY TOWARD THE END OF AUGUST 2014.
+
 Documentation
 -------------
 

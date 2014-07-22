@@ -2,7 +2,7 @@
 Plot the parallax horizons for stars of various spectral types. The parallax horizon defines out to what
 distance the star can be seen for a given relative parallax accuracy.
 
-Anthony Broen 2013
+Anthony Brown 2013
 """
 
 import numpy as np
@@ -10,6 +10,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from pygaia.errors.astrometric import parallaxErrorSkyAvg
 from pygaia.photometry.utils import vminiFromSpt, gabsFromSpt, vabsFromSpt
+from pygaia.photometry.transformations import gminvFromVmini
 
 from os import environ as env
 from matplotlib import rc
@@ -43,6 +44,8 @@ def makePlot(args):
   args - Command line arguments.
   """
   distances = 10.0**np.linspace(1,6,10001)
+  av = args['extinction']
+  ai = 0.479*av #Cardelli et al R=3.1
 
   spts = ['B0I', 'B1V', 'G2V', 'K4V', 'M0V', 'M6V', 'K1III', 'M0III']
   pointOnePercD = []
@@ -63,34 +66,35 @@ def makePlot(args):
   hsv[0,0,2]=0.9
   for hue,spt in zip(hues, spts):
     hsv[0,0,0]=hue
-    vmini=vminiFromSpt(spt)
-    gmags = gabsFromSpt(spt)+5.0*np.log10(distances)-5.0
-    vmags = vabsFromSpt(spt)+5.0*np.log10(distances)-5.0
+    vmags = vabsFromSpt(spt)+5.0*np.log10(distances)-5.0+av
+    vmini=vminiFromSpt(spt)+av-ai
+    #gmags = gabsFromSpt(spt)+5.0*np.log10(distances)-5.0
+    gmags = vmags + gminvFromVmini(vmini)
     relParErr = parallaxErrorSkyAvg(gmags,vmini)*distances/1.0e6
     observed = (gmags>=5.7) & (gmags<=20.0)
     relParErrObs = relParErr[observed]
     # Identify the points where the relative parallax accuracy is 0.1, 1, or 10 per cent.
     if (relParErrObs.min()<0.001):
-      index = len(relParErrObs[relParErrObs<=0.001])
+      index = len(relParErrObs[relParErrObs<=0.001])-1
       pointOnePercD.append(distances[observed][index])
       pointOnePercV.append(vmags[observed][index])
       vabsPointOnePerc.append(vabsFromSpt(spt))
     if (relParErrObs.min()<0.01):
-      index = len(relParErrObs[relParErrObs<=0.01])
+      index = len(relParErrObs[relParErrObs<=0.01])-1
       onePercD.append(distances[observed][index])
       onePercV.append(vmags[observed][index])
       vabsOnePerc.append(vabsFromSpt(spt))
     if (relParErrObs.min()<0.1):
-      index = len(relParErrObs[relParErrObs<=0.1])
+      index = len(relParErrObs[relParErrObs<=0.1])-1
       tenPercD.append(distances[observed][index])
       tenPercV.append(vmags[observed][index])
       vabsTenPerc.append(vabsFromSpt(spt))
     plt.semilogx(distances[observed], vmags[observed], '-', label=spt, color=hsv_to_rgb(hsv)[0,0,:])
-    if (spt!='B0I'):
-      plt.text(distances[observed][-1], vmags[observed][-1], spt, horizontalalignment='center',
+    if (spt=='B0I'):
+      plt.text(distances[observed][-1]-1.0e5, vmags[observed][-1], spt, horizontalalignment='right',
           verticalalignment='bottom', fontsize=14)
     else:
-      plt.text(distances[observed][-1]-1.0e5, vmags[observed][-1], spt, horizontalalignment='right',
+      plt.text(distances[observed][-1], vmags[observed][-1], spt, horizontalalignment='center',
           verticalalignment='bottom', fontsize=14)
 
   # Draw the "contours" of constant relative parallax accuracy.
@@ -112,15 +116,16 @@ def makePlot(args):
   tenPercV = np.array(tenPercV)
   indices = np.argsort(vabsTenPerc)
   plt.semilogx(tenPercD[indices],tenPercV[indices],'k--')
-  plt.text(tenPercD[indices][-1]*1.2,tenPercV[indices][-1]-2.5,"$10$\\%", ha='right', size=16,
+  plt.text(tenPercD[indices][-1]*1.5,tenPercV[indices][-1]-2.5,"$10$\\%", ha='right', size=16,
       bbox=dict(boxstyle="round, pad=0.3", ec=(0.0, 0.0, 0.0), fc=(1.0, 1.0, 1.0),))
 
-  plt.title('Parallax relative accuracy horizons (no extinction)')
+  plt.title('Parallax relative accuracy horizons ($A_V={0}$)'.format(av))
 
   plt.xlabel('Distance [pc]')
   plt.ylabel('V')
   plt.grid()
   #leg=plt.legend(loc=4, fontsize=14, labelspacing=0.5)
+  plt.ylim(5,26)
   
   basename='ParallaxHorizons'
   if (args['pdfOutput']):
@@ -135,6 +140,7 @@ def parseCommandLineArguments():
   Set up command line parsing.
   """
   parser = argparse.ArgumentParser(description="Plot parallax horizons for various spectral types.")
+  parser.add_argument("-a", dest="extinction", type=float, help="Value of extinction Av", default=0.0)
   parser.add_argument("-p", action="store_true", dest="pdfOutput", help="Make PDF plot")
   parser.add_argument("-b", action="store_true", dest="pngOutput", help="Make PNG plot")
   args=vars(parser.parse_args())

@@ -31,7 +31,7 @@ def _orderGridlinePoints(x, y):
   return roll(x,-indexmax), roll(y,-indexmax)
 
 def plotCoordinateTransformationOnSky(transformation, outfile=None, myProjection='hammer',
-    noTitle=False, noLabels=False):
+    noTitle=False, noLabels=False, returnPlotObject=False):
     """
     Produce a sky-plot in a given coordinate system with the meridians and paralles for another
     coordinate system overlayed. The coordinate systems are specified through the
@@ -48,6 +48,8 @@ def plotCoordinateTransformationOnSky(transformation, outfile=None, myProjection
     myProjection   - Use this map projection (default is 'hammer', see basemap documentation)
     noTitle        - If true do not include the plot title.
     noLabels       - If true do not include plot labels.
+    returnPlotObject - If true return the matplotlib object used for plotting. Further plot elements can
+                       then be added.
     """
     ct = CoordinateTransformation(transformation)
 
@@ -119,5 +121,7 @@ def plotCoordinateTransformationOnSky(transformation, outfile=None, myProjection
 
     if (outfile != None):
       plt.savefig(outfile)
+    elif (returnPlotObject):
+      return plt.gca(), basemapInstance
     else:
       plt.show()
