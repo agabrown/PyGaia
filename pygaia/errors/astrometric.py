@@ -66,7 +66,7 @@ def parallaxErrorSkyAvg(G, vmini):
   The parallax error in micro-arcseconds.
   """
   z=calcZ(G)
-  return sqrt(9.3 + 658.1*z + 4.568*z*z)*(0.986 + (1.0 - 0.986)*vmini)
+  return sqrt(-1.631 + 680.766*z + 32.732*z*z)*(0.986 + (1.0 - 0.986)*vmini)
 
 def parallaxMinError(G, vmini):
   """
@@ -149,7 +149,7 @@ def parallaxErrorSkyAvgAltStartGate(G, vmini):
   The parallax error in micro-arcseconds.
   """
   z=calcZAltStartGate(G)
-  return sqrt(9.3 + 658.1*z + 4.568*z*z)*(0.986 + (1.0 - 0.986)*vmini)
+  return sqrt(-1.631 + 680.766*z + 32.732*z*z)*(0.986 + (1.0 - 0.986)*vmini)
 
 def positionErrorSkyAvg(G, vmini):
   """

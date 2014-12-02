@@ -27,7 +27,7 @@ def calcZ(G):
   
   Value of z.
   """
-  gatefloor=power(10.0,0.4*(12.0-15.0))
+  gatefloor=power(10.0,0.4*(12.09-15.0))
   if isscalar(G):
    result=amax((gatefloor,power(10.0,0.4*(G-15.0))))
   else :
