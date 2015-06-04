@@ -1,5 +1,10 @@
 .. :changelog:
 
+0.81 (June 2015)
++++++++++++++++++++
+
+- Forgot to update changelog for version 0.8
+
 0.8 (June 2015)
 +++++++++++++++++++
 
