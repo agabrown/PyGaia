@@ -1,5 +1,15 @@
 .. :changelog:
 
+0.8 (June 2015)
++++++++++++++++++++
+
+- Radial velocity performance predictions updated to post-launch estimates.
+
+0.7 (December 2014)
++++++++++++++++++++
+
+- Astrometry performance predictions updated to post-launch estimates.
+
 0.6 (July 2014)
 +++++++++++++++
 
