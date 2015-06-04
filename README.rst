@@ -14,7 +14,7 @@ Unit 2 (CU2).
 
 This toolkit is basically an implementation of the performance models for Gaia
 which are publicly available at:
-`<http://www.rssd.esa.int/index.php?project=GAIA&page=Science_Performance>`_. In
+`<http://www.cosmos.esa.int/web/gaia/science-performance>`_. In
 addition much of the material in chapter 4 of the book `Astrometry for
 Astrophysics: Methods, Models, and Applications (2012, van Altena et al.)
 <http://www.cambridge.org/9780521519205>`_ is implemented.
@@ -24,8 +24,8 @@ applications*, such as predicting in detail astrometric paths of stars on the
 sky, or transforming between observation epochs.
 
 THE CURRENT VERSION OF THE CODE (0.8, JUNE 2015) CALCULATES THE POST-LAUNCH
-PERFORMANCE PREDICTIONS FOR GAIA FOR THE ASTROMETRY AND RADIAL VELOCITIES. *FOR
-THE PHOTOMETRY THE PRE-LAUNCH PREDICTIONS ARE STILL USED.* 
+PERFORMANCE PREDICTIONS FOR GAIA FOR THE ASTROMETRY AND RADIAL VELOCITIES. **FOR
+THE PHOTOMETRY THE PRE-LAUNCH PREDICTIONS ARE STILL USED.**
 
 Documentation
 -------------
@@ -61,7 +61,7 @@ research.
 License
 -------
 
-Copyright (c) 2012-2013 Anthony Brown, Gaia Data Processing and Analysis Consortium
+Copyright (c) 2012-2015 Anthony Brown, Gaia Data Processing and Analysis Consortium
 
 PyGaia is open source and free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by the
