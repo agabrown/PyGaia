@@ -198,10 +198,10 @@ class CoordinateTransformation:
     covar = sigPhiStar*sigTheta*rhoPhiTheta
     varPhiStar = sigPhiStar*sigPhiStar
     varTheta = sigTheta*sigTheta
-    varPhiRot = cSqr*varPhiStar+sSqr*varTheta+2.0*covar*c*s
+    varPhiStarRot = cSqr*varPhiStar+sSqr*varTheta+2.0*covar*c*s
     varThetaRot = sSqr*varPhiStar+cSqr*varTheta-2.0*covar*c*s
     covarRot = (cSqr-sSqr)*covar+c*s*(varTheta-varPhiStar)
-    return sqrt(varPhiStar), sqrt(varTheta), covarRot/sqrt(varPhiStar*varTheta)
+    return sqrt(varPhiStarRot), sqrt(varThetaRot), covarRot/sqrt(varPhiStarRot*varThetaRot)
 
   def transformProperMotionErrors(self, phi, theta, sigMuPhiStar, sigMuTheta, rhoMuPhiMuTheta=0):
     """

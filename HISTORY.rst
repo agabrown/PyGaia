@@ -1,5 +1,10 @@
 .. :changelog:
 
+0.82 (July 2015)
++++++++++++++++++++
+
+- Error corrected in transformSkyCoordinateErrors() method. Thanks to Teresa Antoja and Taniya Parikh!
+
 0.81 (June 2015)
 +++++++++++++++++++
 
