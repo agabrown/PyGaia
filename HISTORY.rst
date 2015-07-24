@@ -1,5 +1,10 @@
 .. :changelog:
 
+0.83 (July 2015)
++++++++++++++++++++
+
+- Minor error in documentation of astrometryToPhaseSpace() method corrected.
+
 0.82 (July 2015)
 +++++++++++++++++++
 

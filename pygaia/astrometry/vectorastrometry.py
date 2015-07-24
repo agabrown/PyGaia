@@ -191,15 +191,16 @@ def astrometryToPhaseSpace(phi, theta, parallax, muphistar, mutheta, vrad):
   This function has no mechanism to deal with units. The code is set up such that for input astrometry
   with parallaxes and proper motions in mas and mas/yr, and radial velocities in km/s, the phase space
   coordinates are in pc and km/s. For input astrometry with parallaxes and proper motions in muas and
-  muas/yr, and radial velocities in km/s, the phase space coordinates are in pc and km/s. Only positive
+  muas/yr, and radial velocities in km/s, the phase space coordinates are in kpc and km/s. Only positive
   parallaxes are accepted, an exception is thrown if this condition is not met.
 
   NOTE that the doppler factor k=1/(1-vrad/c) is NOT used in the calculations. This is not a problem for
   sources moving at typical velocities of Galactic stars.
 
-  THIS FUNCTION SHOULD NOT BE USED WHEN THE PARALLAXES HAVE RELATIVE ERRORS LARGER THAN ABOUT 10-15 PER
-  CENT. For astrometric data with relatively large parallax errors you should consider doing your
-  analysis in the data space and use forward modelling of some kind.
+  THIS FUNCTION SHOULD NOT BE USED WHEN THE PARALLAXES HAVE RELATIVE ERRORS LARGER THAN ABOUT 20 PER CENT
+  (see http://arxiv.org/abs/1507.02105 for example). For astrometric data with relatively large parallax
+  errors you should consider doing your analysis in the data space and use forward modelling of some
+  kind.
 
   Parameters
   ----------
