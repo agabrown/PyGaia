@@ -1,5 +1,10 @@
 .. :changelog:
 
+0.9 (September 2015)
+++++++++++++++++++++
+
+- Photometric performance predictions updated to post-launch estimates.
+
 0.83 (July 2015)
 +++++++++++++++++++
 

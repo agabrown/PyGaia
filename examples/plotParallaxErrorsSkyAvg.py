@@ -66,6 +66,7 @@ def makePlot(args):
     plt.xlim((5,20))
     plt.ylim((4,1000))
     plt.legend(loc=4)
+    plt.xlabel('$G$ [mag]')
   else:
     ax=fig.add_subplot(111)
     plt.semilogy(vmagB1V, sigparB1V, 'b', label='B1V')
@@ -75,8 +76,9 @@ def makePlot(args):
     plt.fill_between(vmagM6V, sigparM6Vmin, sigparM6Vmax, color='r', alpha=0.3)
     plt.xlim((5,22.5))
     plt.ylim((4,1000))
-    plt.text(17.5,190,'B1V',color='b')
+    plt.text(17.2,190,'B1V',color='b')
     plt.text(18,20,'M6V',color='r')
+    plt.xlabel('$V$ [mag]')
     plt.text(7,17,'calibration noise floor', size=12, bbox=dict(boxstyle="round,pad=0.3",
                        ec=(0.0, 0.0, 0.0),
                        fc=(1.0, 1.0, 1.0),
@@ -85,15 +87,15 @@ def makePlot(args):
                        ec=(0.0, 0.0, 0.0),
                        fc=(1.0, 1.0, 1.0),
                        ))
-    ax.annotate('non-uniformity\nover the sky', xy=(21.5, 160),  xycoords='data',
-                  xytext=(21.5,50), textcoords='data', ha='center', size='12',
+    ax.annotate('non-uniformity\nover the sky', xy=(21.5, 320),  xycoords='data',
+                  xytext=(21.5,80), textcoords='data', ha='center', size='12',
                   bbox=dict(boxstyle="round,pad=0.3",ec=(0,0,0),fc=(1,1,1)),
                   arrowprops=dict(facecolor='black', shrink=0.15, width=1,
                     headwidth=6),
                   horizontalalignment='right', verticalalignment='top',
                   )
-    ax.annotate('', xy=(21.5, 250),  xycoords='data',
-                  xytext=(21.5,800), textcoords='data', ha='center', size='12',
+    ax.annotate('', xy=(21.5, 500),  xycoords='data',
+                  xytext=(21.5,950), textcoords='data', ha='center', size='12',
                   arrowprops=dict(facecolor='black', shrink=0.15, width=1,
                     headwidth=6),
                   horizontalalignment='right', verticalalignment='bottom',
@@ -104,7 +106,6 @@ def makePlot(args):
   ax.set_major_formatter(matplotlib.ticker.ScalarFormatter())
   plt.ticklabel_format(axis='y',style='plain')
   plt.grid(which='both')
-  plt.xlabel('$V$ [mag]')
   plt.ylabel('End-of-mission parallax standard error [$\mu$as]')
   
   if (args['pdfOutput']):

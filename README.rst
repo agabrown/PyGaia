@@ -23,10 +23,6 @@ Note that the code in this package is *not intended for accurate astrometry
 applications*, such as predicting in detail astrometric paths of stars on the
 sky, or transforming between observation epochs.
 
-THE CURRENT VERSION OF THE CODE (0.83, JULY 2015) CALCULATES THE POST-LAUNCH
-PERFORMANCE PREDICTIONS FOR GAIA FOR THE ASTROMETRY AND RADIAL VELOCITIES. **FOR
-THE PHOTOMETRY THE PRE-LAUNCH PREDICTIONS ARE STILL USED.**
-
 Documentation
 -------------
 

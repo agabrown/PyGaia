@@ -3,16 +3,15 @@ __all__ = ['gMagnitudeError', 'bpMagnitudeError', 'rpMagnitudeError']
 from numpy import power, sqrt
 from utils import calcZ, calcZBpRp
 
-def gMagnitudeError(G, vmini):
+def gMagnitudeError(G):
   """
   Calculate the single-field-of-view-transit photometric standard errors in the G band as a function
-  of G and (V-I).
+  of G.
 
   Parameters
   ----------
 
   G     - Value(s) of G-band magnitude.
-  vmini - Value(s) of (V-I) colour.
 
   Returns
   -------
@@ -20,7 +19,7 @@ def gMagnitudeError(G, vmini):
   The G band photometric standard error in units of magnitude.
   """
   z=calcZ(G)
-  return 1.0e-3*sqrt(0.02076*z*z + 2.7224*z + 0.004352)
+  return 1.0e-3*sqrt(0.04895*z*z + 1.8633*z + 0.0001985)
 
 def bpMagnitudeError(G, vmini):
   """
@@ -39,9 +38,9 @@ def bpMagnitudeError(G, vmini):
   The BP band photometric standard error in units of magnitude.
   """
   z=calcZBpRp(G)
-  a	=	-0.003201*power(vmini,3) + 0.0589*vmini*vmini + 0.3353*vmini + 0.7927
-  b	=	-0.001019*power(vmini,3) + 0.0244*vmini*vmini + 0.1756*vmini + 1.4684
-  c	=	-0.004093*power(vmini,3) + 0.0740*vmini*vmini + 0.2834*vmini - 3.4772
+  a	=	-0.000562*power(vmini,3) + 0.044390*vmini*vmini + 0.355123*vmini + 1.043270
+  b	=	-0.000400*power(vmini,3) + 0.018878*vmini*vmini + 0.195768*vmini + 1.465592
+  c	=	+0.000262*power(vmini,3) + 0.060769*vmini*vmini - 0.205807*vmini - 1.866968
   return 1.0e-3*sqrt(power(10.0,a)*z*z+power(10.0,b)*z+power(10.0,c))
 
 def rpMagnitudeError(G, vmini):
@@ -61,7 +60,7 @@ def rpMagnitudeError(G, vmini):
   The RP band photometric standard error in units of magnitude.
   """
   z=calcZBpRp(G)
-  a	=	-0.006560*power(vmini,3) + 0.1080*vmini*vmini - 0.6296*vmini + 1.4470
-  b	=	-0.003280*power(vmini,3) + 0.0540*vmini*vmini - 0.3148*vmini + 1.7856
-  c	=	-0.007992*power(vmini,3) + 0.1482*vmini*vmini - 0.7544*vmini - 3.7232
+  a	=	-0.007597*power(vmini,3) + 0.114126*vmini*vmini - 0.636628*vmini + 1.615927
+  b	=	-0.003803*power(vmini,3) + 0.057112*vmini*vmini - 0.318499*vmini + 1.783906
+  c	=	-0.001923*power(vmini,3) + 0.027352*vmini*vmini - 0.091569*vmini - 3.042268
   return 1.0e-3*sqrt(power(10.0,a)*z*z+power(10.0,b)*z+power(10.0,c))
