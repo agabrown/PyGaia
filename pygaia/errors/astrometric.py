@@ -3,7 +3,7 @@ __all__ = ['parallaxErrorSkyAvg', 'parallaxErrorSkyAvgAltStartGate', 'positionEr
 
 from numpy import sqrt, sin, array, floor
 from scipy import isscalar
-from utils import calcZ, calcZAltStartGate
+from pygaia.errors.utils import calcZ, calcZAltStartGate
 from numpy import genfromtxt
 from pkg_resources import resource_stream
 

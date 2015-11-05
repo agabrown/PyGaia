@@ -70,7 +70,7 @@ def makePlot(args):
   plt.ticklabel_format(axis='y',style='plain')
   plt.grid(which='both')
   plt.ylabel('Photometric error [mag]')
-  plt.title('End-of-mission sky averaged photometric errors$'.format(vmini), fontsize=14)
+  plt.title('End-of-mission sky averaged photometric errors for $(V-I)={0}$'.format(vmini), fontsize=14)
   
   basename = 'PhotometricErrors'
   if (args['pdfOutput']):

@@ -1,7 +1,7 @@
 __all__ = ['gMagnitudeError', 'bpMagnitudeError', 'rpMagnitudeError']
 
 from numpy import power, sqrt
-from utils import calcZ, calcZBpRp
+from pygaia.errors.utils import calcZ, calcZBpRp
 
 def gMagnitudeError(G):
   """

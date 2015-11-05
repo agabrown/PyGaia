@@ -24,11 +24,11 @@ def calcParallaxError(args):
   vmini=float(args['vmini'])
   sigmaPar=parallaxErrorSkyAvg(gmag, vmini)
   gminv=gminvFromVmini(vmini)
-  print "G = {0}".format(gmag)
-  print "V = {0}".format(gmag-gminv)
-  print "(V-I) = {0}".format(vmini)
-  print "(G-V) = {0}".format(gminv)
-  print "standard error = {0} muas".format(sigmaPar)
+  print("G = {0}".format(gmag))
+  print("V = {0}".format(gmag-gminv))
+  print("(V-I) = {0}".format(vmini))
+  print("(G-V) = {0}".format(gminv))
+  print("standard error = {0} muas".format(sigmaPar))
 
 def parseCommandLineArguments():
   """

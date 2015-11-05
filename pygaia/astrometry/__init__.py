@@ -5,4 +5,4 @@ This package provides functions for transforming between astrometric and (Cartes
 for the transformations between different coordinate systems.
 """
 
-__modules__=['coordinates', 'vectorastrometry']
+__modules__=['coordinates', 'vectorastrometry', 'constants']

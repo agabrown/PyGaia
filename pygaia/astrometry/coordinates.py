@@ -1,7 +1,7 @@
 __all__ = ['CoordinateTransformation', 'Transformations']
 
-from vectorastrometry import sphericalToCartesian, cartesianToSpherical, elementaryRotationMatrix, \
-    normalTriad
+from pygaia.astrometry.vectorastrometry import sphericalToCartesian, cartesianToSpherical, \
+        elementaryRotationMatrix, normalTriad
 from pygaia.utils import enum, degreesToRadians, radiansToDegrees
 
 from numpy import ones_like, array, pi, cos, sin, zeros_like

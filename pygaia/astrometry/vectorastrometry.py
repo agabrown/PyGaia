@@ -176,7 +176,7 @@ def phaseSpaceToAstrometry(x, y, z, vx, vy, vz):
     muphistar=zeros_like(parallax)
     mutheta=zeros_like(parallax)
     vrad=zeros_like(parallax)
-    for i in xrange(parallax.size):
+    for i in range(parallax.size):
       muphistar[i]=dot(p[:,i],velocitiesArray[:,i])*parallax[i]/_auKmYearPerSec
       mutheta[i]=dot(q[:,i],velocitiesArray[:,i])*parallax[i]/_auKmYearPerSec
       vrad[i]=dot(r[:,i],velocitiesArray[:,i])
@@ -238,7 +238,7 @@ def astrometryToPhaseSpace(phi, theta, parallax, muphistar, mutheta, vrad):
     vx = zeros_like(parallax)
     vy = zeros_like(parallax)
     vz = zeros_like(parallax)
-    for i in xrange(parallax.size):
+    for i in range(parallax.size):
       velocityArray = dot(transpose(array([p[:,i], q[:,i], r[:,i]])), transverseMotionArray[:,i])
       vx[i] = velocityArray[0]
       vy[i] = velocityArray[1]

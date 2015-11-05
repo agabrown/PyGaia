@@ -1,5 +1,12 @@
 .. :changelog:
 
+1.0 (November 2015)
++++++++++++++++++++
+
+- Added numerical constants.
+
+- Improved setup.py, made code compatible with Python3
+
 0.9 (September 2015)
 ++++++++++++++++++++
 
