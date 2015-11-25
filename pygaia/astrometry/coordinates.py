@@ -149,13 +149,14 @@ class CoordinateTransformation:
 
     phi       - The longitude-like angle of the position of the source (radians).
     theta     - The latitude-like angle of the position of the source (radians).
-    muphistar - Value of the proper motion in the longitude-like angle, multiplied by cos(theta).
+    muphistar - Value of the proper motion in the longitude-like angle, multiplied by cos(latitude).
     mutheta   - Value of the proper motion in the latitude-like angle.
 
     Returns
     -------
 
-    muphistarrot - Value of the transformed proper motion in the longitude-like angle.
+    muphistarrot - Value of the transformed proper motion in the longitude-like angle (including the
+    cos(latitude) factor).
     muthetarot   - Value of the transformed proper motion in the latitude-like angle.
     """
     c, s = self._getJacobian(phi,theta)
@@ -213,7 +214,8 @@ class CoordinateTransformation:
 
     phi             - The longitude-like angle of the position of the source (radians).
     theta           - The latitude-like angle of the position of the source (radians).
-    sigMuPhiStar    - Standard error in the proper motion in the longitude-like direction.
+    sigMuPhiStar    - Standard error in the proper motion in the longitude-like direction (including
+    cos(latitude) factor).
     sigMuTheta      - Standard error in the proper motion in the latitude-like direction.
 
     Keywords (optional)
@@ -225,7 +227,8 @@ class CoordinateTransformation:
     Retuns
     ------
     
-    sigMuPhiRotStar    - The transformed standard error in the proper motion in the longitude direction.
+    sigMuPhiRotStar    - The transformed standard error in the proper motion in the longitude direction
+    (including cos(latitude) factor).
     sigMuThetaRot      - The transformed standard error in the proper motion in the longitude direction.
     rhoMuPhiMuThetaRot - The transformed correlation coefficient.
     """
