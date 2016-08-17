@@ -202,14 +202,28 @@ class test_coordinates(TestCase):
     for i in range(nTests):
       self.assertGreater(sigPhiStarRot[i], 0.0)
       self.assertGreater(sigThetaRot[i], 0.0)
-      self.assertTrue(-1<=rhoPhiTheta[i] and rhoPhiTheta[i]<=1)
+      self.assertTrue(-1<=rhoPhiThetaRot[i] and rhoPhiThetaRot[i]<=1)
 
     sigPhiStarRot, sigThetaRot, rhoPhiThetaRot = ct.transformSkyCoordinateErrors(phi, theta, sigPhiStar,
         sigTheta)
     for i in range(nTests):
       self.assertGreater(sigPhiStarRot[i], 0.0)
       self.assertGreater(sigThetaRot[i], 0.0)
-      self.assertTrue(-1<=rhoPhiTheta[i] and rhoPhiTheta[i]<=1)
+      self.assertTrue(-1<=rhoPhiThetaRot[i] and rhoPhiThetaRot[i]<=1)
+
+    sigPhiStarRot, sigThetaRot, rhoPhiThetaRot = ct.transformSkyCoordinateErrors(phi, theta, sigPhiStar,
+        sigTheta, rhoPhiTheta=0.7)
+    for i in range(nTests):
+      self.assertGreater(sigPhiStarRot[i], 0.0)
+      self.assertGreater(sigThetaRot[i], 0.0)
+      self.assertTrue(-1<=rhoPhiThetaRot[i] and rhoPhiThetaRot[i]<=1)
+
+    for i in range(nTests):
+        sigPhiStarRot, sigThetaRot, rhoPhiThetaRot = ct.transformSkyCoordinateErrors(phi[i], theta[i],
+                sigPhiStar[i], sigTheta[i], rhoPhiTheta=0.7)
+        self.assertGreater(sigPhiStarRot, 0.0)
+        self.assertGreater(sigThetaRot, 0.0)
+        self.assertTrue(-1<=rhoPhiThetaRot and rhoPhiThetaRot<=1)
 
   def test_transformProperMotionErrors(self):
     """

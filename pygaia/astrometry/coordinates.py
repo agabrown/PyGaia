@@ -191,8 +191,8 @@ class CoordinateTransformation:
     sigThetaRot    - The transformed standard error in the latitude-like angle.
     rhoPhiThetaRot - The transformed correlation coefficient.
     """
-    if isscalar(rhoPhiTheta):
-      rhoPhiTheta=zeros_like(sigTheta)
+    if isscalar(rhoPhiTheta) and not isscalar(sigTheta):
+      rhoPhiTheta=zeros_like(sigTheta)+rhoPhiTheta
     c, s = self._getJacobian(phi,theta)
     cSqr = c*c
     sSqr = s*s

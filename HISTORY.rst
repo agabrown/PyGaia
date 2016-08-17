@@ -1,5 +1,12 @@
 .. :changelog:
 
+1.1 (August 2016)
++++++++++++++++++
+
+- Bug fix in coordinate transformation code.
+
+- Updated photometric and radial velocity error predictions.
+
 1.0 (November 2015)
 +++++++++++++++++++
 
