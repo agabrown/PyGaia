@@ -1,7 +1,7 @@
 .. :changelog:
 
-1.1 (August 2016)
-+++++++++++++++++
+1.1 (September 2016)
+++++++++++++++++++++
 
 - Bug fix in coordinate transformation code.
 
