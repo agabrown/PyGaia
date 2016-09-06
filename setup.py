@@ -1,7 +1,7 @@
 """
 Setup module for PyGaia.
 
-Anthony Brown 2012--2015
+Anthony Brown 2012--2016
 
 Based on:
 https://packaging.python.org/en/latest/distributing.html
