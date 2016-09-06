@@ -51,9 +51,6 @@ def makePlot(args):
       sigmaGRp = rpMagnitudeError(gmag, vmini)
       yminmax = (1.0-4,1)
 
-  for g, s, sb, sr in zip(gmag,sigmaG,sigmaGBp,sigmaGRp):
-      print(g,s,sb,sr)
-
   fig=plt.figure(figsize=(10,6.5))
   
   if (args['vmagAbscissa']):
