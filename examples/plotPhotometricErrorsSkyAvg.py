@@ -34,7 +34,7 @@ def makePlot(args):
 
   :argument args: command line arguments
   """
-  gmag=np.linspace(5.7,20.0,101)
+  gmag=np.linspace(3.0,20.0,171)
 
   vmini = args['vmini']
   
@@ -50,6 +50,9 @@ def makePlot(args):
       sigmaGBp = bpMagnitudeError(gmag, vmini)
       sigmaGRp = rpMagnitudeError(gmag, vmini)
       yminmax = (1.0-4,1)
+
+  for g, s, sb, sr in zip(gmag,sigmaG,sigmaGBp,sigmaGRp):
+      print(g,s,sb,sr)
 
   fig=plt.figure(figsize=(10,6.5))
   
@@ -73,8 +76,8 @@ def makePlot(args):
   
   plt.xticks(np.arange(6,20,2))
   ax = plt.gca().yaxis 
-  ax.set_major_formatter(matplotlib.ticker.ScalarFormatter())
-  plt.ticklabel_format(axis='y',style='plain')
+  #ax.set_major_formatter(matplotlib.ticker.ScalarFormatter())
+  #plt.ticklabel_format(axis='y',style='plain')
   plt.grid(which='both')
   plt.ylabel('Photometric error [mag]')
   if args['eom']:

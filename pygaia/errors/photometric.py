@@ -4,6 +4,10 @@ from numpy import power, sqrt
 from pygaia.errors.utils import calcZ, calcZBpRp
 
 #
+# Margin to include on predicted standard errors (i.e. multiply prediction by this value).
+_scienceMargin = 1.2
+
+#
 # Mean number of CCDs crossed by a source in the AF field (G-band photometry)
 _meanNumCcds = (7.0*9.0-1.0)/7.0
 
@@ -16,7 +20,7 @@ _eomCalibrationFloorRP = 5.0e-3
 def gMagnitudeError(G):
   """
   Calculate the single-field-of-view-transit photometric standard error in the G band as a function
-  of G. NO margins are included.
+  of G. A 20% margin is included.
 
   Parameters
   ----------
@@ -29,12 +33,12 @@ def gMagnitudeError(G):
   The G band photometric standard error in units of magnitude.
   """
   z=calcZ(G)
-  return 1.0e-3*sqrt(0.04895*z*z + 1.8633*z + 0.0001985)
+  return 1.0e-3*sqrt(0.04895*z*z + 1.8633*z + 0.0001985) * _scienceMargin
 
 def gMagnitudeErrorEoM(G, nobs=70):
   """
   Calculate the end of mission photometric standard error in the G band as a function
-  of G. NO margins are included.
+  of G. A 20% margin is included.
 
   Parameters
   ----------
@@ -51,7 +55,8 @@ def gMagnitudeErrorEoM(G, nobs=70):
 
   The G band photometric standard error in units of magnitude.
   """
-  return sqrt( (power(gMagnitudeError(G),2) + _eomCalibrationFloorG*_eomCalibrationFloorG)/nobs )
+  return sqrt( (power(gMagnitudeError(G)/_scienceMargin,2) +
+      _eomCalibrationFloorG*_eomCalibrationFloorG)/nobs ) * _scienceMargin
 
 def bpMagnitudeError(G, vmini):
   """
@@ -97,7 +102,8 @@ def bpMagnitudeErrorEoM(G, vmini, nobs=70):
 
   The BP band photometric standard error in units of magnitude.
   """
-  return sqrt( (power(bpMagnitudeError(G, vmini),2) + _eomCalibrationFloorBP*_eomCalibrationFloorBP)/nobs )
+  return sqrt( (power(bpMagnitudeError(G, vmini)/_scienceMargin,2) +
+      _eomCalibrationFloorBP*_eomCalibrationFloorBP)/nobs ) * _scienceMargin
 
 def rpMagnitudeError(G, vmini):
   """
@@ -143,5 +149,6 @@ def rpMagnitudeErrorEoM(G, vmini, nobs=70):
 
   The RP band photometric standard error in units of magnitude.
   """
-  return sqrt( (power(rpMagnitudeError(G, vmini),2) + _eomCalibrationFloorRP*_eomCalibrationFloorRP)/nobs )
+  return sqrt( (power(rpMagnitudeError(G, vmini)/_scienceMargin,2) +
+      _eomCalibrationFloorRP*_eomCalibrationFloorRP)/nobs ) * _scienceMargin
 
