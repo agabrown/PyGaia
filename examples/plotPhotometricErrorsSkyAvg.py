@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 from pygaia.errors.photometric import gMagnitudeError, bpMagnitudeError, rpMagnitudeError
+from pygaia.errors.photometric import gMagnitudeErrorEoM, bpMagnitudeErrorEoM, rpMagnitudeErrorEoM
 from pygaia.photometry.transformations import gminvFromVmini
 
 from os import environ as env
@@ -29,8 +30,7 @@ rc('axes', linewidth=2)
 
 def makePlot(args):
   """
-  Make the plot with proper motion performance predictions. The predictions are for the TOTAL proper
-  motion under the assumption of equal components mu_alpha* and mu_delta.
+  Make the plot with photometry performance predictions.
 
   :argument args: command line arguments
   """
@@ -40,9 +40,16 @@ def makePlot(args):
   
   vmag=gmag-gminvFromVmini(vmini)
   
-  sigmaG = gMagnitudeError(gmag)
-  sigmaGBp = bpMagnitudeError(gmag, vmini)
-  sigmaGRp = rpMagnitudeError(gmag, vmini)
+  if args['eom']:
+      sigmaG = gMagnitudeErrorEoM(gmag)
+      sigmaGBp = bpMagnitudeErrorEoM(gmag, vmini)
+      sigmaGRp = rpMagnitudeErrorEoM(gmag, vmini)
+      yminmax = (1.0-4,0.1)
+  else:
+      sigmaG = gMagnitudeError(gmag)
+      sigmaGBp = bpMagnitudeError(gmag, vmini)
+      sigmaGRp = rpMagnitudeError(gmag, vmini)
+      yminmax = (1.0-4,1)
 
   fig=plt.figure(figsize=(10,6.5))
   
@@ -51,7 +58,7 @@ def makePlot(args):
     plt.semilogy(vmag, sigmaGBp, 'b', label='$\\sigma_{G_\\mathrm{BP}}$'+' for $(V-I)={0}$'.format(vmini))
     plt.semilogy(vmag, sigmaGRp, 'r', label='$\\sigma_{G_\\mathrm{RP}}$'+' for $(V-I)={0}$'.format(vmini))
     plt.xlim((6,20))
-    plt.ylim((1.0e-4,1))
+    #plt.ylim(yminmax)
     plt.legend(loc=0)
     plt.xlabel('$V$ [mag]')
   else:
@@ -60,7 +67,7 @@ def makePlot(args):
     plt.semilogy(gmag, sigmaGBp, 'b', label='$\\sigma_{G_\\mathrm{BP}}$'+' for $(V-I)={0}$'.format(vmini))
     plt.semilogy(gmag, sigmaGRp, 'r', label='$\\sigma_{G_\\mathrm{RP}}$'+' for $(V-I)={0}$'.format(vmini))
     plt.xlim((6,20))
-    plt.ylim((1.0e-4,1))
+    #plt.ylim(yminmax)
     plt.legend(loc=0)
     plt.xlabel('$G$ [mag]')
   
@@ -70,7 +77,10 @@ def makePlot(args):
   plt.ticklabel_format(axis='y',style='plain')
   plt.grid(which='both')
   plt.ylabel('Photometric error [mag]')
-  plt.title('End-of-mission sky averaged photometric errors for $(V-I)={0}$'.format(vmini), fontsize=14)
+  if args['eom']:
+      plt.title('End-of-mission mean photometry: sky averaged errors for $(V-I)={0}$'.format(vmini), fontsize=14)
+  else:
+      plt.title('Single-FoV-transit photometry: sky averaged errors for $(V-I)={0}$'.format(vmini), fontsize=14)
   
   basename = 'PhotometricErrors'
   if (args['pdfOutput']):
@@ -84,8 +94,9 @@ def parseCommandLineArguments():
   """
   Set up command line parsing.
   """
-  parser = argparse.ArgumentParser(description="Plot predicted Gaia sky averaged proper motion errors as a function of V")
+  parser = argparse.ArgumentParser(description="Plot predicted single-transit Gaia sky averaged photometric errors as a function of V or G")
   parser.add_argument("vmini", help="""(V-I) colour of source""", type=float)
+  parser.add_argument("-e", action="store_true", dest="eom", help="Plot end-of-mission errors")
   parser.add_argument("-p", action="store_true", dest="pdfOutput", help="Make PDF plot")
   parser.add_argument("-b", action="store_true", dest="pngOutput", help="Make PNG plot")
   parser.add_argument("-v", action="store_true", dest="vmagAbscissa", help="Plot performance vs V instead of G")

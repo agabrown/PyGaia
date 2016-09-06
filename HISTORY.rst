@@ -5,7 +5,11 @@
 
 - Bug fix in coordinate transformation code.
 
-- Updated photometric and radial velocity error predictions.
+- Updated radial velocity error predictions.
+
+- End-of-mission photometry errors, including calibration floor, introduced for the broad band fluxes.
+
+- Example plot of photometry errors fixed.
 
 1.0 (November 2015)
 +++++++++++++++++++
