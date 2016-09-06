@@ -16,7 +16,7 @@ _eomCalibrationFloorRP = 5.0e-3
 def gMagnitudeError(G):
   """
   Calculate the single-field-of-view-transit photometric standard error in the G band as a function
-  of G.
+  of G. NO margins are included.
 
   Parameters
   ----------
@@ -34,7 +34,7 @@ def gMagnitudeError(G):
 def gMagnitudeErrorEoM(G, nobs=70):
   """
   Calculate the end of mission photometric standard error in the G band as a function
-  of G.
+  of G. NO margins are included.
 
   Parameters
   ----------
@@ -56,7 +56,8 @@ def gMagnitudeErrorEoM(G, nobs=70):
 def bpMagnitudeError(G, vmini):
   """
   Calculate the single-field-of-view-transit photometric standard error in the BP band as a function
-  of G and (V-I). Note: this refers to the integrated flux from the BP spectrophotometer.
+  of G and (V-I). Note: this refers to the integrated flux from the BP spectrophotometer. A margin of 20%
+  is included.
 
   Parameters
   ----------
@@ -77,8 +78,8 @@ def bpMagnitudeError(G, vmini):
 
 def bpMagnitudeErrorEoM(G, vmini, nobs=70):
   """
-  Calculate the end-of-mission photometric standard error in the BP band as a function
-  of G and (V-I). Note: this refers to the integrated flux from the BP spectrophotometer.
+  Calculate the end-of-mission photometric standard error in the BP band as a function of G and (V-I).
+  Note: this refers to the integrated flux from the BP spectrophotometer. A margin of 20% is included.
 
   Parameters
   ----------
@@ -101,7 +102,8 @@ def bpMagnitudeErrorEoM(G, vmini, nobs=70):
 def rpMagnitudeError(G, vmini):
   """
   Calculate the single-field-of-view-transit photometric standard error in the RP band as a function
-  of G and (V-I). Note: this refers to the integrated flux from the RP spectrophotometer.
+  of G and (V-I). Note: this refers to the integrated flux from the RP spectrophotometer. A margin of 20%
+  is included.
 
   Parameters
   ----------
@@ -122,8 +124,8 @@ def rpMagnitudeError(G, vmini):
 
 def rpMagnitudeErrorEoM(G, vmini, nobs=70):
   """
-  Calculate the end-of-mission photometric standard error in the RP band as a function
-  of G and (V-I). Note: this refers to the integrated flux from the RP spectrophotometer.
+  Calculate the end-of-mission photometric standard error in the RP band as a function of G and (V-I).
+  Note: this refers to the integrated flux from the RP spectrophotometer. A margin of 20% is included.
 
   Parameters
   ----------
