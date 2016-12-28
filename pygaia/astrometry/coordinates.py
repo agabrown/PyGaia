@@ -5,7 +5,7 @@ from pygaia.astrometry.vectorastrometry import sphericalToCartesian, cartesianTo
 from pygaia.utils import enum, degreesToRadians, radiansToDegrees
 
 from numpy import ones_like, array, pi, cos, sin, zeros_like
-from numpy import dot, transpose, cross, vstack, diag, sqrt
+from numpy import dot, transpose, cross, vstack, diag, sqrt, identity
 from numpy.linalg import norm
 from scipy import isscalar
 
@@ -234,6 +234,36 @@ class CoordinateTransformation:
     """
     return self.transformSkyCoordinateErrors(phi, theta, sigMuPhiStar, sigMuTheta,
         rhoPhiTheta=rhoMuPhiMuTheta)
+
+  def transformCovarianceMatrix(self, phi, theta, covmat):
+      """
+      Transform the astrometric covariance matrix to its representation in the new coordinate system.
+
+      Parameters
+      ----------
+
+      phi       - The longitude-like angle of the position of the source (radians).
+      theta     - The latitude-like angle of the position of the source (radians).
+      covmat    - Covariance matrix (5x5) of the astrometric parameters.
+
+      Returns
+      -------
+
+      covmat_rot - Covariance matrix in its representation in the new coordinate system.
+      """
+
+      c, s = self._getJacobian(phi,theta)
+      jacobian = identity(5)
+      jacobian[0][0]=c
+      jacobian[1][1]=c
+      jacobian[3][3]=c
+      jacobian[4][4]=c
+      jacobian[0][1]=s
+      jacobian[1][0]=-s
+      jacobian[3][4]=s
+      jacobian[4][3]=-s
+
+      return dot( dot(jacobian, covmat), jacobian.transpose() )
 
   def _getJacobian(self, phi, theta):
     """

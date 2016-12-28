@@ -1,5 +1,14 @@
 .. :changelog:
 
+1.2 (December 2016)
++++++++++++++++++++
+
+- Add method to CoordinateTransformation for the transformation of the full (5x5) covariance matrix of
+  the astrometric parameters.
+
+- Add keyword to astrometric errors prediction functions that allows to specify an extended mission
+  lifetime.
+
 1.1 (September 2016)
 ++++++++++++++++++++
 

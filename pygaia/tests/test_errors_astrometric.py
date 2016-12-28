@@ -3,7 +3,7 @@ Unit tests for the errors.astrometric module.
 """
 
 from numpy.testing import TestCase, assert_almost_equal, assert_array_almost_equal, assert_raises
-from numpy import pi, linspace
+from numpy import pi, linspace, power
 
 from pygaia.errors import astrometric as astrom
 
@@ -35,6 +35,16 @@ class test_errorsAstrometric(TestCase):
     errors = astrom.parallaxErrorSkyAvg(20.0, vmini)
     for error in errors:
       self.assertTrue(error>0.0)
+
+  def test_parallaxErrorSkyAveExtended(self):
+      """
+      Check that errors are correctly scaled for a mission extension.
+      """
+      self.assertTrue(astrom.parallaxErrorSkyAvg(15.0,3.0)>astrom.parallaxErrorSkyAvg(15.0,3.0,extension=1.0))
+      error = astrom.parallaxErrorSkyAvg(15.0,3.0)
+      for e in range(6):
+          exterror = astrom.parallaxErrorSkyAvg(15.0,3.0,extension=e)
+          assert_almost_equal(exterror/error, power((5.0+e)/5.0,-0.5), decimal=8)
 
   def test_parallaxError(self):
     """
@@ -82,6 +92,16 @@ class test_errorsAstrometric(TestCase):
       self.assertTrue(error>0.0)
     for error in sigdelta:
       self.assertTrue(error>0.0)
+
+  def test_positionErrorSkyAveExtended(self):
+      """
+      Check that errors are correctly scaled for a mission extension.
+      """
+      sigalphastar, sigdelta = astrom.positionErrorSkyAvg(15.0,3.0)
+      for e in range(6):
+          sigalphastarext, sigdeltaext = astrom.positionErrorSkyAvg(15.0,3.0,extension=e)
+          assert_almost_equal(sigalphastarext/sigalphastar, power((5.0+e)/5.0,-0.5), decimal=8)
+          assert_almost_equal(sigdeltaext/sigdelta, power((5.0+e)/5.0,-0.5), decimal=8)
 
   def test_positionError(self):
     """
@@ -140,6 +160,16 @@ class test_errorsAstrometric(TestCase):
       self.assertTrue(error>0.0)
     for error in sigdelta:
       self.assertTrue(error>0.0)
+
+  def test_properMotionErrorSkyAveExtended(self):
+      """
+      Check that errors are correctly scaled for a mission extension.
+      """
+      sigmualphastar, sigmudelta = astrom.properMotionErrorSkyAvg(15.0,3.0)
+      for e in range(6):
+          sigmualphastarext, sigmudeltaext = astrom.properMotionErrorSkyAvg(15.0,3.0,extension=e)
+          assert_almost_equal(sigmualphastarext/sigmualphastar, power((5.0+e)/5.0,-1.5), decimal=8)
+          assert_almost_equal(sigmudeltaext/sigmudelta, power((5.0+e)/5.0,-1.5), decimal=8)
 
   def test_properMotionError(self):
     """
