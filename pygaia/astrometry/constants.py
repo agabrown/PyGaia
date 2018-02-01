@@ -16,5 +16,8 @@ julianYearSeconds = 365.25 * 86400.0
 # AU expressed in km*yr/s
 auKmYearPerSec = auInMeter/(julianYearSeconds*1000.0)
 
+# AU expressed in mas*km*yr/s
+auMasKmYearPerSec = auKmYearPerSec*180/pi*3600*1000
+
 # Definition of parsec
 parsec = auInMeter * 180*3600/pi
