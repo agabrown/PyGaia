@@ -4,7 +4,7 @@ from pygaia.astrometry.vectorastrometry import sphericalToCartesian, cartesianTo
         elementaryRotationMatrix, normalTriad
 from pygaia.utils import enum, degreesToRadians, radiansToDegrees
 
-from numpy import ones_like, array, pi, cos, sin, zeros_like
+from numpy import ones_like, array, pi, cos, sin, zeros_like, ndarray, sqrt, sum
 from numpy import dot, transpose, cross, vstack, diag, sqrt, identity
 from numpy.linalg import norm
 from scipy import isscalar
@@ -290,17 +290,15 @@ class CoordinateTransformation:
     zRot = self.rotationMatrix[2,:]
     zRotAll = zRot
     if (p.ndim == 2):
-      for i in range(p.shape[1]-1):
-        zRotAll = vstack((zRotAll,zRot))
+      zRotAll = ndarray((p.shape[1], zRotAll.shape[0]), dtype=zRot.dtype)
+      zRotAll[...] = zRot[None,...]
     pRot = cross(zRotAll, transpose(r))
     if (p.ndim == 2):
-      normPRot = sqrt(diag(dot(pRot,transpose(pRot))))
-      for i in range(pRot.shape[0]):
-        pRot[i,:] = pRot[i,:]/normPRot[i]
+      pRot = pRot/norm(pRot, axis=1)[:,None]
     else:
       pRot = pRot/norm(pRot)
 
     if (p.ndim == 2):
-      return diag(dot(pRot,p)), diag(dot(pRot,q))
+      return sum(pRot*transpose(p),axis=1), sum(pRot*transpose(q),axis=1)
     else:
       return dot(pRot,p), dot(pRot,q)
