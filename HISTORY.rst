@@ -1,5 +1,13 @@
 .. :changelog:
 
+1.21 (April 2018)
++++++++++++++++++
+
+- Added constant AU expressed in mas*km*yr/s
+
+- Fixed large memoery consumption in the _getJacobian method in the coordinate transformation code.
+  Thanks to [jchelly](https://github.com/jchelly) for pointing out this problem.
+
 1.2 (December 2016)
 +++++++++++++++++++
 
