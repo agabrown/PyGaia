@@ -1,5 +1,10 @@
 .. :changelog:
 
+1.22 (February 2019)
+++++++++++++++++++++
+
+- Test cases slightly updated
+
 1.21 (April 2018)
 +++++++++++++++++
 

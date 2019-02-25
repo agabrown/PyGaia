@@ -15,17 +15,11 @@ from pygaia.astrometry.vectorastrometry import astrometryToPhaseSpace
 
 class test_vectorAstrometry(TestCase):
 
-  def setUp(self):
-    self.basisVectorXValues=array([1,0,0])
-    self.basisVectorYValues=array([0,1,0])
-    self.basisVectorZValues=array([0,0,1])
-
   def test_cartesianToSpherical(self):
     """
     Check correct working of the Cartesian to Spherical coordinates transformation.
     """
-    r, phi, theta = cartesianToSpherical(self.basisVectorXValues, self.basisVectorYValues,
-        self.basisVectorZValues)
+    r, phi, theta = cartesianToSpherical(array([1,0,0]), array([0,1,0]), array([0,0,1]))
     assert_array_almost_equal(r,array([1.0,1.0,1.0]))
     assert_array_almost_equal(phi,array([0.0,pi/2.0,0.0]))
     assert_array_almost_equal(theta,array([0.0,0.0,pi/2.0]))
@@ -52,11 +46,6 @@ class test_vectorAstrometry(TestCase):
 
     assert_raises(Exception, cartesianToSpherical, 0.0, 0.0, 0.0)
     assert_raises(Exception, cartesianToSpherical, array([1,0,0,0]), array([0,1,0,0]), array([0,0,0,1]))
-
-    r, phi, theta = cartesianToSpherical(array([1,0,0]), array([0,1,0]), array([0,0,1]))
-    assert_array_almost_equal(r,array([1.0,1.0,1.0]))
-    assert_array_almost_equal(phi,array([0.0,pi/2.0,0.0]))
-    assert_array_almost_equal(theta,array([0.0,0.0,pi/2.0]))
 
   def test_sphericalToCartesian(self):
     """
@@ -162,7 +151,7 @@ class test_vectorAstrometry(TestCase):
     """
     Verify that the phaseSpaceToAstrometry() function works correctly.
     """
-    auKmYearPerSec = 4.74
+    auKmYearPerSec = 4.74047
     vx = array([1,0,-1,0,0,0])
     vy = array([0,1,0,-1,0,0])
     vz = array([0,0,0,0,1,-1])
@@ -177,12 +166,12 @@ class test_vectorAstrometry(TestCase):
     muthetaExpected = parallaxExpected/auKmYearPerSec*array([0,0,0,0,1,-1])
     vradExpected = array([1,0,-1,0,0,0])
     phi, theta, parallax, muphistar, mutheta, vrad = phaseSpaceToAstrometry(x, y, z, vx, vy, vz)
-    assert_array_almost_equal(phiExpected, phi, decimal=2)
-    assert_array_almost_equal(thetaExpected, theta, decimal=2)
-    assert_array_almost_equal(parallaxExpected, parallax, decimal=2)
-    assert_array_almost_equal(muphistarExpected, muphistar, decimal=1)
-    assert_array_almost_equal(muthetaExpected, mutheta, decimal=1)
-    assert_array_almost_equal(vradExpected, vrad, decimal=2)
+    assert_array_almost_equal(phiExpected, phi, decimal=3)
+    assert_array_almost_equal(thetaExpected, theta, decimal=3)
+    assert_array_almost_equal(parallaxExpected, parallax, decimal=3)
+    assert_array_almost_equal(muphistarExpected, muphistar, decimal=3)
+    assert_array_almost_equal(muthetaExpected, mutheta, decimal=3)
+    assert_array_almost_equal(vradExpected, vrad, decimal=3)
 
     x = zeros_like(vx)
     y = 2.0*ones_like(vy)
@@ -194,12 +183,12 @@ class test_vectorAstrometry(TestCase):
     muthetaExpected = parallaxExpected/auKmYearPerSec*array([0,0,0,0,1,-1])
     vradExpected = array([0,1,0,-1,0,0])
     phi, theta, parallax, muphistar, mutheta, vrad = phaseSpaceToAstrometry(x, y, z, vx, vy, vz)
-    assert_array_almost_equal(phiExpected, phi, decimal=2)
-    assert_array_almost_equal(thetaExpected, theta, decimal=2)
-    assert_array_almost_equal(parallaxExpected, parallax, decimal=2)
-    assert_array_almost_equal(muphistarExpected, muphistar, decimal=1)
-    assert_array_almost_equal(muthetaExpected, mutheta, decimal=1)
-    assert_array_almost_equal(vradExpected, vrad, decimal=2)
+    assert_array_almost_equal(phiExpected, phi, decimal=3)
+    assert_array_almost_equal(thetaExpected, theta, decimal=3)
+    assert_array_almost_equal(parallaxExpected, parallax, decimal=3)
+    assert_array_almost_equal(muphistarExpected, muphistar, decimal=3)
+    assert_array_almost_equal(muthetaExpected, mutheta, decimal=3)
+    assert_array_almost_equal(vradExpected, vrad, decimal=3)
 
     x = -0.5*ones_like(vx)
     y = zeros_like(vy)
@@ -211,12 +200,12 @@ class test_vectorAstrometry(TestCase):
     muthetaExpected = parallaxExpected/auKmYearPerSec*array([0,0,0,0,1,-1])
     vradExpected = array([-1,0,1,0,0,0])
     phi, theta, parallax, muphistar, mutheta, vrad = phaseSpaceToAstrometry(x, y, z, vx, vy, vz)
-    assert_array_almost_equal(phiExpected, phi, decimal=2)
-    assert_array_almost_equal(thetaExpected, theta, decimal=2)
-    assert_array_almost_equal(parallaxExpected, parallax, decimal=2)
-    assert_array_almost_equal(muphistarExpected, muphistar, decimal=1)
-    assert_array_almost_equal(muthetaExpected, mutheta, decimal=1)
-    assert_array_almost_equal(vradExpected, vrad, decimal=2)
+    assert_array_almost_equal(phiExpected, phi, decimal=3)
+    assert_array_almost_equal(thetaExpected, theta, decimal=3)
+    assert_array_almost_equal(parallaxExpected, parallax, decimal=3)
+    assert_array_almost_equal(muphistarExpected, muphistar, decimal=3)
+    assert_array_almost_equal(muthetaExpected, mutheta, decimal=3)
+    assert_array_almost_equal(vradExpected, vrad, decimal=3)
 
     x = zeros_like(vx)
     y = -1*ones_like(vy)
@@ -228,12 +217,12 @@ class test_vectorAstrometry(TestCase):
     muthetaExpected = parallaxExpected/auKmYearPerSec*array([0,0,0,0,1,-1])
     vradExpected = array([0,-1,0,1,0,0])
     phi, theta, parallax, muphistar, mutheta, vrad = phaseSpaceToAstrometry(x, y, z, vx, vy, vz)
-    assert_array_almost_equal(phiExpected, phi, decimal=2)
-    assert_array_almost_equal(thetaExpected, theta, decimal=2)
-    assert_array_almost_equal(parallaxExpected, parallax, decimal=2)
-    assert_array_almost_equal(muphistarExpected, muphistar, decimal=1)
-    assert_array_almost_equal(muthetaExpected, mutheta, decimal=1)
-    assert_array_almost_equal(vradExpected, vrad, decimal=2)
+    assert_array_almost_equal(phiExpected, phi, decimal=3)
+    assert_array_almost_equal(thetaExpected, theta, decimal=3)
+    assert_array_almost_equal(parallaxExpected, parallax, decimal=3)
+    assert_array_almost_equal(muphistarExpected, muphistar, decimal=3)
+    assert_array_almost_equal(muthetaExpected, mutheta, decimal=3)
+    assert_array_almost_equal(vradExpected, vrad, decimal=3)
 
     x = zeros_like(vx)
     y = zeros_like(vy)
@@ -245,12 +234,12 @@ class test_vectorAstrometry(TestCase):
     muthetaExpected = parallaxExpected/auKmYearPerSec*array([-1,0,1,0,0,0])
     vradExpected = array([0,0,0,0,1,-1])
     phi, theta, parallax, muphistar, mutheta, vrad = phaseSpaceToAstrometry(x, y, z, vx, vy, vz)
-    assert_array_almost_equal(phiExpected, phi, decimal=2)
-    assert_array_almost_equal(thetaExpected, theta, decimal=2)
-    assert_array_almost_equal(parallaxExpected, parallax, decimal=2)
-    assert_array_almost_equal(muphistarExpected, muphistar, decimal=1)
-    assert_array_almost_equal(muthetaExpected, mutheta, decimal=1)
-    assert_array_almost_equal(vradExpected, vrad, decimal=2)
+    assert_array_almost_equal(phiExpected, phi, decimal=3)
+    assert_array_almost_equal(thetaExpected, theta, decimal=3)
+    assert_array_almost_equal(parallaxExpected, parallax, decimal=3)
+    assert_array_almost_equal(muphistarExpected, muphistar, decimal=3)
+    assert_array_almost_equal(muthetaExpected, mutheta, decimal=3)
+    assert_array_almost_equal(vradExpected, vrad, decimal=3)
 
     x = zeros_like(vx)
     y = zeros_like(vy)
@@ -262,18 +251,18 @@ class test_vectorAstrometry(TestCase):
     muthetaExpected = parallaxExpected/auKmYearPerSec*array([1,0,-1,0,0,0])
     vradExpected = array([0,0,0,0,-1,1])
     phi, theta, parallax, muphistar, mutheta, vrad = phaseSpaceToAstrometry(x, y, z, vx, vy, vz)
-    assert_array_almost_equal(phiExpected, phi, decimal=2)
-    assert_array_almost_equal(thetaExpected, theta, decimal=2)
-    assert_array_almost_equal(parallaxExpected, parallax, decimal=2)
-    assert_array_almost_equal(muphistarExpected, muphistar, decimal=1)
-    assert_array_almost_equal(muthetaExpected, mutheta, decimal=1)
-    assert_array_almost_equal(vradExpected, vrad, decimal=2)
+    assert_array_almost_equal(phiExpected, phi, decimal=3)
+    assert_array_almost_equal(thetaExpected, theta, decimal=3)
+    assert_array_almost_equal(parallaxExpected, parallax, decimal=3)
+    assert_array_almost_equal(muphistarExpected, muphistar, decimal=3)
+    assert_array_almost_equal(muthetaExpected, mutheta, decimal=3)
+    assert_array_almost_equal(vradExpected, vrad, decimal=3)
 
   def testAstrometryToPhaseSpace(self):
     """
     Verify that the astrometryToPhaseSpace() function works correctly.
     """
-    auKmYearPerSec = 4.74
+    auKmYearPerSec = 4.74047
     muphistar = array([1,-1,0,0,0,0])/auKmYearPerSec
     mutheta = array([0,0,1,-1,0,0])/auKmYearPerSec
     vrad = array([0,0,0,0,1,-1])
@@ -291,9 +280,9 @@ class test_vectorAstrometry(TestCase):
     assert_array_almost_equal(xExpected, x, decimal=6)
     assert_array_almost_equal(yExpected, y, decimal=6)
     assert_array_almost_equal(zExpected, z, decimal=6)
-    assert_array_almost_equal(vxExpected, vx, decimal=4)
-    assert_array_almost_equal(vyExpected, vy, decimal=4)
-    assert_array_almost_equal(vzExpected, vz, decimal=4)
+    assert_array_almost_equal(vxExpected, vx, decimal=6)
+    assert_array_almost_equal(vyExpected, vy, decimal=6)
+    assert_array_almost_equal(vzExpected, vz, decimal=6)
 
     parallax = zeros_like(vrad)+100.0
     phi = zeros_like(vrad)+pi/2.0
@@ -308,9 +297,9 @@ class test_vectorAstrometry(TestCase):
     assert_array_almost_equal(xExpected, x, decimal=6)
     assert_array_almost_equal(yExpected, y, decimal=6)
     assert_array_almost_equal(zExpected, z, decimal=6)
-    assert_array_almost_equal(vxExpected, vx, decimal=4)
-    assert_array_almost_equal(vyExpected, vy, decimal=4)
-    assert_array_almost_equal(vzExpected, vz, decimal=4)
+    assert_array_almost_equal(vxExpected, vx, decimal=6)
+    assert_array_almost_equal(vyExpected, vy, decimal=6)
+    assert_array_almost_equal(vzExpected, vz, decimal=6)
 
     parallax = zeros_like(vrad)+20.0
     phi = zeros_like(vrad)+pi
@@ -325,9 +314,9 @@ class test_vectorAstrometry(TestCase):
     assert_array_almost_equal(xExpected, x, decimal=6)
     assert_array_almost_equal(yExpected, y, decimal=6)
     assert_array_almost_equal(zExpected, z, decimal=6)
-    assert_array_almost_equal(vxExpected, vx, decimal=4)
-    assert_array_almost_equal(vyExpected, vy, decimal=4)
-    assert_array_almost_equal(vzExpected, vz, decimal=4)
+    assert_array_almost_equal(vxExpected, vx, decimal=6)
+    assert_array_almost_equal(vyExpected, vy, decimal=6)
+    assert_array_almost_equal(vzExpected, vz, decimal=6)
 
     parallax = zeros_like(vrad)+20.0
     phi = zeros_like(vrad)-pi/2.0
@@ -342,9 +331,9 @@ class test_vectorAstrometry(TestCase):
     assert_array_almost_equal(xExpected, x, decimal=6)
     assert_array_almost_equal(yExpected, y, decimal=6)
     assert_array_almost_equal(zExpected, z, decimal=6)
-    assert_array_almost_equal(vxExpected, vx, decimal=4)
-    assert_array_almost_equal(vyExpected, vy, decimal=4)
-    assert_array_almost_equal(vzExpected, vz, decimal=4)
+    assert_array_almost_equal(vxExpected, vx, decimal=6)
+    assert_array_almost_equal(vyExpected, vy, decimal=6)
+    assert_array_almost_equal(vzExpected, vz, decimal=6)
 
     parallax = zeros_like(vrad)+20.0
     phi = zeros_like(vrad)
@@ -359,9 +348,9 @@ class test_vectorAstrometry(TestCase):
     assert_array_almost_equal(xExpected, x, decimal=6)
     assert_array_almost_equal(yExpected, y, decimal=6)
     assert_array_almost_equal(zExpected, z, decimal=6)
-    assert_array_almost_equal(vxExpected, vx, decimal=4)
-    assert_array_almost_equal(vyExpected, vy, decimal=4)
-    assert_array_almost_equal(vzExpected, vz, decimal=4)
+    assert_array_almost_equal(vxExpected, vx, decimal=6)
+    assert_array_almost_equal(vyExpected, vy, decimal=6)
+    assert_array_almost_equal(vzExpected, vz, decimal=6)
 
     parallax = zeros_like(vrad)+20.0
     phi = zeros_like(vrad)
@@ -376,9 +365,9 @@ class test_vectorAstrometry(TestCase):
     assert_array_almost_equal(xExpected, x, decimal=6)
     assert_array_almost_equal(yExpected, y, decimal=6)
     assert_array_almost_equal(zExpected, z, decimal=6)
-    assert_array_almost_equal(vxExpected, vx, decimal=4)
-    assert_array_almost_equal(vyExpected, vy, decimal=4)
-    assert_array_almost_equal(vzExpected, vz, decimal=4)
+    assert_array_almost_equal(vxExpected, vx, decimal=6)
+    assert_array_almost_equal(vyExpected, vy, decimal=6)
+    assert_array_almost_equal(vzExpected, vz, decimal=6)
 
     parallax = zeros_like(vrad)+20.0
     phi = zeros_like(vrad)+pi/2.0
@@ -393,6 +382,6 @@ class test_vectorAstrometry(TestCase):
     assert_array_almost_equal(xExpected, x, decimal=6)
     assert_array_almost_equal(yExpected, y, decimal=6)
     assert_array_almost_equal(zExpected, z, decimal=6)
-    assert_array_almost_equal(vxExpected, vx, decimal=4)
-    assert_array_almost_equal(vyExpected, vy, decimal=4)
-    assert_array_almost_equal(vzExpected, vz, decimal=4)
+    assert_array_almost_equal(vxExpected, vx, decimal=6)
+    assert_array_almost_equal(vyExpected, vy, decimal=6)
+    assert_array_almost_equal(vzExpected, vz, decimal=6)
