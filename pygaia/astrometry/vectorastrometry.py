@@ -2,7 +2,7 @@ __all__ = [ 'sphericalToCartesian', 'cartesianToSpherical', 'normalTriad', 'elem
 'phaseSpaceToAstrometry', 'astrometryToPhaseSpace']
 
 from numpy import cos, sin, sqrt, arctan2, zeros_like, isscalar
-from numpy import array, transpose, dot, any
+from numpy import array, transpose, dot, any, where, pi
 
 # Astronomical Unit in meter, IAU constant and defining length
 _auInMeter = 149597870700.0
@@ -60,13 +60,15 @@ def cartesianToSpherical(x, y, z):
   
   The spherical coordinates r=sqrt(x*x+y*y+z*z), longitude phi, latitude theta.
   
-  NOTE THAT THE LONGITUDE ANGLE IS BETWEEN -PI AND +PI. FOR r=0 AN EXCEPTION IS RAISED.
+  NOTE THAT THE LONGITUDE ANGLE IS BETWEEN 0 AND +2PI. FOR r=0 AN EXCEPTION IS RAISED.
   """
   rCylSq=x*x+y*y
   r=sqrt(rCylSq+z*z)
   if any(r==0.0):
     raise Exception("Error: one or more of the points is at distance zero.")
-  return r, arctan2(y,x), arctan2(z,sqrt(rCylSq))
+  phi = arctan2(y,x)
+  phi = where(phi<0.0, phi+2*pi, phi)
+  return r, phi, arctan2(z,sqrt(rCylSq))
 
 def normalTriad(phi, theta):
   """

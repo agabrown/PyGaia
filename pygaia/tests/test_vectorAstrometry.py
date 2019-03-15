@@ -41,7 +41,7 @@ class test_vectorAstrometry(TestCase):
 
     r, phi, theta = cartesianToSpherical(-1.0, -1.0, -1.0)
     assert_almost_equal(r, sqrt(3.0))
-    assert_almost_equal(phi, pi/4.0-pi)
+    assert_almost_equal(phi, pi/4.0+pi)
     assert_almost_equal(theta, -arcsin(1.0/sqrt(3.0)))
 
     assert_raises(Exception, cartesianToSpherical, 0.0, 0.0, 0.0)
@@ -210,7 +210,7 @@ class test_vectorAstrometry(TestCase):
     x = zeros_like(vx)
     y = -1*ones_like(vy)
     z = zeros_like(vz)
-    phiExpected = zeros_like(x)-pi/2.0
+    phiExpected = zeros_like(x)+3*pi/2.0
     thetaExpected = zeros_like(x)
     parallaxExpected = 1000*ones_like(x)
     muphistarExpected = parallaxExpected/auKmYearPerSec*array([1,0,-1,0,0,0])

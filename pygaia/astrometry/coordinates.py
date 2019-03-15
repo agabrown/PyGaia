@@ -1,11 +1,12 @@
-__all__ = ['CoordinateTransformation', 'Transformations']
+__all__ = ['CoordinateTransformation', 'Transformations', 'EpochPropagation']
 
 from pygaia.astrometry.vectorastrometry import sphericalToCartesian, cartesianToSpherical, \
         elementaryRotationMatrix, normalTriad
 from pygaia.utils import enum, degreesToRadians, radiansToDegrees
+from pygaia.astrometry.constants import auKmYearPerSec
 
-from numpy import ones_like, array, pi, cos, sin, zeros_like, zeros
-from numpy import dot, transpose, cross, vstack, diag, sqrt, identity, tile
+from numpy import ones_like, array, pi, cos, sin, zeros_like, zeros, arccos, select
+from numpy import dot, transpose, cross, vstack, diag, sqrt, identity, tile, sum, arctan
 from numpy.linalg import norm
 from scipy import isscalar
 
@@ -68,6 +69,34 @@ _transformationStringMap = {Transformations.GAL2ICRS:("galactic", "ICRS"),
     Transformations.ICRS2ECL:("ICRS","ecliptic"),
     Transformations.GAL2ECL:("galactic","ecliptic"),
     Transformations.ECL2GAL:("ecliptic","galactic")}
+
+def angularDistance(phi1, theta1, phi2, theta2):
+    """
+    Calculate the angular distance between pairs of sky coordinates.
+
+    Parameters
+    ----------
+
+    phi1 : float
+        Longitude of first coordinate (radians).
+    theta1 : float
+        Latitude of first coordinate (radians).
+    phi2 : float
+        Longitude of second coordinate (radians).
+    theta2 : float
+        Latitude of second coordinate (radians).
+
+    Returns
+    -------
+
+    Angular distance in radians.
+    """
+    # Formula below is more numerically stable than arccos( sin(theta1)*sin(theta2) +
+    # cos(phi2-phi1)*cos(theta1)*cos(theta2) )
+    # See: https://en.wikipedia.org/wiki/Great-circle_distance
+    return arctan( sqrt((cos(theta2)*sin(phi2-phi1))**2 +
+        (cos(theta1)*sin(theta2)-sin(theta1)*cos(theta2)*cos(phi2-phi1))**2) / (sin(theta1)*sin(theta2) +
+            cos(phi2-phi1)*cos(theta1)*cos(theta2)) )
 
 class CoordinateTransformation:
     """
@@ -310,3 +339,174 @@ class CoordinateTransformation:
             pRot = cross(zRot, r.T)
             pRot = pRot/norm(pRot)
             return dot(pRot,p), dot(pRot,q)
+
+class EpochPropagation:
+    """
+    Provides methods for transforming the astrometry and radial velocity of a given source to a different
+    epoch. The formulae for rigorous epoch transformation can be found on the Gaia documentation pages:
+    http://gea.esac.esa.int/archive/documentation/GDR2/Data_processing/chap_cu3ast/sec_cu3ast_intro/ssec_cu3ast_intro_tansforms.html#SSS3.P1
+    """
+
+    def __init__(self):
+        self.mastorad = pi/(180*3600*1000)
+
+    def propagate_astrometry(self, phi, theta, parallax, muphistar, mutheta, vrad, t0, t1):
+        """
+        Propagate the position of a source from the reference epoch t0 to the new epoch t1.
+
+        Parameters
+        ----------
+
+        phi : float
+            Longitude at reference epoch (radians).
+        theta : float
+            Latitude at reference epoch (radians).
+        parallax : float
+            Parallax at the reference epoch (mas).
+        muphistar : float
+            Proper motion in longitude (including cos(latitude) term) at reference epoch (mas/yr).
+        mutheta : float
+            Proper motion in latitude at reference epoch (mas/yr).
+        vrad : float
+            Radial velocity at reference epoch (km/s).
+        t0 : float
+            Reference epoch (Julian years).
+        t1 : float
+            New epoch (Julian years).
+
+        Returns
+        -------
+
+        Astrometric parameters, including the "radial proper motion" (NOT the radial velocity), at the new epoch.
+        phi1, theta1, parallax1, muphistar1, mutheta1, mur1 = epoch_prop_pos(..., t0, t1)
+        """
+
+        t = t1-t0
+        p0, q0, r0 = normalTriad(phi, theta)
+
+        # Convert input data to units of radians and Julian year. Use ICRS coordinate names internally to
+        # avoid errors in translating the formulae to code.
+        pmra0 = muphistar*self.mastorad
+        pmdec0 = mutheta*self.mastorad
+        plx0 = parallax*self.mastorad
+        pmr0 = vrad*parallax/auKmYearPerSec*self.mastorad
+        pmtot0sqr = (muphistar**2 + mutheta**2) * self.mastorad**2
+
+        # Proper motion vector
+        pmvec0 = pmra0*p0+pmdec0*q0
+
+        f = (1 + 2*pmr0*t + (pmtot0sqr+pmr0**2)*t**2)**(-0.5)
+        u = (r0*(1+pmr0*t) + pmvec0*t)*f
+
+        _, phi1, theta1 = cartesianToSpherical(u[0], u[1], u[2])
+        parallax1 = parallax*f
+        pmr1 = (pmr0+(pmtot0sqr + pmr0**2)*t)*f**2
+        pmvec1 = (pmvec0*(1+pmr0*t) - r0*pmr0**2*t)*f**3
+        p1, q1, r1 = normalTriad(phi1, theta1)
+        muphistar1 = sum(p1*pmvec1/self.mastorad, axis=0)
+        mutheta1 = sum(q1*pmvec1/self.mastorad, axis =0)
+        murad1 = pmr1/self.mastorad
+
+        return phi1, theta1, parallax1, muphistar1, mutheta1, murad1
+
+    def propagate_pos(self, phi, theta, parallax, muphistar, mutheta, vrad, t0, t1):
+        """
+        Propagate the position of a source from the reference epoch t0 to the new epoch t1.
+
+        Parameters
+        ----------
+
+        phi : float
+            Longitude at reference epoch (radians).
+        theta : float
+            Latitude at reference epoch (radians).
+        parallax : float
+            Parallax at the reference epoch (mas).
+        muphistar : float
+            Proper motion in longitude (including cos(latitude) term) at reference epoch (mas/yr).
+        mutheta : float
+            Proper motion in latitude at reference epoch (mas/yr).
+        vrad : float
+            Radial velocity at reference epoch (km/s).
+        t0 : float
+            Reference epoch (Julian years).
+        t1 : float
+            New epoch (Julian years).
+
+        Returns
+        -------
+
+        Coordinates phi and theta at new epoch (in radians)
+        """
+        phi1, theta1, parallax1, muphistar1, mutheta1, vrad1 = self.epoch_prop_astrometry(phi, theta, parallax, muphistar, mutheta, vrad, t0, t1)
+        return phi1, theta1
+
+    def propagate_astrometry_and_covariance_matrix(self, a0, c0, t0, t1):
+        """
+        Propagate the covariance matrix of the astrometric parameters and radial proper motion of a
+        source from epoch t0 to epoch t1.
+
+        Parameters
+        ----------
+
+        a0 : array_like
+            6-element vector: (phi, theta, parallax, muphistar, mutheta, vrad) in units of (radians,
+            radians, mas, mas/yr, mas/yr, km/s)
+
+        c0 : array_like
+            Covariance matrix stored in a 6x6 element array. This can be constructed from the columns
+            listed in the Gaia catalogue. The units are [mas^2, mas^2/yr, mas^2/yr^2] for the various
+            elements. Note that the elements in the 6th row and column should be:
+            c[6,i]=c[i,6]=c[i,3]*vrad/auKmYearPerSec for i=1,..,5 and
+            c[6,6]=c[3,3]*(vrad^2+vrad_error^2)/auKmYearPerSec^2+(parallax*vrad_error/auKmYearPerSec)^2
+
+        t0 : float
+            Reference epoch (Julian years).
+
+        t1 : float
+            New epoch (Julian years).
+
+        Returns
+        -------
+
+        Astrometric parameters, including the "radial proper motion" (NOT the radial velocity), and
+        covariance matrix at the new epoch as a 2D matrix with the new variances on the diagional and the
+        covariance in the off-diagonal elements.
+        """
+
+        zero, one, two, three = 0, 1, 2, 3
+        tau = t1-t0
+        tau2 = tau*tau
+
+        p0, q0, r0 = normalTriad(a0[0], a0[1])
+        plx0 = a0[2]*self.mastorad
+        pmra0 = a0[3]*self.mastorad
+        pmdec0 = a0[4]*self.mastorad
+        pmr0 = a0[5]*a0[2]/auKmYearPerSec*self.mastorad
+        pmtot0sqr = (a0[3]**2 + a0[4]**2) * self.mastorad**2
+
+        pmvec0 = pmra0*p0+pmdec0*q0
+
+        f2 = one/(one + two*pmr0*tau + (pmtot0sqr+pmr0**2)*tau2)
+        f = sqrt(f2)
+        f3 = f2*f
+        f4 = f2*f2
+
+        u = (r0*(one+pmr0*tau) + pmvec0*tau)*f
+        _, ra, dec = cartesianToSpherical(u[0], u[1], u[2])
+        plx = plx0*f
+        pmr = (pmr0+(pmtot0sqr + pmr0**2)*tau)*f2
+        pmvec = (pmvec0*(one+pmr0*tau) - r0*pmr0**2*tau)*f3
+        p, q, r = normalTriad(ra, dec)
+        pmra = sum(p*pmvec, axis=0)
+        pmdec = sum(q*pmvec, axis =0)
+
+        a = zeros_like(a0)
+        a[0] = ra
+        a[1] = dec
+        a[2] = plx/self.mastorad
+        a[3] = pmra/self.mastorad
+        a[4] = pmdec/self.mastorad
+        a[5] = pmr/self.mastorad
+
+        return a

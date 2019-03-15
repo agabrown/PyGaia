@@ -1,5 +1,15 @@
 .. :changelog:
 
+1.30 (March 2019)
++++++++++++++++++
+
+- Epoch propagation added.
+
+- Covariance matrix construction from Gaia catalogue columns, including "radial proper motion" term.
+
+- Changed convention for longitude numerical values. They are now between 0 and 2PI instead of -PI and
+  +PI. **THIS IS A BREAKING CHANGE.**
+
 1.22 (February 2019)
 ++++++++++++++++++++
 
