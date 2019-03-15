@@ -57,7 +57,7 @@ research.
 License
 -------
 
-Copyright (c) 2012-2018 Anthony Brown, Gaia Data Processing and Analysis Consortium
+Copyright (c) 2012-2019 Anthony Brown, Gaia Data Processing and Analysis Consortium
 
 PyGaia is open source and free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by the
