@@ -32,10 +32,9 @@ function to find out more. More extensive documentation will follow.
 Installation notes
 ------------------
 
-This package was developed in a python 2.7 environment and you may experience
-problems if you have an older version installed. In particular the scripts in
-the *examples* folder will not run because they expect the argparse module to be
-present.
+This package is intended for Python3. You may experience problems if you have an older version installed.
+In particular the scripts in the *examples* folder will not run because they expect the argparse module
+to be present.
 
 The following python packages are required:
 
