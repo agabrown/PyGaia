@@ -3,7 +3,7 @@
 1.30 (March 2019)
 +++++++++++++++++
 
-- Epoch propagation added.
+- Epoch propagation added, including the propagation of the covariance matrix.
 
 - Covariance matrix construction from Gaia catalogue columns, including "radial proper motion" term.
 
