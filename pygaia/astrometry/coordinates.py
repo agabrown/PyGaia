@@ -7,6 +7,7 @@ from pygaia.astrometry.constants import auKmYearPerSec
 
 from numpy import ones_like, array, pi, cos, sin, zeros_like, zeros, arccos, select
 from numpy import dot, transpose, cross, vstack, diag, sqrt, identity, tile, sum, arctan
+from numpy import matmul, newaxis, squeeze
 from numpy.linalg import norm
 from scipy import isscalar
 
@@ -446,12 +447,15 @@ class EpochPropagation:
         Propagate the covariance matrix of the astrometric parameters and radial proper motion of a
         source from epoch t0 to epoch t1.
 
+        Code based on the Hipparcos Fortran implementation by Lennart Lindegren.
+
         Parameters
         ----------
 
         a0 : array_like
             6-element vector: (phi, theta, parallax, muphistar, mutheta, vrad) in units of (radians,
-            radians, mas, mas/yr, mas/yr, km/s)
+            radians, mas, mas/yr, mas/yr, km/s). Shape of a should be (6,) or (6,N), with N the number of
+            sources for which the astrometric parameters are provided.
 
         c0 : array_like
             Covariance matrix stored in a 6x6 element array. This can be constructed from the columns
@@ -459,6 +463,8 @@ class EpochPropagation:
             elements. Note that the elements in the 6th row and column should be:
             c[6,i]=c[i,6]=c[i,3]*vrad/auKmYearPerSec for i=1,..,5 and
             c[6,6]=c[3,3]*(vrad^2+vrad_error^2)/auKmYearPerSec^2+(parallax*vrad_error/auKmYearPerSec)^2
+
+            Shape of c0 should be (6,6) or (N,6,6).
 
         t0 : float
             Reference epoch (Julian years).
@@ -476,37 +482,118 @@ class EpochPropagation:
 
         zero, one, two, three = 0, 1, 2, 3
         tau = t1-t0
-        tau2 = tau*tau
 
+        # Calculate the normal triad [p0 q0 r0] at t0
         p0, q0, r0 = normalTriad(a0[0], a0[1])
-        plx0 = a0[2]*self.mastorad
-        pmra0 = a0[3]*self.mastorad
-        pmdec0 = a0[4]*self.mastorad
+
+        # Convert to internal units (radians, Julian year)
+        par0 = a0[2]*self.mastorad
+        pma0 = a0[3]*self.mastorad
+        pmd0 = a0[4]*self.mastorad
         pmr0 = a0[5]*a0[2]/auKmYearPerSec*self.mastorad
-        pmtot0sqr = (a0[3]**2 + a0[4]**2) * self.mastorad**2
 
-        pmvec0 = pmra0*p0+pmdec0*q0
+        # Proper motion vector
+        pmvec0 = pma0*p0+pmd0*q0
 
-        f2 = one/(one + two*pmr0*tau + (pmtot0sqr+pmr0**2)*tau2)
+        # Auxiliary quantities
+        tau2 = tau*tau
+        pm02 = pma0**2 + pmd0**2
+        w = one + pmr0*tau
+        f2 = one/(one + two*pmr0*tau + (pm02+pmr0**2)*tau2)
         f = sqrt(f2)
         f3 = f2*f
         f4 = f2*f2
 
-        u = (r0*(one+pmr0*tau) + pmvec0*tau)*f
+        # Position vector and parallax at t1
+        u = (r0*w + pmvec0*tau)*f
         _, ra, dec = cartesianToSpherical(u[0], u[1], u[2])
-        plx = plx0*f
-        pmr = (pmr0+(pmtot0sqr + pmr0**2)*tau)*f2
+        par = par0*f
+
+        # Proper motion vector and radial proper motion at t1
         pmvec = (pmvec0*(one+pmr0*tau) - r0*pmr0**2*tau)*f3
+        pmr = (pmr0+(pm02 + pmr0**2)*tau)*f2
+
+        # Normal triad at t1
         p, q, r = normalTriad(ra, dec)
-        pmra = sum(p*pmvec, axis=0)
-        pmdec = sum(q*pmvec, axis =0)
+
+        # Convert parameters at t1 to external units (mas, Julian year)
+        pma = sum(p*pmvec, axis=0)
+        pmd = sum(q*pmvec, axis =0)
 
         a = zeros_like(a0)
         a[0] = ra
         a[1] = dec
-        a[2] = plx/self.mastorad
-        a[3] = pmra/self.mastorad
-        a[4] = pmdec/self.mastorad
+        a[2] = par/self.mastorad
+        a[3] = pma/self.mastorad
+        a[4] = pmd/self.mastorad
         a[5] = pmr/self.mastorad
 
-        return a
+        # Auxiliary quantities for the partial derivatives
+
+        pmz = pmvec0*f - three*pmvec*w
+        pp0 = sum(p*p0, axis=0)
+        pq0 = sum(p*q0, axis=0)
+        pr0 = sum(p*r0, axis=0)
+        qp0 = sum(q*p0, axis=0)
+        qq0 = sum(q*q0, axis=0)
+        qr0 = sum(q*r0, axis=0)
+        ppmz = sum(p*pmz, axis=0)
+        qpmz = sum(q*pmz, axis=0)
+
+        J = zeros_like(c0)
+        if (c0.ndim==2):
+            J = J[newaxis,:,:]
+
+        # Partial derivatives
+        J[:,0,0] = pp0*w*f - pr0*pma0*tau*f
+        J[:,0,1] = pq0*w*f - pr0*pmd0*tau*f
+        J[:,0,2] = zero
+        J[:,0,3] = pp0*tau*f
+        J[:,0,4] = pq0*tau*f
+        J[:,0,5] = -pma*tau2
+
+        J[:,1,0] = qp0*w*f - qr0*pma0*tau*f
+        J[:,1,1] = qq0*w*f - qr0*pmd0*tau*f
+        J[:,1,2] = zero
+        J[:,1,3] = qp0*tau*f
+        J[:,1,4] = qq0*tau*f
+        J[:,1,5] = -pmd*tau2
+
+        J[:,2,0] = zero
+        J[:,2,1] = zero
+        J[:,2,2] = f
+        J[:,2,3] = -par*pma0*tau2*f2
+        J[:,2,4] = -par*pmd0*tau2*f2
+        J[:,2,5] = -par*w*tau*f2
+
+        J[:,3,0] = -pp0*pm02*tau*f3 - pr0*pma0*w*f3
+        J[:,3,1] = -pq0*pm02*tau*f3 - pr0*pmd0*w*f3
+        J[:,3,2] = zero
+        J[:,3,3] = pp0*w*f3 - two*pr0*pma0*tau*f3 - three*pma*pma0*tau2*f2
+        J[:,3,4] = pq0*w*f3 - two*pr0*pmd0*tau*f3 - three*pma*pmd0*tau2*f2
+        J[:,3,5] = ppmz*tau*f2
+
+        J[:,4,0] = -qp0*pm02*tau*f3 - qr0*pma0*w*f3
+        J[:,4,1] = -qq0*pm02*tau*f3 - qr0*pmd0*w*f3
+        J[:,4,2] = zero
+        J[:,4,3] = qp0*w*f3 - two*qr0*pma0*tau*f3 - three*pmd*pma0*tau2*f2
+        J[:,4,4] = qq0*w*f3 - two*qr0*pmd0*tau*f3 - three*pmd*pmd0*tau2*f2
+        J[:,4,5] = qpmz*tau*f2
+
+        J[:,5,0] = zero
+        J[:,5,1] = zero
+        J[:,5,2] = zero
+        J[:,5,3] = two*pma0*w*tau*f4
+        J[:,5,4] = two*pmd0*w*tau*f4
+        J[:,5,5] = (w**2 - pm02*tau2)*f4
+
+        JT = zeros_like(J)
+        for i in range(J.shape[0]):
+            JT[i] = J[i].T
+
+        if (c0.ndim==2):
+            c = matmul(J,matmul(c0[newaxis,:,:],JT))
+        else:
+            c = matmul(J,matmul(c0,JT))
+
+        return a, squeeze(c)

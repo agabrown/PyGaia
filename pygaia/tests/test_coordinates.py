@@ -5,13 +5,16 @@ Unit tests for the coordinates module.
 from numpy.testing import TestCase, assert_allclose, assert_array_almost_equal, assert_almost_equal
 from numpy.testing import assert_array_less, assert_equal
 from numpy import pi, array, transpose, cos, sin, sqrt, diag, zeros, dot, arcsin, zeros_like, abs, argmax
+from numpy import tile, array_equal, allclose
 from numpy.random import rand
+from numpy.linalg import LinAlgError, cholesky
 
 from pygaia.astrometry.coordinates import CoordinateTransformation
 from pygaia.astrometry.coordinates import Transformations, EpochPropagation, angularDistance
 from pygaia.astrometry.vectorastrometry import cartesianToSpherical, astrometryToPhaseSpace,\
     phaseSpaceToAstrometry
 from pygaia.astrometry.constants import auKmYearPerSec
+from pygaia.utils import construct_covariance_matrix
 
 import sys
 class test_coordinates(TestCase):
@@ -463,8 +466,16 @@ class test_coordinates(TestCase):
         a0[5] = rand(nTests)*400-200
         pmr0 = a0[5]*a0[2]/auKmYearPerSec
 
-        a1 = ep.propagate_astrometry_and_covariance_matrix(a0, zeros((6,6)), t0, t1)
-        a2 = ep.propagate_astrometry_and_covariance_matrix(a0, zeros((6,6)), t0, t2)
+        covmat = array([1.0,1.0,1.0,1.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0])
+        vrad_error = 2.0
+        c0 = construct_covariance_matrix(tile(covmat, (nTests,covmat.size)), a0[2], a0[5],
+                tile(vrad_error, nTests))
+
+        for i in range(nTests):
+            self.assertTrue(self._is_pos_def(c0[i]))
+
+        a1, c1 = ep.propagate_astrometry_and_covariance_matrix(a0, c0, t0, t1)
+        a2, c2 = ep.propagate_astrometry_and_covariance_matrix(a0, c0, t0, t2)
         phi1, theta1, parallax1, muphistar1, mutheta1, pmr1 = ep.propagate_astrometry(a0[0], a0[1], a0[2],
                 a0[3], a0[4], a0[5], t0, t1)
         phi2, theta2, parallax2, muphistar2, mutheta2, pmr2 = ep.propagate_astrometry(a0[0], a0[1], a0[2],
@@ -483,6 +494,34 @@ class test_coordinates(TestCase):
         assert_almost_equal(muphistar2, a2[3], 12)
         assert_almost_equal(mutheta2, a2[4], 12)
         assert_almost_equal(pmr2, a2[5], 12)
+
+        for i in range(nTests):
+            self.assertTrue(self._is_pos_def(c1[i]))
+            self.assertTrue(self._is_pos_def(c2[i]))
+
+        a1, c1 = ep.propagate_astrometry_and_covariance_matrix(a0[:,0], c0[0], t0, t1)
+        a2, c2 = ep.propagate_astrometry_and_covariance_matrix(a0[:,0], c0[0], t0, t2)
+        phi1, theta1, parallax1, muphistar1, mutheta1, pmr1 = ep.propagate_astrometry(a0[0,0], a0[1,0],
+                a0[2,0], a0[3,0], a0[4,0], a0[5,0], t0, t1)
+        phi2, theta2, parallax2, muphistar2, mutheta2, pmr2 = ep.propagate_astrometry(a0[0,0], a0[1,0],
+                a0[2,0], a0[3,0], a0[4,0], a0[5,0], t0, t2)
+
+        assert_almost_equal(phi1, a1[0], 12)
+        assert_almost_equal(theta1, a1[1], 12)
+        assert_almost_equal(parallax1, a1[2], 12)
+        assert_almost_equal(muphistar1, a1[3], 12)
+        assert_almost_equal(mutheta1, a1[4], 12)
+        assert_almost_equal(pmr1, a1[5], 12)
+
+        assert_almost_equal(phi2, a2[0], 12)
+        assert_almost_equal(theta2, a2[1], 12)
+        assert_almost_equal(parallax2, a2[2], 12)
+        assert_almost_equal(muphistar2, a2[3], 12)
+        assert_almost_equal(mutheta2, a2[4], 12)
+        assert_almost_equal(pmr2, a2[5], 12)
+
+        self.assertTrue(self._is_pos_def(c1))
+        self.assertTrue(self._is_pos_def(c2))
 
     def _generateRandomCovarianceMatrices(self, num):
         """
@@ -515,3 +554,17 @@ class test_coordinates(TestCase):
             rho12[i] = covMatrix[0,1]/(sigma1[i]*sigma2[i])
 
         return sigma1, sigma2, rho12
+
+    def _is_pos_def(self, A):
+        """
+        Check if matrix A is positive definite. Code from
+        https://stackoverflow.com/questions/16266720/find-out-if-matrix-is-positive-definite-with-numpy
+        """
+        if allclose(A, A.T, rtol=1e-10, atol=1e-12):
+            try:
+                cholesky(A)
+                return True
+            except LinAlgError:
+                return False
+        else:
+            return False
