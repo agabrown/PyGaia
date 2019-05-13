@@ -44,7 +44,7 @@ The following python packages are required:
 For the plotting tools:
 
 * `matplotlib <http://matplotlib.org/>`_
-* `Basemap toolkit for matplotlib <http://matplotlib.org/basemap/>`_
+* `Cartopy <https://scitools.org.uk/cartopy/docs/latest/>`_
 
 Attribution
 -----------

@@ -3,6 +3,8 @@
 1.30 (March 2019)
 +++++++++++++++++
 
+- Switched from Basemap to Cartopy in sky.py.
+
 - Epoch propagation added, including the propagation of the covariance matrix.
 
 - Covariance matrix construction from Gaia catalogue columns, including "radial proper motion" term.
