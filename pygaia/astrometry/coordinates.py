@@ -439,7 +439,7 @@ class EpochPropagation:
 
         Coordinates phi and theta at new epoch (in radians)
         """
-        phi1, theta1, parallax1, muphistar1, mutheta1, vrad1 = self.epoch_prop_astrometry(phi, theta, parallax, muphistar, mutheta, vrad, t0, t1)
+        phi1, theta1, parallax1, muphistar1, mutheta1, vrad1 = self.propagate_astrometry(phi, theta, parallax, muphistar, mutheta, vrad, t0, t1)
         return phi1, theta1
 
     def propagate_astrometry_and_covariance_matrix(self, a0, c0, t0, t1):
