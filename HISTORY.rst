@@ -1,5 +1,10 @@
 .. :changelog:
 
+1.31 (September 2019)
++++++++++++++++++++++
+
+- Allow for list of spectral types as input to vradErrorSkyAvg.
+
 1.30 (March 2019)
 +++++++++++++++++
 
