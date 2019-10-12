@@ -1,5 +1,10 @@
 .. :changelog:
 
+1.32 (October 2019)
++++++++++++++++++++
+
+- Mission length scaling in photometric and radial velocity uncertainties.
+
 1.31 (September 2019)
 +++++++++++++++++++++
 
