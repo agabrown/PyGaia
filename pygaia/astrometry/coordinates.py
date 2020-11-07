@@ -1,18 +1,18 @@
 __all__ = ['CoordinateTransformation', 'Transformations', 'EpochPropagation']
 
-from pygaia.astrometry.vectorastrometry import sphericalToCartesian, cartesianToSpherical, \
-        elementaryRotationMatrix, normalTriad
-from pygaia.utils import enum, degreesToRadians, radiansToDegrees
-from pygaia.astrometry.constants import auKmYearPerSec
-
-from numpy import ones_like, array, pi, cos, sin, zeros_like, zeros, arccos, select
-from numpy import dot, transpose, cross, vstack, diag, sqrt, identity, tile, sum, arctan
+from numpy import dot, transpose, cross, sqrt, identity, tile, sum, arctan
+from numpy import isscalar
 from numpy import matmul, newaxis, squeeze
+from numpy import ones_like, pi, cos, sin, zeros_like, zeros
 from numpy.linalg import norm
-from scipy import isscalar
+
+from pygaia.astrometry.constants import auKmYearPerSec
+from pygaia.astrometry.vectorastrometry import sphericalToCartesian, cartesianToSpherical, \
+    elementaryRotationMatrix, normalTriad
+from pygaia.utils import enum, degreesToRadians
 
 # Obliquity of the Ecliptic (arcsec)
-_obliquityOfEcliptic = degreesToRadians(84381.41100/3600.0)
+_obliquityOfEcliptic = degreesToRadians(84381.41100 / 3600.0)
 
 # Galactic pole in ICRS coordinates (see Hipparcos Explanatory Vol 1 section 1.5, and Murray, 1983,
 # section 10.2)
@@ -24,10 +24,10 @@ _omega = degreesToRadians(32.93192)
 
 # Rotation matrix for the transformation from ICRS to Galactic coordinates. See equation (4.25) in
 # chapter 4.5 of "Astrometry for Astrophysics", 2012, van Altena et al.
-_matA = elementaryRotationMatrix("z",pi/2.0+_alphaGalPole)
-_matB = elementaryRotationMatrix("x",pi/2.0-_deltaGalPole)
-_matC = elementaryRotationMatrix("z",-_omega)
-_rotationMatrixIcrsToGalactic=dot(_matC,dot(_matB,_matA))
+_matA = elementaryRotationMatrix("z", pi / 2.0 + _alphaGalPole)
+_matB = elementaryRotationMatrix("x", pi / 2.0 - _deltaGalPole)
+_matC = elementaryRotationMatrix("z", -_omega)
+_rotationMatrixIcrsToGalactic = dot(_matC, dot(_matB, _matA))
 
 # Alternative way to calculate the rotation matrix from ICRS to Galactic coordinates. First calculate
 # the vectors describing the Galactic coordinate reference frame expressed within the ICRS.
@@ -44,32 +44,33 @@ _rotationMatrixIcrsToGalactic=dot(_matC,dot(_matB,_matA))
 _rotationMatrixGalacticToIcrs = transpose(_rotationMatrixIcrsToGalactic)
 
 # Rotation matrix for the transformation from Ecliptic to ICRS coordinates.
-_rotationMatrixEclipticToIcrs = elementaryRotationMatrix("x", -1*(_obliquityOfEcliptic))
+_rotationMatrixEclipticToIcrs = elementaryRotationMatrix("x", -1 * _obliquityOfEcliptic)
 
 # Rotation matrix for the transformation from ICRS to Ecliptic coordinates.
 _rotationMatrixIcrsToEcliptic = transpose(_rotationMatrixEclipticToIcrs)
 
 # Rotation matrix for the transformation from Galactic to Ecliptic coordinates.
-_rotationMatrixGalacticToEcliptic = dot(_rotationMatrixIcrsToEcliptic,_rotationMatrixGalacticToIcrs)
+_rotationMatrixGalacticToEcliptic = dot(_rotationMatrixIcrsToEcliptic, _rotationMatrixGalacticToIcrs)
 
 # Rotation matrix for the transformation from Ecliptic to Galactic coordinates.
 _rotationMatrixEclipticToGalactic = transpose(_rotationMatrixGalacticToEcliptic)
 
 Transformations = enum('Transformations', ['GAL2ICRS', 'ICRS2GAL', 'ECL2ICRS', 'ICRS2ECL', 'GAL2ECL', 'ECL2GAL'])
 
-_rotationMatrixMap = {Transformations.GAL2ICRS:_rotationMatrixGalacticToIcrs,
-    Transformations.ICRS2GAL:_rotationMatrixIcrsToGalactic,
-    Transformations.ECL2ICRS:_rotationMatrixEclipticToIcrs,
-    Transformations.ICRS2ECL:_rotationMatrixIcrsToEcliptic,
-    Transformations.GAL2ECL:_rotationMatrixGalacticToEcliptic,
-    Transformations.ECL2GAL:_rotationMatrixEclipticToGalactic}
+_rotationMatrixMap = {Transformations.GAL2ICRS: _rotationMatrixGalacticToIcrs,
+                      Transformations.ICRS2GAL: _rotationMatrixIcrsToGalactic,
+                      Transformations.ECL2ICRS: _rotationMatrixEclipticToIcrs,
+                      Transformations.ICRS2ECL: _rotationMatrixIcrsToEcliptic,
+                      Transformations.GAL2ECL: _rotationMatrixGalacticToEcliptic,
+                      Transformations.ECL2GAL: _rotationMatrixEclipticToGalactic}
 
-_transformationStringMap = {Transformations.GAL2ICRS:("galactic", "ICRS"),
-    Transformations.ICRS2GAL:("ICRS","galactic"),
-    Transformations.ECL2ICRS:("ecliptic","ICRS"),
-    Transformations.ICRS2ECL:("ICRS","ecliptic"),
-    Transformations.GAL2ECL:("galactic","ecliptic"),
-    Transformations.ECL2GAL:("ecliptic","galactic")}
+_transformationStringMap = {Transformations.GAL2ICRS: ("galactic", "ICRS"),
+                            Transformations.ICRS2GAL: ("ICRS", "galactic"),
+                            Transformations.ECL2ICRS: ("ecliptic", "ICRS"),
+                            Transformations.ICRS2ECL: ("ICRS", "ecliptic"),
+                            Transformations.GAL2ECL: ("galactic", "ecliptic"),
+                            Transformations.ECL2GAL: ("ecliptic", "galactic")}
+
 
 def angularDistance(phi1, theta1, phi2, theta2):
     """
@@ -95,9 +96,11 @@ def angularDistance(phi1, theta1, phi2, theta2):
     # Formula below is more numerically stable than arccos( sin(theta1)*sin(theta2) +
     # cos(phi2-phi1)*cos(theta1)*cos(theta2) )
     # See: https://en.wikipedia.org/wiki/Great-circle_distance
-    return arctan( sqrt((cos(theta2)*sin(phi2-phi1))**2 +
-        (cos(theta1)*sin(theta2)-sin(theta1)*cos(theta2)*cos(phi2-phi1))**2) / (sin(theta1)*sin(theta2) +
-            cos(phi2-phi1)*cos(theta1)*cos(theta2)) )
+    return arctan(sqrt((cos(theta2) * sin(phi2 - phi1)) ** 2 +
+                       (cos(theta1) * sin(theta2) - sin(theta1) * cos(theta2) * cos(phi2 - phi1)) ** 2) / (
+                              sin(theta1) * sin(theta2) +
+                              cos(phi2 - phi1) * cos(theta1) * cos(theta2)))
+
 
 class CoordinateTransformation:
     """
@@ -121,8 +124,8 @@ class CoordinateTransformation:
         desiredTransformation - The kind of coordinate transformation that should be provided. For example
         Transformations.GAL2ECL
         """
-        self.rotationMatrix=_rotationMatrixMap[desiredTransformation]
-        self.transformationStrings=_transformationStringMap[desiredTransformation]
+        self.rotationMatrix = _rotationMatrixMap[desiredTransformation]
+        self.transformationStrings = _transformationStringMap[desiredTransformation]
 
     def transformCartesianCoordinates(self, x, y, z):
         """
@@ -143,7 +146,7 @@ class CoordinateTransformation:
         yrot - Value of Y-coordinate after rotation
         zrot - Value of Z-coordinate after rotation
         """
-        xrot, yrot, zrot = dot(self.rotationMatrix,[x,y,z])
+        xrot, yrot, zrot = dot(self.rotationMatrix, [x, y, z])
         return xrot, yrot, zrot
 
     def transformSkyCoordinates(self, phi, theta):
@@ -163,7 +166,7 @@ class CoordinateTransformation:
         phirot   - Value of the transformed azimuthal angle in radians.
         thetarot - Value of the transformed elevation angle in radians.
         """
-        r=ones_like(phi)
+        r = ones_like(phi)
         x, y, z = sphericalToCartesian(r, phi, theta)
         xrot, yrot, zrot = self.transformCartesianCoordinates(x, y, z)
         r, phirot, thetarot = cartesianToSpherical(xrot, yrot, zrot)
@@ -189,8 +192,8 @@ class CoordinateTransformation:
         cos(latitude) factor).
         muthetarot   - Value of the transformed proper motion in the latitude-like angle.
         """
-        c, s = self._getJacobian(phi,theta)
-        return c*muphistar+s*mutheta, c*mutheta-s*muphistar
+        c, s = self._getJacobian(phi, theta)
+        return c * muphistar + s * mutheta, c * mutheta - s * muphistar
 
     def transformSkyCoordinateErrors(self, phi, theta, sigPhiStar, sigTheta, rhoPhiTheta=0):
         """
@@ -213,8 +216,8 @@ class CoordinateTransformation:
         rhoPhiTheta - Correlation coefficient of the position errors. Set to zero if this keyword is not
                       provided.
 
-        Retuns
-        ------
+        Returns
+        -------
         
         sigPhiRotStar  - The transformed standard error in the longitude-like angle (including
                          cos(latitude) factor)
@@ -222,17 +225,17 @@ class CoordinateTransformation:
         rhoPhiThetaRot - The transformed correlation coefficient.
         """
         if isscalar(rhoPhiTheta) and not isscalar(sigTheta):
-            rhoPhiTheta=zeros_like(sigTheta)+rhoPhiTheta
-        c, s = self._getJacobian(phi,theta)
-        cSqr = c*c
-        sSqr = s*s
-        covar = sigPhiStar*sigTheta*rhoPhiTheta
-        varPhiStar = sigPhiStar*sigPhiStar
-        varTheta = sigTheta*sigTheta
-        varPhiStarRot = cSqr*varPhiStar+sSqr*varTheta+2.0*covar*c*s
-        varThetaRot = sSqr*varPhiStar+cSqr*varTheta-2.0*covar*c*s
-        covarRot = (cSqr-sSqr)*covar+c*s*(varTheta-varPhiStar)
-        return sqrt(varPhiStarRot), sqrt(varThetaRot), covarRot/sqrt(varPhiStarRot*varThetaRot)
+            rhoPhiTheta = zeros_like(sigTheta) + rhoPhiTheta
+        c, s = self._getJacobian(phi, theta)
+        cSqr = c * c
+        sSqr = s * s
+        covar = sigPhiStar * sigTheta * rhoPhiTheta
+        varPhiStar = sigPhiStar * sigPhiStar
+        varTheta = sigTheta * sigTheta
+        varPhiStarRot = cSqr * varPhiStar + sSqr * varTheta + 2.0 * covar * c * s
+        varThetaRot = sSqr * varPhiStar + cSqr * varTheta - 2.0 * covar * c * s
+        covarRot = (cSqr - sSqr) * covar + c * s * (varTheta - varPhiStar)
+        return sqrt(varPhiStarRot), sqrt(varThetaRot), covarRot / sqrt(varPhiStarRot * varThetaRot)
 
     def transformProperMotionErrors(self, phi, theta, sigMuPhiStar, sigMuTheta, rhoMuPhiMuTheta=0):
         """
@@ -254,8 +257,8 @@ class CoordinateTransformation:
         rhoMuPhiMuTheta - Correlation coefficient of the proper motion errors. Set to zero if this 
                           keyword is not provided.
 
-        Retuns
-        ------
+        Returns
+        -------
         
         sigMuPhiRotStar    - The transformed standard error in the proper motion in the longitude direction
         (including cos(latitude) factor).
@@ -263,7 +266,7 @@ class CoordinateTransformation:
         rhoMuPhiMuThetaRot - The transformed correlation coefficient.
         """
         return self.transformSkyCoordinateErrors(phi, theta, sigMuPhiStar, sigMuTheta,
-                rhoPhiTheta=rhoMuPhiMuTheta)
+                                                 rhoPhiTheta=rhoMuPhiMuTheta)
 
     def transformCovarianceMatrix(self, phi, theta, covmat):
         """
@@ -282,18 +285,18 @@ class CoordinateTransformation:
         covmat_rot - Covariance matrix in its representation in the new coordinate system.
         """
 
-        c, s = self._getJacobian(phi,theta)
+        c, s = self._getJacobian(phi, theta)
         jacobian = identity(5)
-        jacobian[0][0]=c
-        jacobian[1][1]=c
-        jacobian[3][3]=c
-        jacobian[4][4]=c
-        jacobian[0][1]=s
-        jacobian[1][0]=-s
-        jacobian[3][4]=s
-        jacobian[4][3]=-s
+        jacobian[0][0] = c
+        jacobian[1][1] = c
+        jacobian[3][3] = c
+        jacobian[4][4] = c
+        jacobian[0][1] = s
+        jacobian[1][0] = -s
+        jacobian[3][4] = s
+        jacobian[4][3] = -s
 
-        return dot( dot(jacobian, covmat), jacobian.T )
+        return dot(dot(jacobian, covmat), jacobian.T)
 
     def _getJacobian(self, phi, theta):
         """
@@ -322,14 +325,14 @@ class CoordinateTransformation:
         p, q, r = normalTriad(phi, theta)
 
         # zRot = z-axis of new coordinate system expressed in terms of old system
-        zRot = self.rotationMatrix[2,:]
+        zRot = self.rotationMatrix[2, :]
 
-        if (p.ndim == 2):
-            zRotAll = tile(zRot, p.shape[1]).reshape(p.shape[1],3)
+        if p.ndim == 2:
+            zRotAll = tile(zRot, p.shape[1]).reshape(p.shape[1], 3)
             pRot = cross(zRotAll, r.T)
-            normPRot = norm(pRot,axis=1)
+            normPRot = norm(pRot, axis=1)
             for i in range(pRot.shape[0]):
-                pRot[i] = pRot[i]/normPRot[i]
+                pRot[i] = pRot[i] / normPRot[i]
             c = zeros(pRot.shape[0])
             s = zeros(pRot.shape[0])
             for i in range(pRot.shape[0]):
@@ -338,8 +341,9 @@ class CoordinateTransformation:
             return c, s
         else:
             pRot = cross(zRot, r.T)
-            pRot = pRot/norm(pRot)
-            return dot(pRot,p), dot(pRot,q)
+            pRot = pRot / norm(pRot)
+            return dot(pRot, p), dot(pRot, q)
+
 
 class EpochPropagation:
     """
@@ -349,7 +353,7 @@ class EpochPropagation:
     """
 
     def __init__(self):
-        self.mastorad = pi/(180*3600*1000)
+        self.mastorad = pi / (180 * 3600 * 1000)
 
     def propagate_astrometry(self, phi, theta, parallax, muphistar, mutheta, vrad, t0, t1):
         """
@@ -382,31 +386,30 @@ class EpochPropagation:
         phi1, theta1, parallax1, muphistar1, mutheta1, mur1 = epoch_prop_pos(..., t0, t1)
         """
 
-        t = t1-t0
+        t = t1 - t0
         p0, q0, r0 = normalTriad(phi, theta)
 
         # Convert input data to units of radians and Julian year. Use ICRS coordinate names internally to
         # avoid errors in translating the formulae to code.
-        pmra0 = muphistar*self.mastorad
-        pmdec0 = mutheta*self.mastorad
-        plx0 = parallax*self.mastorad
-        pmr0 = vrad*parallax/auKmYearPerSec*self.mastorad
-        pmtot0sqr = (muphistar**2 + mutheta**2) * self.mastorad**2
+        pmra0 = muphistar * self.mastorad
+        pmdec0 = mutheta * self.mastorad
+        pmr0 = vrad * parallax / auKmYearPerSec * self.mastorad
+        pmtot0sqr = (muphistar ** 2 + mutheta ** 2) * self.mastorad ** 2
 
         # Proper motion vector
-        pmvec0 = pmra0*p0+pmdec0*q0
+        pmvec0 = pmra0 * p0 + pmdec0 * q0
 
-        f = (1 + 2*pmr0*t + (pmtot0sqr+pmr0**2)*t**2)**(-0.5)
-        u = (r0*(1+pmr0*t) + pmvec0*t)*f
+        f = (1 + 2 * pmr0 * t + (pmtot0sqr + pmr0 ** 2) * t ** 2) ** (-0.5)
+        u = (r0 * (1 + pmr0 * t) + pmvec0 * t) * f
 
         _, phi1, theta1 = cartesianToSpherical(u[0], u[1], u[2])
-        parallax1 = parallax*f
-        pmr1 = (pmr0+(pmtot0sqr + pmr0**2)*t)*f**2
-        pmvec1 = (pmvec0*(1+pmr0*t) - r0*pmr0**2*t)*f**3
+        parallax1 = parallax * f
+        pmr1 = (pmr0 + (pmtot0sqr + pmr0 ** 2) * t) * f ** 2
+        pmvec1 = (pmvec0 * (1 + pmr0 * t) - r0 * pmr0 ** 2 * t) * f ** 3
         p1, q1, r1 = normalTriad(phi1, theta1)
-        muphistar1 = sum(p1*pmvec1/self.mastorad, axis=0)
-        mutheta1 = sum(q1*pmvec1/self.mastorad, axis =0)
-        murad1 = pmr1/self.mastorad
+        muphistar1 = sum(p1 * pmvec1 / self.mastorad, axis=0)
+        mutheta1 = sum(q1 * pmvec1 / self.mastorad, axis=0)
+        murad1 = pmr1 / self.mastorad
 
         return phi1, theta1, parallax1, muphistar1, mutheta1, murad1
 
@@ -439,7 +442,9 @@ class EpochPropagation:
 
         Coordinates phi and theta at new epoch (in radians)
         """
-        phi1, theta1, parallax1, muphistar1, mutheta1, vrad1 = self.propagate_astrometry(phi, theta, parallax, muphistar, mutheta, vrad, t0, t1)
+        phi1, theta1, parallax1, muphistar1, mutheta1, vrad1 = self.propagate_astrometry(phi, theta, parallax,
+                                                                                         muphistar, mutheta, vrad, t0,
+                                                                                         t1)
         return phi1, theta1
 
     def propagate_astrometry_and_covariance_matrix(self, a0, c0, t0, t1):
@@ -476,124 +481,124 @@ class EpochPropagation:
         -------
 
         Astrometric parameters, including the "radial proper motion" (NOT the radial velocity), and
-        covariance matrix at the new epoch as a 2D matrix with the new variances on the diagional and the
+        covariance matrix at the new epoch as a 2D matrix with the new variances on the diagonal and the
         covariance in the off-diagonal elements.
         """
 
         zero, one, two, three = 0, 1, 2, 3
-        tau = t1-t0
+        tau = t1 - t0
 
         # Calculate the normal triad [p0 q0 r0] at t0
         p0, q0, r0 = normalTriad(a0[0], a0[1])
 
         # Convert to internal units (radians, Julian year)
-        par0 = a0[2]*self.mastorad
-        pma0 = a0[3]*self.mastorad
-        pmd0 = a0[4]*self.mastorad
-        pmr0 = a0[5]*a0[2]/auKmYearPerSec*self.mastorad
+        par0 = a0[2] * self.mastorad
+        pma0 = a0[3] * self.mastorad
+        pmd0 = a0[4] * self.mastorad
+        pmr0 = a0[5] * a0[2] / auKmYearPerSec * self.mastorad
 
         # Proper motion vector
-        pmvec0 = pma0*p0+pmd0*q0
+        pmvec0 = pma0 * p0 + pmd0 * q0
 
         # Auxiliary quantities
-        tau2 = tau*tau
-        pm02 = pma0**2 + pmd0**2
-        w = one + pmr0*tau
-        f2 = one/(one + two*pmr0*tau + (pm02+pmr0**2)*tau2)
+        tau2 = tau * tau
+        pm02 = pma0 ** 2 + pmd0 ** 2
+        w = one + pmr0 * tau
+        f2 = one / (one + two * pmr0 * tau + (pm02 + pmr0 ** 2) * tau2)
         f = sqrt(f2)
-        f3 = f2*f
-        f4 = f2*f2
+        f3 = f2 * f
+        f4 = f2 * f2
 
         # Position vector and parallax at t1
-        u = (r0*w + pmvec0*tau)*f
+        u = (r0 * w + pmvec0 * tau) * f
         _, ra, dec = cartesianToSpherical(u[0], u[1], u[2])
-        par = par0*f
+        par = par0 * f
 
         # Proper motion vector and radial proper motion at t1
-        pmvec = (pmvec0*(one+pmr0*tau) - r0*pmr0**2*tau)*f3
-        pmr = (pmr0+(pm02 + pmr0**2)*tau)*f2
+        pmvec = (pmvec0 * (one + pmr0 * tau) - r0 * pmr0 ** 2 * tau) * f3
+        pmr = (pmr0 + (pm02 + pmr0 ** 2) * tau) * f2
 
         # Normal triad at t1
         p, q, r = normalTriad(ra, dec)
 
         # Convert parameters at t1 to external units (mas, Julian year)
-        pma = sum(p*pmvec, axis=0)
-        pmd = sum(q*pmvec, axis =0)
+        pma = sum(p * pmvec, axis=0)
+        pmd = sum(q * pmvec, axis=0)
 
         a = zeros_like(a0)
         a[0] = ra
         a[1] = dec
-        a[2] = par/self.mastorad
-        a[3] = pma/self.mastorad
-        a[4] = pmd/self.mastorad
-        a[5] = pmr/self.mastorad
+        a[2] = par / self.mastorad
+        a[3] = pma / self.mastorad
+        a[4] = pmd / self.mastorad
+        a[5] = pmr / self.mastorad
 
         # Auxiliary quantities for the partial derivatives
 
-        pmz = pmvec0*f - three*pmvec*w
-        pp0 = sum(p*p0, axis=0)
-        pq0 = sum(p*q0, axis=0)
-        pr0 = sum(p*r0, axis=0)
-        qp0 = sum(q*p0, axis=0)
-        qq0 = sum(q*q0, axis=0)
-        qr0 = sum(q*r0, axis=0)
-        ppmz = sum(p*pmz, axis=0)
-        qpmz = sum(q*pmz, axis=0)
+        pmz = pmvec0 * f - three * pmvec * w
+        pp0 = sum(p * p0, axis=0)
+        pq0 = sum(p * q0, axis=0)
+        pr0 = sum(p * r0, axis=0)
+        qp0 = sum(q * p0, axis=0)
+        qq0 = sum(q * q0, axis=0)
+        qr0 = sum(q * r0, axis=0)
+        ppmz = sum(p * pmz, axis=0)
+        qpmz = sum(q * pmz, axis=0)
 
         J = zeros_like(c0)
-        if (c0.ndim==2):
-            J = J[newaxis,:,:]
+        if c0.ndim == 2:
+            J = J[newaxis, :, :]
 
         # Partial derivatives
-        J[:,0,0] = pp0*w*f - pr0*pma0*tau*f
-        J[:,0,1] = pq0*w*f - pr0*pmd0*tau*f
-        J[:,0,2] = zero
-        J[:,0,3] = pp0*tau*f
-        J[:,0,4] = pq0*tau*f
-        J[:,0,5] = -pma*tau2
+        J[:, 0, 0] = pp0 * w * f - pr0 * pma0 * tau * f
+        J[:, 0, 1] = pq0 * w * f - pr0 * pmd0 * tau * f
+        J[:, 0, 2] = zero
+        J[:, 0, 3] = pp0 * tau * f
+        J[:, 0, 4] = pq0 * tau * f
+        J[:, 0, 5] = -pma * tau2
 
-        J[:,1,0] = qp0*w*f - qr0*pma0*tau*f
-        J[:,1,1] = qq0*w*f - qr0*pmd0*tau*f
-        J[:,1,2] = zero
-        J[:,1,3] = qp0*tau*f
-        J[:,1,4] = qq0*tau*f
-        J[:,1,5] = -pmd*tau2
+        J[:, 1, 0] = qp0 * w * f - qr0 * pma0 * tau * f
+        J[:, 1, 1] = qq0 * w * f - qr0 * pmd0 * tau * f
+        J[:, 1, 2] = zero
+        J[:, 1, 3] = qp0 * tau * f
+        J[:, 1, 4] = qq0 * tau * f
+        J[:, 1, 5] = -pmd * tau2
 
-        J[:,2,0] = zero
-        J[:,2,1] = zero
-        J[:,2,2] = f
-        J[:,2,3] = -par*pma0*tau2*f2
-        J[:,2,4] = -par*pmd0*tau2*f2
-        J[:,2,5] = -par*w*tau*f2
+        J[:, 2, 0] = zero
+        J[:, 2, 1] = zero
+        J[:, 2, 2] = f
+        J[:, 2, 3] = -par * pma0 * tau2 * f2
+        J[:, 2, 4] = -par * pmd0 * tau2 * f2
+        J[:, 2, 5] = -par * w * tau * f2
 
-        J[:,3,0] = -pp0*pm02*tau*f3 - pr0*pma0*w*f3
-        J[:,3,1] = -pq0*pm02*tau*f3 - pr0*pmd0*w*f3
-        J[:,3,2] = zero
-        J[:,3,3] = pp0*w*f3 - two*pr0*pma0*tau*f3 - three*pma*pma0*tau2*f2
-        J[:,3,4] = pq0*w*f3 - two*pr0*pmd0*tau*f3 - three*pma*pmd0*tau2*f2
-        J[:,3,5] = ppmz*tau*f2
+        J[:, 3, 0] = -pp0 * pm02 * tau * f3 - pr0 * pma0 * w * f3
+        J[:, 3, 1] = -pq0 * pm02 * tau * f3 - pr0 * pmd0 * w * f3
+        J[:, 3, 2] = zero
+        J[:, 3, 3] = pp0 * w * f3 - two * pr0 * pma0 * tau * f3 - three * pma * pma0 * tau2 * f2
+        J[:, 3, 4] = pq0 * w * f3 - two * pr0 * pmd0 * tau * f3 - three * pma * pmd0 * tau2 * f2
+        J[:, 3, 5] = ppmz * tau * f2
 
-        J[:,4,0] = -qp0*pm02*tau*f3 - qr0*pma0*w*f3
-        J[:,4,1] = -qq0*pm02*tau*f3 - qr0*pmd0*w*f3
-        J[:,4,2] = zero
-        J[:,4,3] = qp0*w*f3 - two*qr0*pma0*tau*f3 - three*pmd*pma0*tau2*f2
-        J[:,4,4] = qq0*w*f3 - two*qr0*pmd0*tau*f3 - three*pmd*pmd0*tau2*f2
-        J[:,4,5] = qpmz*tau*f2
+        J[:, 4, 0] = -qp0 * pm02 * tau * f3 - qr0 * pma0 * w * f3
+        J[:, 4, 1] = -qq0 * pm02 * tau * f3 - qr0 * pmd0 * w * f3
+        J[:, 4, 2] = zero
+        J[:, 4, 3] = qp0 * w * f3 - two * qr0 * pma0 * tau * f3 - three * pmd * pma0 * tau2 * f2
+        J[:, 4, 4] = qq0 * w * f3 - two * qr0 * pmd0 * tau * f3 - three * pmd * pmd0 * tau2 * f2
+        J[:, 4, 5] = qpmz * tau * f2
 
-        J[:,5,0] = zero
-        J[:,5,1] = zero
-        J[:,5,2] = zero
-        J[:,5,3] = two*pma0*w*tau*f4
-        J[:,5,4] = two*pmd0*w*tau*f4
-        J[:,5,5] = (w**2 - pm02*tau2)*f4
+        J[:, 5, 0] = zero
+        J[:, 5, 1] = zero
+        J[:, 5, 2] = zero
+        J[:, 5, 3] = two * pma0 * w * tau * f4
+        J[:, 5, 4] = two * pmd0 * w * tau * f4
+        J[:, 5, 5] = (w ** 2 - pm02 * tau2) * f4
 
         JT = zeros_like(J)
         for i in range(J.shape[0]):
             JT[i] = J[i].T
 
-        if (c0.ndim==2):
-            c = matmul(J,matmul(c0[newaxis,:,:],JT))
+        if c0.ndim == 2:
+            c = matmul(J, matmul(c0[newaxis, :, :], JT))
         else:
-            c = matmul(J,matmul(c0,JT))
+            c = matmul(J, matmul(c0, JT))
 
         return a, squeeze(c)

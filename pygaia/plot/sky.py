@@ -1,4 +1,4 @@
-__all__ = ['plotCoordinateTransformationOnSky']
+__all__ = ['order_points_for_sky_plot', 'plotCoordinateTransformationOnSky']
 
 from pygaia.astrometry.coordinates import Transformations, CoordinateTransformation
 from pygaia.utils import degreesToRadians, radiansToDegrees
@@ -7,7 +7,7 @@ from numpy import arange, argmax, roll, any, linspace, pi, zeros_like
 import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
 
-def _orderGridlinePoints(x, y):
+def order_points_for_sky_plot(x, y):
     """
     This code takes care of ordering the points (x,y), calculated for a sky map parallel or merdian, such
     that the drawing code can start at one end of the curve and end at the other (so no artifacts due to
@@ -80,14 +80,14 @@ def plotCoordinateTransformationOnSky(transformation, outfile=None, noTitle=Fals
         xplot=x[indices]
         yplot=y[indices]
         if any(indices):
-            xplot, yplot = _orderGridlinePoints(xplot, yplot)
+            xplot, yplot = order_points_for_sky_plot(xplot, yplot)
         ax.plot(xplot, yplot, '-', color=lc, transform=defaultProj)
      
         indices=(phirot<0.0)
         xplot=x[indices]
         yplot=y[indices]
         if any(indices):
-            xplot, yplot = _orderGridlinePoints(xplot, yplot)
+            xplot, yplot = order_points_for_sky_plot(xplot, yplot)
         ax.plot(xplot, yplot, '-', color=lc, transform=defaultProj)
 
     for phiDeg in meridians:
@@ -101,14 +101,14 @@ def plotCoordinateTransformationOnSky(transformation, outfile=None, noTitle=Fals
         xplot=x[indices]
         yplot=y[indices]
         if any(indices):
-            xplot, yplot = _orderGridlinePoints(xplot, yplot)
+            xplot, yplot = order_points_for_sky_plot(xplot, yplot)
         ax.plot(xplot, yplot, '-', color=lc, transform=defaultProj)
        
         indices=(phirot<0.0)
         xplot=x[indices]
         yplot=y[indices]
         if any(indices):
-            xplot, yplot = _orderGridlinePoints(xplot, yplot)
+            xplot, yplot = order_points_for_sky_plot(xplot, yplot)
         ax.plot(xplot, yplot, '-', color=lc, transform=defaultProj)
 
     if (not noTitle):
