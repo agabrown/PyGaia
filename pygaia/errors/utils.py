@@ -1,6 +1,6 @@
 __all__ = ['calcZ', 'calcZBpRp', 'calcZAltStartGate', 'averageNumberOfTransits']
 
-from scipy import isscalar
+from numpy import isscalar
 from numpy import sqrt, power, amax, array, floor, sin
 from numpy import genfromtxt
 from pkg_resources import resource_stream
