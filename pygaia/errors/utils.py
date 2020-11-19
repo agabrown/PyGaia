@@ -1,103 +1,82 @@
-__all__ = ['calcZ', 'calcZBpRp', 'calcZAltStartGate', 'averageNumberOfTransits']
+__all__ = ['calc_z_plx', 'calc_z_gmag', 'calc_z_bprp']
 
 from numpy import isscalar
-from numpy import sqrt, power, amax, array, floor, sin
-from numpy import genfromtxt
-from pkg_resources import resource_stream
+from numpy import power, amax
 
-_table = resource_stream('pygaia', 'data/errorFactorVariationBeta.txt')
-_averageTransitNumber = genfromtxt(_table,
-    skip_header=16, skip_footer=1,
-    names=['sinBeta','betaMin','betaMax','nTransits',
-      'alphaStar','delta','parallax','muAlphaStar','muDelta'])['nTransits']
-_numStepsSinBeta = len(_averageTransitNumber)
+_bright_floor_star_plx = 13.0
+_bright_floor_star_gmag = 12.0
+_bright_floor_star_bprp = 11.0
 
-def calcZ(G):
-  """
-  Calculate the value for the parameter z in the formula for parallax and G magnitude errors as a
-  function of G and (V-I).
 
-  Parameters
-  ----------
-  
-  G - Value of G-band magnitude.
+def calc_z_plx(gmag):
+    """
+    Calculate the value for the parameter z in the formula for parallax errors as a function of G and (V-I).
 
-  Returns
-  -------
-  
-  Value of z.
-  """
-  gatefloor=power(10.0,0.4*(12.0-15.0))
-  if isscalar(G):
-   result=amax((gatefloor,power(10.0,0.4*(G-15.0))))
-  else :
-    result=power(10.0,0.4*(G-15.0))
-    indices=(result<gatefloor)
-    result[indices]=gatefloor
-  return result
+    Parameters
+    ----------
+    gmag : float or array
+        Value of G-band magnitude.
 
-def calcZBpRp(G):
-  """
-  Calculate the value for the parameter z in the formula for the BP and RP magnitude errors as a
-  function of G and (V-I).
+    Returns
+    -------
+    z : float or array
+        Value of z.
+    """
+    gatefloor = power(10.0, 0.4 * (_bright_floor_star_plx - 15.0))
+    if isscalar(gmag):
+        result = amax((gatefloor, power(10.0, 0.4 * (gmag - 15.0))))
+    else:
+        result = power(10.0, 0.4 * (gmag - 15.0))
+        indices = (result < gatefloor)
+        result[indices] = gatefloor
+    return result
 
-  Parameters
-  ----------
-  
-  G - Value of G-band magnitude.
 
-  Returns
-  -------
-  
-  Value of z for BP/RP.
-  """
-  gatefloor=power(10.0,0.4*(11.0-15.0))
-  if isscalar(G):
-   result=amax((gatefloor,power(10.0,0.4*(G-15.0))))
-  else :
-    result=power(10.0,0.4*(G-15.0))
-    indices=(result<gatefloor)
-    result[indices]=gatefloor
-  return result
+def calc_z_gmag(gmag):
+    """
+    Calculate the value for the parameter z in the formula for G magnitude errors as a function of G and (V-I).
 
-def calcZAltStartGate(G):
-  """
-  Calculate the value of z in the formula for the parallax errors. In this case assume gating starts at
-  G=13.3 (to simulate bright star worst performance)
+    Parameters
+    ----------
+    gmag : float or array
+        Value of G-band magnitude.
 
-  Parameters
-  ----------
-  
-  G - Value of G-band magnitude.
+    Returns
+    -------
+    z : float or array
+        Value of z.
+    """
+    gatefloor = power(10.0, 0.4 * (_bright_floor_star_gmag - 15.0))
+    if isscalar(gmag):
+        result = amax((gatefloor, power(10.0, 0.4 * (gmag - 15.0))))
+    else:
+        result = power(10.0, 0.4 * (gmag - 15.0))
+        indices = (result < gatefloor)
+        result[indices] = gatefloor
+    return result
 
-  Returns
-  -------
-  
-  Value of z.
-  """
-  gatefloor=power(10.0,0.4*(13.3-15.0))
-  if isscalar(G):
-   result=amax((gatefloor,power(10.0,0.4*(G-15.0))))
-  else :
-    result=power(10.0,0.4*(G-15.0))
-    indices=(result<gatefloor)
-    result[indices]=gatefloor
-  return result
 
-def averageNumberOfTransits(beta):
-  """
-  Returns the number of transits across the Gaia focal plane averaged over ecliptic longitude.
+def calc_z_bprp(gmag):
+    """
+    Calculate the value for the parameter z in the formula for the BP and RP magnitude errors as a
+    function of G and (V-I).
 
-  Parameters
-  ----------
+    Parameters
+    ----------
 
-  beta - Value(s) of the Ecliptic latitude.
+    gmag : float or array
+        Value of G-band magnitude.
 
-  Returns
-  -------
-
-  Average number of transits for the input values of beta.
-  """
-  indices = array(floor(abs(sin(beta))*_numStepsSinBeta), dtype=int)
-  indices[(indices==_numStepsSinBeta)] = _numStepsSinBeta-1
-  return _averageTransitNumber[indices]
+    Returns
+    -------
+    z : float or array
+        Value of z for BP/RP.
+    """
+    gatefloor = power(10.0, 0.4 * (_bright_floor_star_bprp - 15.0))
+    if isscalar(gmag):
+        result = amax((gatefloor, power(10.0, 0.4 * (gmag - 15.0))))
+    else:
+        result = power(10.0, 0.4 * (gmag - 15.0))
+        indices = (result < gatefloor)
+        result[indices] = gatefloor
+    return result

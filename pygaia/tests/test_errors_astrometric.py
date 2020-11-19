@@ -14,25 +14,25 @@ class test_errorsAstrometric(TestCase):
     Check that this function works for arrays and scalars.
     """
     beta = linspace(0,pi/2.0,30)
-    factors = astrom.errorScalingFactor("parallax", beta)
+    factors = astrom.uncertainty_scaling_factor("parallax", beta)
     for factorValue in factors:
       self.assertTrue(factorValue>0.0)
-    self.assertTrue(astrom.errorScalingFactor("parallax", pi/3.0)>0.0)
+    self.assertTrue(astrom.uncertainty_scaling_factor("parallax", pi / 3.0) > 0.0)
 
   def test_parallaxErrorSkyAvg(self):
     """
     Verify that the function works for reasonable combinations of array and scalar input parameters.
     """
-    self.assertTrue(astrom.parallaxErrorSkyAvg(15.0,3.0)>0.0)
+    self.assertTrue(astrom.parallax_uncertainty_sky_avg(15.0, 3.0) > 0.0)
     gmags = linspace(6,20,100)
     vmini = linspace(-1,4,100)
-    errors = astrom.parallaxErrorSkyAvg(gmags, vmini)
+    errors = astrom.parallax_uncertainty_sky_avg(gmags, vmini)
     for error in errors:
       self.assertTrue(error>0.0)
-    errors = astrom.parallaxErrorSkyAvg(gmags, 1.0)
+    errors = astrom.parallax_uncertainty_sky_avg(gmags, 1.0)
     for error in errors:
       self.assertTrue(error>0.0)
-    errors = astrom.parallaxErrorSkyAvg(20.0, vmini)
+    errors = astrom.parallax_uncertainty_sky_avg(20.0, vmini)
     for error in errors:
       self.assertTrue(error>0.0)
 
@@ -40,30 +40,30 @@ class test_errorsAstrometric(TestCase):
       """
       Check that errors are correctly scaled for a mission extension.
       """
-      self.assertTrue(astrom.parallaxErrorSkyAvg(15.0,3.0)>astrom.parallaxErrorSkyAvg(15.0,3.0,extension=1.0))
-      error = astrom.parallaxErrorSkyAvg(15.0,3.0)
+      self.assertTrue(astrom.parallax_uncertainty_sky_avg(15.0, 3.0) > astrom.parallax_uncertainty_sky_avg(15.0, 3.0, extension=1.0))
+      error = astrom.parallax_uncertainty_sky_avg(15.0, 3.0)
       for e in range(6):
-          exterror = astrom.parallaxErrorSkyAvg(15.0,3.0,extension=e)
+          exterror = astrom.parallax_uncertainty_sky_avg(15.0, 3.0, extension=e)
           assert_almost_equal(exterror/error, power((5.0+e)/5.0,-0.5), decimal=8)
 
   def test_parallaxError(self):
     """
     Verify that the function works for reasonable combinations of array and scalar input parameters.
     """
-    self.assertTrue(astrom.parallaxError(15.0,3.0,pi/2.0)>0.0)
+    self.assertTrue(astrom.parallax_uncertainty(15.0, 3.0, pi / 2.0) > 0.0)
     gmags = linspace(6,20,100)
     vmini = linspace(-1,4,100)
     beta = linspace(0,pi/2.0,100)
-    errors = astrom.parallaxError(gmags, vmini, beta)
+    errors = astrom.parallax_uncertainty(gmags, vmini, beta)
     for error in errors:
       self.assertTrue(error>0.0)
-    errors = astrom.parallaxError(gmags, 1.0, beta)
+    errors = astrom.parallax_uncertainty(gmags, 1.0, beta)
     for error in errors:
       self.assertTrue(error>0.0)
-    errors = astrom.parallaxError(20.0, vmini, beta)
+    errors = astrom.parallax_uncertainty(20.0, vmini, beta)
     for error in errors:
       self.assertTrue(error>0.0)
-    errors = astrom.parallaxError(gmags, vmini, 0.0)
+    errors = astrom.parallax_uncertainty(gmags, vmini, 0.0)
     for error in errors:
       self.assertTrue(error>0.0)
 

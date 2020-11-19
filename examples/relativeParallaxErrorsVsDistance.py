@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from collections import OrderedDict
 from pygaia.photometry.transformations import gminvFromVmini
-from pygaia.errors.astrometric import parallaxErrorSkyAvg
+from pygaia.errors.astrometric import parallax_uncertainty_sky_avg
 
 from os import environ as env
 from matplotlib import rc
@@ -47,7 +47,7 @@ def makePlot(pdf=False, png=False):
     vmag=sptVabsAndVmini[spt][0]+5.0*logdistancekpc+10.0
     indices=(vmag>14) & (vmag<16)
     gmag=vmag+gminvFromVmini(sptVabsAndVmini[spt][1])
-    parerrors=parallaxErrorSkyAvg(gmag,sptVabsAndVmini[spt][1])
+    parerrors=parallax_uncertainty_sky_avg(gmag, sptVabsAndVmini[spt][1])
     relparerrors=parerrors*10**logdistancekpc/1000.0
     plt.loglog(10**logdistancekpc, relparerrors,'--k',lw=1)
     plt.loglog(10**logdistancekpc[indices], relparerrors[indices],'-',label=spt)

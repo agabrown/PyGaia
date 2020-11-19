@@ -5,7 +5,7 @@
 
 import numpy as np
 from pygaia.photometry.transformations import gminvFromVmini
-from pygaia.errors.astrometric import parallaxErrorSkyAvg
+from pygaia.errors.astrometric import parallax_uncertainty_sky_avg
 
 from os import environ as env
 try:
@@ -22,7 +22,7 @@ def calcParallaxError(args):
   """
   gmag=float(args['gmag'])
   vmini=float(args['vmini'])
-  sigmaPar=parallaxErrorSkyAvg(gmag, vmini)
+  sigmaPar=parallax_uncertainty_sky_avg(gmag, vmini)
   gminv=gminvFromVmini(vmini)
   print("G = {0}".format(gmag))
   print("V = {0}".format(gmag-gminv))

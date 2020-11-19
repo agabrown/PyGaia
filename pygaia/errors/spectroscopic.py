@@ -1,7 +1,7 @@
 __all__ = ['vradErrorSkyAvg']
 
 from numpy import exp, isscalar, zeros_like
-from .astrometric import errorScalingMissionLength
+from .astrometric import uncertainty_scaling_mission_length
 
 _vradErrorACoeff = {'B0V': 0.90, 'B5V': 0.90, 'A0V': 1.0, 'A5V': 1.15, 'F0V': 1.15, 'G0V': 1.15, 'G5V': 1.15,
                     'K0V': 1.15, 'K1IIIMP': 1.15, 'K4V': 1.15, 'K1III': 1.15}
@@ -33,7 +33,7 @@ def vradErrorSkyAvg(vmag, spt, extension=0.0):
 
     The radial velocity error in km/s.
     """
-    errscaling = errorScalingMissionLength(extension, -0.5)
+    errscaling = uncertainty_scaling_mission_length(extension, -0.5)
     if isscalar(spt):
         return _vradCalibrationFloor + _vradErrorBCoeff[spt] * exp(
             _vradErrorACoeff[spt] * (vmag - _vradMagnitudeZeroPoint)) * errscaling

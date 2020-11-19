@@ -1,7 +1,7 @@
 __all__ = ['gMagnitudeError', 'bpMagnitudeError', 'rpMagnitudeError']
 
 from numpy import power, sqrt, round
-from pygaia.errors.utils import calcZ, calcZBpRp
+from pygaia.errors.utils import calc_z_gmag, calc_z_bprp
 
 #
 # Margin to include on predicted standard errors (i.e. multiply prediction by this value).
@@ -33,7 +33,7 @@ def gMagnitudeError(G):
 
     The G band photometric standard error in units of magnitude.
     """
-    z = calcZ(G)
+    z = calc_z_gmag(G)
     return 1.0e-3 * sqrt(0.04895 * z * z + 1.8633 * z + 0.0001985) * _scienceMargin
 
 
@@ -81,7 +81,7 @@ def bpMagnitudeError(G, vmini):
 
     The BP band photometric standard error in units of magnitude.
     """
-    z = calcZBpRp(G)
+    z = calc_z_bprp(G)
     a = -0.000562 * power(vmini, 3) + 0.044390 * vmini * vmini + 0.355123 * vmini + 1.043270
     b = -0.000400 * power(vmini, 3) + 0.018878 * vmini * vmini + 0.195768 * vmini + 1.465592
     c = +0.000262 * power(vmini, 3) + 0.060769 * vmini * vmini - 0.205807 * vmini - 1.866968
@@ -133,7 +133,7 @@ def rpMagnitudeError(G, vmini):
 
     The RP band photometric standard error in units of magnitude.
     """
-    z = calcZBpRp(G)
+    z = calc_z_bprp(G)
     a = -0.007597 * power(vmini, 3) + 0.114126 * vmini * vmini - 0.636628 * vmini + 1.615927
     b = -0.003803 * power(vmini, 3) + 0.057112 * vmini * vmini - 0.318499 * vmini + 1.783906
     c = -0.001923 * power(vmini, 3) + 0.027352 * vmini * vmini - 0.091569 * vmini - 3.042268

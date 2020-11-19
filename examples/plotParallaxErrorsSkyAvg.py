@@ -6,8 +6,8 @@
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-from pygaia.errors.astrometric import parallaxErrorSkyAvg
-from pygaia.errors.astrometric import parallaxMinError, parallaxMaxError
+from pygaia.errors.astrometric import parallax_uncertainty_sky_avg
+from pygaia.errors.astrometric import parallax_min_uncertainty, parallax_max_uncertainty
 from pygaia.photometry.utils import vminiFromSpt
 from pygaia.photometry.transformations import gminvFromVmini
 
@@ -45,17 +45,17 @@ def makePlot(args):
   vmagG2V=gmag-gminvFromVmini(vminiG2V)
   vmagM6V=gmag-gminvFromVmini(vminiM6V)
   
-  sigparB1V=parallaxErrorSkyAvg(gmag,vminiB1V)
-  sigparB1Vmin=parallaxMinError(gmag,vminiB1V)
-  sigparB1Vmax=parallaxMaxError(gmag,vminiB1V)
+  sigparB1V=parallax_uncertainty_sky_avg(gmag, vminiB1V)
+  sigparB1Vmin=parallax_min_uncertainty(gmag, vminiB1V)
+  sigparB1Vmax=parallax_max_uncertainty(gmag, vminiB1V)
   
-  sigparG2V=parallaxErrorSkyAvg(gmag,vminiG2V)
-  sigparG2Vmin=parallaxMinError(gmag,vminiG2V)
-  sigparG2Vmax=parallaxMaxError(gmag,vminiG2V)
+  sigparG2V=parallax_uncertainty_sky_avg(gmag, vminiG2V)
+  sigparG2Vmin=parallax_min_uncertainty(gmag, vminiG2V)
+  sigparG2Vmax=parallax_max_uncertainty(gmag, vminiG2V)
   
-  sigparM6V=parallaxErrorSkyAvg(gmag,vminiM6V)
-  sigparM6Vmin=parallaxMinError(gmag,vminiM6V)
-  sigparM6Vmax=parallaxMaxError(gmag,vminiM6V)
+  sigparM6V=parallax_uncertainty_sky_avg(gmag, vminiM6V)
+  sigparM6Vmin=parallax_min_uncertainty(gmag, vminiM6V)
+  sigparM6Vmax=parallax_max_uncertainty(gmag, vminiM6V)
   
   fig=plt.figure(figsize=(10,6.5))
   

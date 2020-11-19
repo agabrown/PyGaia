@@ -8,7 +8,7 @@ Anthony Brown 2013
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-from pygaia.errors.astrometric import parallaxErrorSkyAvg
+from pygaia.errors.astrometric import parallax_uncertainty_sky_avg
 from pygaia.photometry.utils import vminiFromSpt, gabsFromSpt, vabsFromSpt
 from pygaia.photometry.transformations import gminvFromVmini
 
@@ -70,7 +70,7 @@ def makePlot(args):
     vmini=vminiFromSpt(spt)+av-ai
     #gmags = gabsFromSpt(spt)+5.0*np.log10(distances)-5.0
     gmags = vmags + gminvFromVmini(vmini)
-    relParErr = parallaxErrorSkyAvg(gmags,vmini)*distances/1.0e6
+    relParErr = parallax_uncertainty_sky_avg(gmags, vmini) * distances / 1.0e6
     observed = (gmags>=5.7) & (gmags<=20.0)
     relParErrObs = relParErr[observed]
     # Identify the points where the relative parallax accuracy is 0.1, 1, or 10 per cent.
