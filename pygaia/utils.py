@@ -1,8 +1,8 @@
-__all__ = ['enum', 'degreesToRadians', 'radiansToDegrees']
+__all__ = ['enum', 'construct_covariance_matrix']
 
 import numpy as np
 
-from pygaia.astrometry.constants import auKmYearPerSec
+from pygaia.astrometry.constants import au_km_year_per_sec
 
 
 def enum(typename, field_names):
@@ -22,40 +22,6 @@ def enum(typename, field_names):
         field_names = field_names.replace(',', ' ').split()
     d = dict((reversed(nv) for nv in enumerate(field_names)), __slots__=())
     return type(typename, (object,), d)()
-
-
-def degreesToRadians(angle):
-    """
-    Convert from degrees to radians.
-
-    Parameters
-    ----------
-
-    angle - angle in degrees
-
-    Returns
-    -------
-
-    Angle in radians.
-    """
-    return angle / 180.0 * np.pi
-
-
-def radiansToDegrees(angle):
-    """
-    Convert from radians to degrees.
-
-    Parameters
-    ----------
-
-    angle - angle in radians.
-
-    Returns
-    -------
- 
-    Angle in degrees.
-    """
-    return angle / np.pi * 180.0
 
 
 def construct_covariance_matrix(cvec, parallax, radial_velocity, radial_velocity_error):
@@ -109,9 +75,9 @@ def construct_covariance_matrix(cvec, parallax, radial_velocity, radial_velocity
         cmat[:, j, i] = cmat[:, i, j]
 
     for k in range(nsources):
-        cmat[k, 0:5, 5] = cmat[k, 0:5, 2] * np.atleast_1d(radial_velocity)[k] / auKmYearPerSec
+        cmat[k, 0:5, 5] = cmat[k, 0:5, 2] * np.atleast_1d(radial_velocity)[k] / au_km_year_per_sec
     cmat[:, 5, 0:5] = cmat[:, 0:5, 5]
-    cmat[:, 5, 5] = cmat[:, 2, 2] * (radial_velocity ** 2 + radial_velocity_error ** 2) / auKmYearPerSec ** 2 + \
-                    (parallax * radial_velocity_error / auKmYearPerSec) ** 2
+    cmat[:, 5, 5] = cmat[:, 2, 2] * (radial_velocity ** 2 + radial_velocity_error ** 2) / au_km_year_per_sec ** 2 + \
+                    (parallax * radial_velocity_error / au_km_year_per_sec) ** 2
 
     return np.squeeze(cmat)

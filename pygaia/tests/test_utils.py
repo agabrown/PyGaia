@@ -8,7 +8,7 @@ from numpy.testing import TestCase, assert_allclose, assert_array_almost_equal, 
 from numpy.testing import assert_array_less, assert_equal
 
 from pygaia.utils import construct_covariance_matrix
-from pygaia.astrometry.constants import auKmYearPerSec
+from pygaia.astrometry.constants import au_km_year_per_sec
 
 class test_utils(TestCase):
 
@@ -19,8 +19,8 @@ class test_utils(TestCase):
 
         cvec = np.arange(15)+1
         parallax = 16
-        vrad = 17*auKmYearPerSec
-        vrad_error = 18*auKmYearPerSec
+        vrad = 17 * au_km_year_per_sec
+        vrad_error = 18 * au_km_year_per_sec
 
         cmat = construct_covariance_matrix(cvec, parallax, vrad, vrad_error)
 
@@ -50,8 +50,8 @@ class test_utils(TestCase):
         cvec[0] = np.arange(15)+1
         cvec[1] = -cvec[0]
         parallax = np.array([16, -16])
-        vrad = np.array([17, -17])*auKmYearPerSec
-        vrad_error = np.array([18, -18])*auKmYearPerSec
+        vrad = np.array([17, -17]) * au_km_year_per_sec
+        vrad_error = np.array([18, -18]) * au_km_year_per_sec
 
         cmat = construct_covariance_matrix(cvec, parallax, vrad, vrad_error)
 

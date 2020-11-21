@@ -1,23 +1,23 @@
 """
-Provides numerical constants useuful for astrometric calculations.
+Provides numerical constants useful for astrometric calculations.
 """
 
-from numpy import pi
+import numpy as np
 
 # Astronomical Unit in meter, IAU constant and defining length
-auInMeter = 149597870700.0
+au_in_meter = 149597870700.0
 
 # AU expressed in mas*pc or muas*kpc
-auMasParsec = 1000.0
+au_mas_parsec = 1000.0
 
 # Number of seconds in Julian year
-julianYearSeconds = 365.25 * 86400.0
+julian_year_seconds = 365.25 * 86400.0
 
 # AU expressed in km*yr/s
-auKmYearPerSec = auInMeter/(julianYearSeconds*1000.0)
+au_km_year_per_sec = au_in_meter / (julian_year_seconds * 1000.0)
 
 # AU expressed in mas*km*yr/s
-auMasKmYearPerSec = auKmYearPerSec*180/pi*3600*1000
+au_mas_km_year_per_sec = au_km_year_per_sec * 180 / np.pi * 3600 * 1000
 
 # Definition of parsec
-parsec = auInMeter * 180*3600/pi
+parsec = au_in_meter * 180 * 3600 / np.pi

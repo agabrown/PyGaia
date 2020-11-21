@@ -10,10 +10,10 @@ from numpy.random import rand
 from numpy.linalg import LinAlgError, cholesky
 
 from pygaia.astrometry.coordinates import CoordinateTransformation
-from pygaia.astrometry.coordinates import Transformations, EpochPropagation, angularDistance
-from pygaia.astrometry.vectorastrometry import cartesianToSpherical, astrometryToPhaseSpace,\
-    phaseSpaceToAstrometry
-from pygaia.astrometry.constants import auKmYearPerSec
+from pygaia.astrometry.coordinates import Transformations, EpochPropagation, angular_distance
+from pygaia.astrometry.vectorastrometry import cartesian_to_spherical, astrometry_to_phase_space,\
+    phase_space_to_astrometry
+from pygaia.astrometry.constants import au_km_year_per_sec
 from pygaia.utils import construct_covariance_matrix
 
 import sys
@@ -33,18 +33,18 @@ class test_coordinates(TestCase):
         Verify correctness of transformations from the Galactic to ICRS coordinate systems.
         """
         ct = CoordinateTransformation(Transformations.GAL2ICRS)
-        x, y, z = ct.transformCartesianCoordinates(self.basisVectorXValues, self.basisVectorYValues, self.basisVectorZValues)
+        x, y, z = ct.transform_cartesian_coordinates(self.basisVectorXValues, self.basisVectorYValues, self.basisVectorZValues)
         assert_array_almost_equal(x, self.expectedMatIcrsToGal[:,0], decimal=2)
         assert_array_almost_equal(y, self.expectedMatIcrsToGal[:,1], decimal=2)
         assert_array_almost_equal(z, self.expectedMatIcrsToGal[:,2], decimal=2)
 
-        r, expectedAlpha, expectedDelta = cartesianToSpherical(self.expectedMatIcrsToGal[:,0],
+        r, expectedAlpha, expectedDelta = cartesian_to_spherical(self.expectedMatIcrsToGal[:, 0],
                 self.expectedMatIcrsToGal[:,1], self.expectedMatIcrsToGal[:,2])
-        alpha, delta = ct.transformSkyCoordinates(array([0.0,pi/2.0,0.0]), array([0.0, 0.0, pi/2.0]))
+        alpha, delta = ct.transform_sky_coordinates(array([0.0, pi / 2.0, 0.0]), array([0.0, 0.0, pi / 2.0]))
         assert_array_almost_equal(expectedAlpha, alpha, decimal=1)
         assert_array_almost_equal(expectedDelta, delta, decimal=1)
 
-        alpha, delta = ct.transformSkyCoordinates(0.0,pi/2.0)
+        alpha, delta = ct.transform_sky_coordinates(0.0, pi / 2.0)
         assert_allclose(alpha/pi*180, 192.9, atol=1.0)
         assert_allclose(delta/pi*180, 27.1, atol=1.0)
 
@@ -53,14 +53,14 @@ class test_coordinates(TestCase):
         Verify correctness of transformations from the ICRS to Galactic coordinate systems.
         """
         ct=CoordinateTransformation(Transformations.ICRS2GAL)
-        x, y, z = ct.transformCartesianCoordinates(self.basisVectorXValues, self.basisVectorYValues, self.basisVectorZValues)
+        x, y, z = ct.transform_cartesian_coordinates(self.basisVectorXValues, self.basisVectorYValues, self.basisVectorZValues)
         assert_array_almost_equal(x, self.expectedMatIcrsToGal[0,:], decimal=2)
         assert_array_almost_equal(y, self.expectedMatIcrsToGal[1,:], decimal=2)
         assert_array_almost_equal(z, self.expectedMatIcrsToGal[2,:], decimal=2)
 
-        r, expectedGalon, expectedGalat = cartesianToSpherical(self.expectedMatIcrsToGal[0,:],
+        r, expectedGalon, expectedGalat = cartesian_to_spherical(self.expectedMatIcrsToGal[0, :],
                 self.expectedMatIcrsToGal[1,:], self.expectedMatIcrsToGal[2,:])
-        galon, galat = ct.transformSkyCoordinates(array([0.0,pi/2.0,0.0]), array([0.0, 0.0, pi/2.0]))
+        galon, galat = ct.transform_sky_coordinates(array([0.0, pi / 2.0, 0.0]), array([0.0, 0.0, pi / 2.0]))
         assert_array_almost_equal(expectedGalon, galon, decimal=1)
         assert_array_almost_equal(expectedGalat, galat, decimal=1)
 
@@ -69,20 +69,20 @@ class test_coordinates(TestCase):
         Verify correctness of transformations from the ICRS to Ecliptic coordinate systems.
         """
         ct=CoordinateTransformation(Transformations.ICRS2ECL)
-        x, y, z = ct.transformCartesianCoordinates(self.basisVectorXValues, self.basisVectorYValues, self.basisVectorZValues)
+        x, y, z = ct.transform_cartesian_coordinates(self.basisVectorXValues, self.basisVectorYValues, self.basisVectorZValues)
         assert_array_almost_equal(x, self.expectedMatEclipticToIcrs[:,0], decimal=2)
         assert_array_almost_equal(y, self.expectedMatEclipticToIcrs[:,1], decimal=2)
         assert_array_almost_equal(z, self.expectedMatEclipticToIcrs[:,2], decimal=2)
 
-        r, expectedLambda, expectedBeta = cartesianToSpherical(self.expectedMatEclipticToIcrs[:,0],
+        r, expectedLambda, expectedBeta = cartesian_to_spherical(self.expectedMatEclipticToIcrs[:, 0],
                 self.expectedMatEclipticToIcrs[:,1], self.expectedMatEclipticToIcrs[:,2])
-        lambdaEcl, betaEcl = ct.transformSkyCoordinates(array([0.0,pi/2.0,0.0]), array([0.0, 0.0, pi/2.0]))
+        lambdaEcl, betaEcl = ct.transform_sky_coordinates(array([0.0, pi / 2.0, 0.0]), array([0.0, 0.0, pi / 2.0]))
         assert_array_almost_equal(expectedLambda, lambdaEcl, decimal=1)
         assert_array_almost_equal(expectedBeta, betaEcl, decimal=1)
 
         alpha = 2.0*pi*rand(100)
         delta = -pi/2.0+pi*rand(100)
-        lambdaEcl, betaEcl = ct.transformSkyCoordinates(alpha, delta)
+        lambdaEcl, betaEcl = ct.transform_sky_coordinates(alpha, delta)
         result = 0.9175*sin(delta)-0.3978*sin(alpha)*cos(delta)
         assert_array_almost_equal(result, sin(betaEcl), decimal=2)
 
@@ -91,20 +91,20 @@ class test_coordinates(TestCase):
         Verify correctness of transformations from the Ecliptic to ICRS coordinate systems.
         """
         ct=CoordinateTransformation(Transformations.ECL2ICRS)
-        x, y, z = ct.transformCartesianCoordinates(self.basisVectorXValues, self.basisVectorYValues, self.basisVectorZValues)
+        x, y, z = ct.transform_cartesian_coordinates(self.basisVectorXValues, self.basisVectorYValues, self.basisVectorZValues)
         assert_array_almost_equal(x, self.expectedMatEclipticToIcrs[0,:], decimal=2)
         assert_array_almost_equal(y, self.expectedMatEclipticToIcrs[1,:], decimal=2)
         assert_array_almost_equal(z, self.expectedMatEclipticToIcrs[2,:], decimal=2)
 
-        r, expectedAlpha, expectedDelta = cartesianToSpherical(self.expectedMatEclipticToIcrs[0,:],
+        r, expectedAlpha, expectedDelta = cartesian_to_spherical(self.expectedMatEclipticToIcrs[0, :],
                 self.expectedMatEclipticToIcrs[1,:], self.expectedMatEclipticToIcrs[2,:])
-        alpha, delta = ct.transformSkyCoordinates(array([0.0,pi/2.0,0.0]), array([0.0, 0.0, pi/2.0]))
+        alpha, delta = ct.transform_sky_coordinates(array([0.0, pi / 2.0, 0.0]), array([0.0, 0.0, pi / 2.0]))
         assert_array_almost_equal(expectedAlpha, alpha, decimal=1)
         assert_array_almost_equal(expectedDelta, delta, decimal=1)
 
         lambdaEcl = 2.0*pi*rand(100)
         betaEcl = -pi/2.0+pi*rand(100)
-        alpha, delta = ct.transformSkyCoordinates(lambdaEcl, betaEcl)
+        alpha, delta = ct.transform_sky_coordinates(lambdaEcl, betaEcl)
         result = 0.9175*sin(betaEcl)+0.3978*sin(lambdaEcl)*cos(betaEcl)
         assert_array_almost_equal(result, sin(delta), decimal=2)
 
@@ -113,14 +113,14 @@ class test_coordinates(TestCase):
         Verify correctness of transformations from the Ecliptic to Galactic coordinate systems.
         """
         ct=CoordinateTransformation(Transformations.ECL2GAL)
-        x, y, z = ct.transformCartesianCoordinates(self.basisVectorXValues, self.basisVectorYValues, self.basisVectorZValues)
+        x, y, z = ct.transform_cartesian_coordinates(self.basisVectorXValues, self.basisVectorYValues, self.basisVectorZValues)
         assert_array_almost_equal(x, self.expectedMatGalacticToEcliptic[:,0], decimal=2)
         assert_array_almost_equal(y, self.expectedMatGalacticToEcliptic[:,1], decimal=2)
         assert_array_almost_equal(z, self.expectedMatGalacticToEcliptic[:,2], decimal=2)
 
-        r, expectedGalon, expectedGalat = cartesianToSpherical(self.expectedMatGalacticToEcliptic[:,0],
+        r, expectedGalon, expectedGalat = cartesian_to_spherical(self.expectedMatGalacticToEcliptic[:, 0],
                 self.expectedMatGalacticToEcliptic[:,1], self.expectedMatGalacticToEcliptic[:,2])
-        galon, galat = ct.transformSkyCoordinates(array([0.0,pi/2.0,0.0]), array([0.0, 0.0, pi/2.0]))
+        galon, galat = ct.transform_sky_coordinates(array([0.0, pi / 2.0, 0.0]), array([0.0, 0.0, pi / 2.0]))
         assert_array_almost_equal(expectedGalon, galon, decimal=1)
         assert_array_almost_equal(expectedGalat, galat, decimal=1)
 
@@ -129,14 +129,14 @@ class test_coordinates(TestCase):
         Verify correctness of transformations from the Galactic to Ecliptic coordinate systems.
         """
         ct=CoordinateTransformation(Transformations.GAL2ECL)
-        x, y, z = ct.transformCartesianCoordinates(self.basisVectorXValues, self.basisVectorYValues, self.basisVectorZValues)
+        x, y, z = ct.transform_cartesian_coordinates(self.basisVectorXValues, self.basisVectorYValues, self.basisVectorZValues)
         assert_array_almost_equal(x, self.expectedMatGalacticToEcliptic[0,:], decimal=2)
         assert_array_almost_equal(y, self.expectedMatGalacticToEcliptic[1,:], decimal=2)
         assert_array_almost_equal(z, self.expectedMatGalacticToEcliptic[2,:], decimal=2)
 
-        r, expectedLambda, expectedBeta = cartesianToSpherical(self.expectedMatGalacticToEcliptic[0,:],
+        r, expectedLambda, expectedBeta = cartesian_to_spherical(self.expectedMatGalacticToEcliptic[0, :],
                 self.expectedMatGalacticToEcliptic[1,:], self.expectedMatGalacticToEcliptic[2,:])
-        lambdaEcl, betaEcl = ct.transformSkyCoordinates(array([0.0,pi/2.0,0.0]), array([0.0, 0.0, pi/2.0]))
+        lambdaEcl, betaEcl = ct.transform_sky_coordinates(array([0.0, pi / 2.0, 0.0]), array([0.0, 0.0, pi / 2.0]))
         #
         # Note the abs() in the line below is required to avoid an error when -pi and pi are compared.
         # The better solution of course is to write an assert function that can handle modulo 2*pi cases.
@@ -146,7 +146,7 @@ class test_coordinates(TestCase):
 
         galon = 2.0*pi*rand(100)
         galat = -pi/2.0+pi*rand(100)
-        lambdaEcl, betaEcl = ct.transformSkyCoordinates(galon, galat)
+        lambdaEcl, betaEcl = ct.transform_sky_coordinates(galon, galat)
         phi=6.38/180.0*pi
         result = 0.4971*sin(galat)+0.8677*sin(galon-phi)*cos(galat)
         assert_array_almost_equal(result, sin(betaEcl), decimal=2)
@@ -164,13 +164,13 @@ class test_coordinates(TestCase):
         mutheta = -30.0+60.0*rand(nTests)
         vrad = -200.0+400.0*rand(nTests)
 
-        x,y,z,vx,vy,vz = astrometryToPhaseSpace(phi,theta,parallax,muphistar,mutheta,vrad)
-        xrot, yrot, zrot = ct.transformCartesianCoordinates(x,y,z)
-        vxrot, vyrot, vzrot = ct.transformCartesianCoordinates(vx,vy,vz)
+        x,y,z,vx,vy,vz = astrometry_to_phase_space(phi, theta, parallax, muphistar, mutheta, vrad)
+        xrot, yrot, zrot = ct.transform_cartesian_coordinates(x, y, z)
+        vxrot, vyrot, vzrot = ct.transform_cartesian_coordinates(vx, vy, vz)
         phiRot, thetaRot, parRot, muphistarRotExpected, muthetaRotExpected, vradRot = \
-                phaseSpaceToAstrometry(xrot, yrot, zrot, vxrot, vyrot, vzrot)
+                phase_space_to_astrometry(xrot, yrot, zrot, vxrot, vyrot, vzrot)
 
-        muphistarRot, muthetaRot = ct.transformProperMotions(phi, theta, muphistar, mutheta)
+        muphistarRot, muthetaRot = ct.transform_proper_motions(phi, theta, muphistar, mutheta)
 
         assert_array_almost_equal(muphistarRotExpected, muphistarRot, decimal=2)
         assert_array_almost_equal(muthetaRotExpected, muthetaRot, decimal=2)
@@ -179,7 +179,7 @@ class test_coordinates(TestCase):
         # Test scalar version of method.
         #
         for i in range(nTests):
-            muphistarRot, muthetaRot = ct.transformProperMotions(phi[i], theta[i], muphistar[i], mutheta[i])
+            muphistarRot, muthetaRot = ct.transform_proper_motions(phi[i], theta[i], muphistar[i], mutheta[i])
             assert_almost_equal(muphistarRotExpected[i], muphistarRot, decimal=2)
             assert_almost_equal(muthetaRotExpected[i], muthetaRot, decimal=2)
 
@@ -193,29 +193,29 @@ class test_coordinates(TestCase):
         theta = -pi/2.0+pi*rand(nTests)
         sigPhiStar, sigTheta, rhoPhiTheta = self._generateRandomCovarianceMatrices(nTests)
 
-        sigPhiStarRot, sigThetaRot, rhoPhiThetaRot = ct.transformSkyCoordinateErrors(phi, theta, sigPhiStar,
-                sigTheta, rhoPhiTheta=rhoPhiTheta)
+        sigPhiStarRot, sigThetaRot, rhoPhiThetaRot = ct.transform_sky_coordinate_errors(phi, theta, sigPhiStar,
+                                                                                        sigTheta, rho_phi_theta=rhoPhiTheta)
         for i in range(nTests):
             self.assertGreater(sigPhiStarRot[i], 0.0)
             self.assertGreater(sigThetaRot[i], 0.0)
             self.assertTrue(-1<=rhoPhiThetaRot[i] and rhoPhiThetaRot[i]<=1)
 
-        sigPhiStarRot, sigThetaRot, rhoPhiThetaRot = ct.transformSkyCoordinateErrors(phi, theta, sigPhiStar, sigTheta)
+        sigPhiStarRot, sigThetaRot, rhoPhiThetaRot = ct.transform_sky_coordinate_errors(phi, theta, sigPhiStar, sigTheta)
         for i in range(nTests):
             self.assertGreater(sigPhiStarRot[i], 0.0)
             self.assertGreater(sigThetaRot[i], 0.0)
             self.assertTrue(-1<=rhoPhiThetaRot[i] and rhoPhiThetaRot[i]<=1)
 
-        sigPhiStarRot, sigThetaRot, rhoPhiThetaRot = ct.transformSkyCoordinateErrors(phi, theta, sigPhiStar,
-                sigTheta, rhoPhiTheta=0.7)
+        sigPhiStarRot, sigThetaRot, rhoPhiThetaRot = ct.transform_sky_coordinate_errors(phi, theta, sigPhiStar,
+                                                                                        sigTheta, rho_phi_theta=0.7)
         for i in range(nTests):
             self.assertGreater(sigPhiStarRot[i], 0.0)
             self.assertGreater(sigThetaRot[i], 0.0)
             self.assertTrue(-1<=rhoPhiThetaRot[i] and rhoPhiThetaRot[i]<=1)
 
         for i in range(nTests):
-            sigPhiStarRot, sigThetaRot, rhoPhiThetaRot = ct.transformSkyCoordinateErrors(phi[i], theta[i],
-                    sigPhiStar[i], sigTheta[i], rhoPhiTheta=0.7)
+            sigPhiStarRot, sigThetaRot, rhoPhiThetaRot = ct.transform_sky_coordinate_errors(phi[i], theta[i],
+                                                                                            sigPhiStar[i], sigTheta[i], rho_phi_theta=0.7)
             self.assertGreater(sigPhiStarRot, 0.0)
             self.assertGreater(sigThetaRot, 0.0)
             self.assertTrue(-1<=rhoPhiThetaRot and rhoPhiThetaRot<=1)
@@ -230,14 +230,14 @@ class test_coordinates(TestCase):
         theta = -pi/2.0+pi*rand(nTests)
         sigPhiStar, sigTheta, rhoPhiTheta = self._generateRandomCovarianceMatrices(nTests)
 
-        sigPhiStarRot, sigThetaRot, rhoPhiThetaRot = ct.transformProperMotionErrors(phi, theta, sigPhiStar,
-                sigTheta, rhoMuPhiMuTheta=rhoPhiTheta)
+        sigPhiStarRot, sigThetaRot, rhoPhiThetaRot = ct.transform_proper_motion_errors(phi, theta, sigPhiStar,
+                                                                                       sigTheta, rho_muphi_mutheta=rhoPhiTheta)
         for i in range(nTests):
             self.assertGreater(sigPhiStarRot[i], 0.0)
             self.assertGreater(sigThetaRot[i], 0.0)
             self.assertTrue(-1<=rhoPhiTheta[i] and rhoPhiTheta[i]<=1)
 
-        sigPhiStarRot, sigThetaRot, rhoPhiThetaRot = ct.transformProperMotionErrors(phi, theta, sigPhiStar, sigTheta)
+        sigPhiStarRot, sigThetaRot, rhoPhiThetaRot = ct.transform_proper_motion_errors(phi, theta, sigPhiStar, sigTheta)
         for i in range(nTests):
             self.assertGreater(sigPhiStarRot[i], 0.0)
             self.assertGreater(sigThetaRot[i], 0.0)
@@ -300,7 +300,7 @@ class test_coordinates(TestCase):
         muphistar = zeros_like(phi)
         mutheta = zeros_like(phi)
         vrad = rand(nTests)*50.0+1.0
-        pmr = vrad*parallax/auKmYearPerSec
+        pmr = vrad * parallax / au_km_year_per_sec
         phi1, theta1, parallax1, muphistar1, mutheta1, pmr1 = ep.propagate_astrometry(phi, theta,
                 parallax, muphistar, mutheta, vrad, t0, t1)
         assert_almost_equal(phi1, phi, 12)
@@ -326,7 +326,7 @@ class test_coordinates(TestCase):
         # radial velocity and positive parallax at the current epoch: the parallax always increases,
         # the radial proper motion always decreases.
         vrad = -1.0-70*rand(nTests)
-        pmr = vrad*parallax/auKmYearPerSec
+        pmr = vrad * parallax / au_km_year_per_sec
         phi1, theta1, parallax1, muphistar1, mutheta1, pmr1 = ep.propagate_astrometry(phi, theta,
                 parallax, muphistar, mutheta, vrad, t0, t1)
         assert_almost_equal(phi1, phi, 12)
@@ -357,13 +357,13 @@ class test_coordinates(TestCase):
         muphistar = rand(nTests)*200-100
         mutheta = rand(nTests)*200-100
         vrad = rand(nTests)*400-200
-        pmr = vrad*parallax/auKmYearPerSec
+        pmr = vrad * parallax / au_km_year_per_sec
         phi1, theta1, parallax1, muphistar1, mutheta1, pmr1 = ep.propagate_astrometry(phi, theta,
                 parallax, muphistar, mutheta, vrad, t0, t1)
         phi2, theta2, parallax2, muphistar2, mutheta2, pmr2 = ep.propagate_astrometry(phi, theta,
                 parallax, muphistar, mutheta, vrad, t0, t2)
-        rho1 = angularDistance(phi, theta, phi1, theta1)*radtomas
-        rho2 = angularDistance(phi, theta, phi2, theta2)*radtomas
+        rho1 = angular_distance(phi, theta, phi1, theta1) * radtomas
+        rho2 = angular_distance(phi, theta, phi2, theta2) * radtomas
         rho_naive1 = sqrt(muphistar**2+mutheta**2)*abs(t1-t0)
         rho_naive2 = sqrt(muphistar**2+mutheta**2)*abs(t2-t0)
         assert_allclose(rho_naive1, rho1, rtol=0.1)
@@ -396,7 +396,7 @@ class test_coordinates(TestCase):
         muphistar = zeros_like(phi)
         mutheta = zeros_like(phi)
         vrad = rand(nTests)*50.0+1.0
-        pmr = vrad*parallax/auKmYearPerSec
+        pmr = vrad * parallax / au_km_year_per_sec
         phi1, theta1, parallax1, muphistar1, mutheta1, pmr1 = ep.propagate_astrometry(phi, theta,
                 parallax, muphistar, mutheta, vrad, t0, t1)
         assert_almost_equal(phi1, phi, 12)
@@ -422,7 +422,7 @@ class test_coordinates(TestCase):
         # radial velocity and negative parallax at the current epoch: the parallax always increases,
         # the radial proper motion always decreases.
         vrad = -1.0-70*rand(nTests)
-        pmr = vrad*parallax/auKmYearPerSec
+        pmr = vrad * parallax / au_km_year_per_sec
         phi1, theta1, parallax1, muphistar1, mutheta1, pmr1 = ep.propagate_astrometry(phi, theta,
                 parallax, muphistar, mutheta, vrad, t0, t1)
         assert_almost_equal(phi1, phi, 12)
@@ -464,7 +464,7 @@ class test_coordinates(TestCase):
         a0[3] = rand(nTests)*200-100
         a0[4] = rand(nTests)*200-100
         a0[5] = rand(nTests)*400-200
-        pmr0 = a0[5]*a0[2]/auKmYearPerSec
+        pmr0 = a0[5] * a0[2] / au_km_year_per_sec
 
         covmat = array([1.0,1.0,1.0,1.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0])
         vrad_error = 2.0

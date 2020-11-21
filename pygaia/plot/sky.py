@@ -74,7 +74,7 @@ def plot_coordinate_transformation_on_sky(transformation, outfile=None, no_title
     for thetaDeg in parallels:
         phi = np.linspace(-np.pi, np.pi, 1001)
         theta = np.zeros_like(phi) + np.deg2rad(thetaDeg)
-        phirot, thetarot = ct.transformSkyCoordinates(phi, theta)
+        phirot, thetarot = ct.transform_sky_coordinates(phi, theta)
         phirot[(phirot > np.pi)] = phirot[(phirot > np.pi)] - 2 * np.pi
         x, y = np.rad2deg(phirot), np.rad2deg(thetarot)
 
@@ -95,7 +95,7 @@ def plot_coordinate_transformation_on_sky(transformation, outfile=None, no_title
     for phiDeg in meridians:
         theta = np.linspace(-meridian_max, meridian_max, 1001)
         phi = np.zeros_like(theta) + np.deg2rad(phiDeg)
-        phirot, thetarot = ct.transformSkyCoordinates(phi, theta)
+        phirot, thetarot = ct.transform_sky_coordinates(phi, theta)
         phirot[(phirot > np.pi)] = phirot[(phirot > np.pi)] - 2 * np.pi
         x, y = np.rad2deg(phirot), np.rad2deg(thetarot)
 
@@ -119,17 +119,17 @@ def plot_coordinate_transformation_on_sky(transformation, outfile=None, no_title
 
     if not no_labels:
         for theta in np.arange(-60, 90, 30):
-            phirot, thetarot = ct.transformSkyCoordinates(0.0, np.deg2rad(theta))
+            phirot, thetarot = ct.transform_sky_coordinates(0.0, np.deg2rad(theta))
             x, y = (np.rad2deg(phirot), np.rad2deg(thetarot))
             ax.text(x, y, "${0}$".format(theta), fontsize=16, va='bottom', ha='center', color=tc,
                     transform=default_proj)
         for phi in np.arange(-150, 0, 30):
-            phirot, thetarot = ct.transformSkyCoordinates(np.deg2rad(phi), 0.0)
+            phirot, thetarot = ct.transform_sky_coordinates(np.deg2rad(phi), 0.0)
             x, y = (np.rad2deg(phirot), np.rad2deg(thetarot))
             ax.text(x, y, "${0}$".format(phi + addtolabel), fontsize=16, va='bottom', ha='center', color=tc,
                     transform=default_proj)
         for phi in np.arange(30, 210, 30):
-            phirot, thetarot = ct.transformSkyCoordinates(np.deg2rad(phi), 0.0)
+            phirot, thetarot = ct.transform_sky_coordinates(np.deg2rad(phi), 0.0)
             x, y = (np.rad2deg(phirot), np.rad2deg(thetarot))
             ax.text(x, y, "${0}$".format(phi), fontsize=16, va='bottom', ha='center', color=tc,
                     transform=default_proj)
