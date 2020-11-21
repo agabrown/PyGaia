@@ -6,8 +6,8 @@
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-from pygaia.errors.photometric import gMagnitudeError, bpMagnitudeError, rpMagnitudeError
-from pygaia.errors.photometric import gMagnitudeErrorEoM, bpMagnitudeErrorEoM, rpMagnitudeErrorEoM
+from pygaia.errors.photometric import g_magnitude_uncertainty, bp_magnitude_uncertainty, rp_magnitude_uncertainty
+from pygaia.errors.photometric import g_magnitude_uncertainty_eom, bp_magnitude_uncertainty_eom, rp_magnitude_uncertainty_eom
 from pygaia.photometry.transformations import gminvFromVmini
 
 from os import environ as env
@@ -41,14 +41,14 @@ def makePlot(args):
   vmag=gmag-gminvFromVmini(vmini)
   
   if args['eom']:
-      sigmaG = gMagnitudeErrorEoM(gmag)
-      sigmaGBp = bpMagnitudeErrorEoM(gmag, vmini)
-      sigmaGRp = rpMagnitudeErrorEoM(gmag, vmini)
+      sigmaG = g_magnitude_uncertainty_eom(gmag)
+      sigmaGBp = bp_magnitude_uncertainty_eom(gmag, vmini)
+      sigmaGRp = rp_magnitude_uncertainty_eom(gmag, vmini)
       yminmax = (1.0-4,0.1)
   else:
-      sigmaG = gMagnitudeError(gmag)
-      sigmaGBp = bpMagnitudeError(gmag, vmini)
-      sigmaGRp = rpMagnitudeError(gmag, vmini)
+      sigmaG = g_magnitude_uncertainty(gmag)
+      sigmaGBp = bp_magnitude_uncertainty(gmag, vmini)
+      sigmaGRp = rp_magnitude_uncertainty(gmag, vmini)
       yminmax = (1.0-4,1)
 
   fig=plt.figure(figsize=(10,6.5))

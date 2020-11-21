@@ -2,203 +2,81 @@
 Unit tests for the errors.astrometric module.
 """
 
-from numpy.testing import TestCase, assert_almost_equal, assert_array_almost_equal, assert_raises
-from numpy import pi, linspace, power
+import numpy as np
+from numpy.testing import TestCase
 
 from pygaia.errors import astrometric as astrom
 
-class test_errorsAstrometric(TestCase):
 
-  def test_errorScalingFactor(self):
-    """
-    Check that this function works for arrays and scalars.
-    """
-    beta = linspace(0,pi/2.0,30)
-    factors = astrom.uncertainty_scaling_factor("parallax", beta)
-    for factorValue in factors:
-      self.assertTrue(factorValue>0.0)
-    self.assertTrue(astrom.uncertainty_scaling_factor("parallax", pi / 3.0) > 0.0)
+class TestErrorsAstrometric(TestCase):
 
-  def test_parallaxErrorSkyAvg(self):
-    """
-    Verify that the function works for reasonable combinations of array and scalar input parameters.
-    """
-    self.assertTrue(astrom.parallax_uncertainty_sky_avg(15.0, 3.0) > 0.0)
-    gmags = linspace(6,20,100)
-    vmini = linspace(-1,4,100)
-    errors = astrom.parallax_uncertainty_sky_avg(gmags, vmini)
-    for error in errors:
-      self.assertTrue(error>0.0)
-    errors = astrom.parallax_uncertainty_sky_avg(gmags, 1.0)
-    for error in errors:
-      self.assertTrue(error>0.0)
-    errors = astrom.parallax_uncertainty_sky_avg(20.0, vmini)
-    for error in errors:
-      self.assertTrue(error>0.0)
+    def test_parallax_uncertainty(self):
+        """
+        Verify that the function works for reasonable combinations of array and scalar input parameters.
+        """
+        self.assertTrue(astrom.parallax_uncertainty(15.0) > 0.0)
+        self.assertTrue(astrom.parallax_uncertainty(15.0, release='dr4') > 0.0)
+        self.assertTrue(astrom.parallax_uncertainty(15.0, release='dr3') > 0.0)
+        self.assertTrue(astrom.parallax_uncertainty(15.0, release='dr5') > 0.0)
+        gmags = np.linspace(6, 20, 100)
+        errorsdr4 = astrom.parallax_uncertainty(gmags)
+        errorsdr3 = astrom.parallax_uncertainty(gmags, release='dr3')
+        errorsdr5 = astrom.parallax_uncertainty(gmags, release='dr5')
+        for errordr4, errordr3, errordr5 in zip(errorsdr4, errorsdr3, errorsdr5):
+            self.assertTrue(errordr4 > 0.0)
+            self.assertTrue(errordr3 > errordr4)
+            self.assertTrue(errordr5 < errordr4)
 
-  def test_parallaxErrorSkyAveExtended(self):
-      """
-      Check that errors are correctly scaled for a mission extension.
-      """
-      self.assertTrue(astrom.parallax_uncertainty_sky_avg(15.0, 3.0) > astrom.parallax_uncertainty_sky_avg(15.0, 3.0, extension=1.0))
-      error = astrom.parallax_uncertainty_sky_avg(15.0, 3.0)
-      for e in range(6):
-          exterror = astrom.parallax_uncertainty_sky_avg(15.0, 3.0, extension=e)
-          assert_almost_equal(exterror/error, power((5.0+e)/5.0,-0.5), decimal=8)
+    def test_position_uncertainty(self):
+        """
+        Verify that the function works for reasonable combinations of array and scalar input parameters.
+        """
+        sigalphastar, sigdelta = astrom.position_uncertainty(15.0)
+        self.assertTrue(sigalphastar > 0.0)
+        self.assertTrue(sigdelta > 0.0)
+        sigalphastar, sigdelta = astrom.position_uncertainty(15.0, release='dr3')
+        self.assertTrue(sigalphastar > 0.0)
+        self.assertTrue(sigdelta > 0.0)
+        sigalphastar, sigdelta = astrom.position_uncertainty(15.0, release='dr5')
+        self.assertTrue(sigalphastar > 0.0)
+        self.assertTrue(sigdelta > 0.0)
 
-  def test_parallaxError(self):
-    """
-    Verify that the function works for reasonable combinations of array and scalar input parameters.
-    """
-    self.assertTrue(astrom.parallax_uncertainty(15.0, 3.0, pi / 2.0) > 0.0)
-    gmags = linspace(6,20,100)
-    vmini = linspace(-1,4,100)
-    beta = linspace(0,pi/2.0,100)
-    errors = astrom.parallax_uncertainty(gmags, vmini, beta)
-    for error in errors:
-      self.assertTrue(error>0.0)
-    errors = astrom.parallax_uncertainty(gmags, 1.0, beta)
-    for error in errors:
-      self.assertTrue(error>0.0)
-    errors = astrom.parallax_uncertainty(20.0, vmini, beta)
-    for error in errors:
-      self.assertTrue(error>0.0)
-    errors = astrom.parallax_uncertainty(gmags, vmini, 0.0)
-    for error in errors:
-      self.assertTrue(error>0.0)
+        gmags = np.linspace(6, 20, 100)
+        sigalphastardr4, sigdeltadr4 = astrom.position_uncertainty(gmags)
+        sigalphastardr3, sigdeltadr3 = astrom.position_uncertainty(gmags, release='dr3')
+        sigalphastardr5, sigdeltadr5 = astrom.position_uncertainty(gmags, release='dr5')
+        for errordr4, errordr3, errordr5 in zip(sigalphastardr4, sigalphastardr3, sigalphastardr5):
+            self.assertTrue(errordr4 > 0.0)
+            self.assertTrue(errordr3 > errordr4)
+            self.assertTrue(errordr5 < errordr4)
+        for errordr4, errordr3, errordr5 in zip(sigdeltadr4, sigdeltadr3, sigdeltadr5):
+            self.assertTrue(errordr4 > 0.0)
+            self.assertTrue(errordr3 > errordr4)
+            self.assertTrue(errordr5 < errordr4)
 
-  def test_positionErrorSkyAvg(self):
-    """
-    Verify that the function works for reasonable combinations of array and scalar input parameters.
-    """
-    sigalphastar, sigdelta = astrom.positionErrorSkyAvg(15.0,3.0)
-    self.assertTrue(sigalphastar>0.0)
-    self.assertTrue(sigdelta>0.0)
+    def test_proper_motion_uncertainty(self):
+        """
+        Verify that the function works for reasonable combinations of array and scalar input parameters.
+        """
+        sigpmra, sigpmdec = astrom.proper_motion_uncertainty(15.0)
+        self.assertTrue(sigpmra > 0.0)
+        self.assertTrue(sigpmdec > 0.0)
+        sigpmra, sigpmdec = astrom.proper_motion_uncertainty(15.0, release='dr3')
+        self.assertTrue(sigpmra > 0.0)
+        self.assertTrue(sigpmdec > 0.0)
+        sigpmra, sigpmdec = astrom.proper_motion_uncertainty(15.0, release='dr5')
+        self.assertTrue(sigpmra > 0.0)
+        self.assertTrue(sigpmdec > 0.0)
 
-    gmags = linspace(6,20,100)
-    vmini = linspace(-1,4,100)
-    sigalphastar, sigdelta = astrom.positionErrorSkyAvg(gmags, vmini)
-    for error in sigalphastar:
-      self.assertTrue(error>0.0)
-    for error in sigdelta:
-      self.assertTrue(error>0.0)
-    sigalphastar, sigdelta = astrom.positionErrorSkyAvg(gmags, -1.0)
-    for error in sigalphastar:
-      self.assertTrue(error>0.0)
-    for error in sigdelta:
-      self.assertTrue(error>0.0)
-    sigalphastar, sigdelta = astrom.positionErrorSkyAvg(15.0, vmini)
-    for error in sigalphastar:
-      self.assertTrue(error>0.0)
-    for error in sigdelta:
-      self.assertTrue(error>0.0)
-
-  def test_positionErrorSkyAveExtended(self):
-      """
-      Check that errors are correctly scaled for a mission extension.
-      """
-      sigalphastar, sigdelta = astrom.positionErrorSkyAvg(15.0,3.0)
-      for e in range(6):
-          sigalphastarext, sigdeltaext = astrom.positionErrorSkyAvg(15.0,3.0,extension=e)
-          assert_almost_equal(sigalphastarext/sigalphastar, power((5.0+e)/5.0,-0.5), decimal=8)
-          assert_almost_equal(sigdeltaext/sigdelta, power((5.0+e)/5.0,-0.5), decimal=8)
-
-  def test_positionError(self):
-    """
-    Verify that the function works for reasonable combinations of array and scalar input parameters.
-    """
-    sigalphastar, sigdelta = astrom.positionError(15.0,3.0,pi/4.0)
-    self.assertTrue(sigalphastar>0.0)
-    self.assertTrue(sigdelta>0.0)
-
-    gmags = linspace(6,20,100)
-    vmini = linspace(-1,4,100)
-    beta = linspace(0,pi/2.0,100)
-    sigalphastar, sigdelta = astrom.positionError(gmags, vmini, beta)
-    for error in sigalphastar:
-      self.assertTrue(error>0.0)
-    for error in sigdelta:
-      self.assertTrue(error>0.0)
-    sigalphastar, sigdelta = astrom.positionError(gmags, -1.0, beta)
-    for error in sigalphastar:
-      self.assertTrue(error>0.0)
-    for error in sigdelta:
-      self.assertTrue(error>0.0)
-    sigalphastar, sigdelta = astrom.positionError(15.0, vmini, beta)
-    for error in sigalphastar:
-      self.assertTrue(error>0.0)
-    for error in sigdelta:
-      self.assertTrue(error>0.0)
-    sigalphastar, sigdelta = astrom.positionError(gmags, vmini, 0.0)
-    for error in sigalphastar:
-      self.assertTrue(error>0.0)
-    for error in sigdelta:
-      self.assertTrue(error>0.0)
-
-  def test_properMotionErrorSkyAvg(self):
-    """
-    Verify that the function works for reasonable combinations of array and scalar input parameters.
-    """
-    sigalphastar, sigdelta = astrom.properMotionErrorSkyAvg(15.0,3.0)
-    self.assertTrue(sigalphastar>0.0)
-    self.assertTrue(sigdelta>0.0)
-
-    gmags = linspace(6,20,100)
-    vmini = linspace(-1,4,100)
-    sigalphastar, sigdelta = astrom.properMotionErrorSkyAvg(gmags, vmini)
-    for error in sigalphastar:
-      self.assertTrue(error>0.0)
-    for error in sigdelta:
-      self.assertTrue(error>0.0)
-    sigalphastar, sigdelta = astrom.properMotionErrorSkyAvg(gmags, -1.0)
-    for error in sigalphastar:
-      self.assertTrue(error>0.0)
-    for error in sigdelta:
-      self.assertTrue(error>0.0)
-    sigalphastar, sigdelta = astrom.properMotionErrorSkyAvg(15.0, vmini)
-    for error in sigalphastar:
-      self.assertTrue(error>0.0)
-    for error in sigdelta:
-      self.assertTrue(error>0.0)
-
-  def test_properMotionErrorSkyAveExtended(self):
-      """
-      Check that errors are correctly scaled for a mission extension.
-      """
-      sigmualphastar, sigmudelta = astrom.properMotionErrorSkyAvg(15.0,3.0)
-      for e in range(6):
-          sigmualphastarext, sigmudeltaext = astrom.properMotionErrorSkyAvg(15.0,3.0,extension=e)
-          assert_almost_equal(sigmualphastarext/sigmualphastar, power((5.0+e)/5.0,-1.5), decimal=8)
-          assert_almost_equal(sigmudeltaext/sigmudelta, power((5.0+e)/5.0,-1.5), decimal=8)
-
-  def test_properMotionError(self):
-    """
-    Verify that the function works for reasonable combinations of array and scalar input parameters.
-    """
-    sigalphastar, sigdelta = astrom.properMotionError(15.0,3.0,pi/4.0)
-    self.assertTrue(sigalphastar>0.0)
-    self.assertTrue(sigdelta>0.0)
-
-    gmags = linspace(6,20,100)
-    vmini = linspace(-1,4,100)
-    beta = linspace(0,pi/2.0,100)
-    sigalphastar, sigdelta = astrom.properMotionError(gmags, vmini, beta)
-    for error in sigalphastar:
-      self.assertTrue(error>0.0)
-    for error in sigdelta:
-      self.assertTrue(error>0.0)
-    sigalphastar, sigdelta = astrom.properMotionError(gmags, -1.0, beta)
-    for error in sigalphastar:
-      self.assertTrue(error>0.0)
-    for error in sigdelta:
-      self.assertTrue(error>0.0)
-    sigalphastar, sigdelta = astrom.properMotionError(15.0, vmini, beta)
-    for error in sigalphastar:
-      self.assertTrue(error>0.0)
-    for error in sigdelta:
-      self.assertTrue(error>0.0)
-    sigalphastar, sigdelta = astrom.properMotionError(gmags, vmini, 0.0)
-    for error in sigalphastar:
-      self.assertTrue(error>0.0)
-    for error in sigdelta:
-      self.assertTrue(error>0.0)
+        gmags = np.linspace(6, 20, 100)
+        sigpmradr4, sigpmdecdr4 = astrom.proper_motion_uncertainty(gmags)
+        sigpmradr3, sigpmdecdr3 = astrom.proper_motion_uncertainty(gmags, release='dr3')
+        sigpmradr5, sigpmdecdr5 = astrom.proper_motion_uncertainty(gmags, release='dr5')
+        for errordr4, errordr3, errordr5 in zip(sigpmradr4, sigpmradr3, sigpmradr5):
+            self.assertTrue(errordr4 > 0.0)
+            self.assertTrue(errordr3 > errordr4)
+            self.assertTrue(errordr5 < errordr4)
+        for errordr4, errordr3, errordr5 in zip(sigpmdecdr4, sigpmdecdr3, sigpmdecdr5):
+            self.assertTrue(errordr4 > 0.0)
+            self.assertTrue(errordr3 > errordr4)
+            self.assertTrue(errordr5 < errordr4)

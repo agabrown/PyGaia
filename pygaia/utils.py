@@ -4,6 +4,7 @@ import numpy as np
 
 from pygaia.astrometry.constants import auKmYearPerSec
 
+
 def enum(typename, field_names):
     """
     Create a new enumeration type.
@@ -19,8 +20,9 @@ def enum(typename, field_names):
 
     if isinstance(field_names, str):
         field_names = field_names.replace(',', ' ').split()
-    d = dict((reversed(nv) for nv in enumerate(field_names)), __slots__ = ())
+    d = dict((reversed(nv) for nv in enumerate(field_names)), __slots__=())
     return type(typename, (object,), d)()
+
 
 def degreesToRadians(angle):
     """
@@ -36,7 +38,8 @@ def degreesToRadians(angle):
 
     Angle in radians.
     """
-    return angle/180.0*np.pi
+    return angle / 180.0 * np.pi
+
 
 def radiansToDegrees(angle):
     """
@@ -52,7 +55,8 @@ def radiansToDegrees(angle):
  
     Angle in degrees.
     """
-    return angle/np.pi*180.0
+    return angle / np.pi * 180.0
+
 
 def construct_covariance_matrix(cvec, parallax, radial_velocity, radial_velocity_error):
     """
@@ -86,28 +90,28 @@ def construct_covariance_matrix(cvec, parallax, radial_velocity, radial_velocity
     Covariance matrix as a 6x6 array.
     """
 
-    if np.ndim(cvec)==1:
-        cmat = np.zeros((1,6,6))
+    if np.ndim(cvec) == 1:
+        cmat = np.zeros((1, 6, 6))
         nsources = 1
         cv = np.atleast_2d(cvec)
     else:
         nsources = cvec.shape[0]
-        cmat = np.zeros((nsources,6,6))
+        cmat = np.zeros((nsources, 6, 6))
         cv = cvec
     for k in range(nsources):
-        cmat[k,0:5,0:5] = cv[k,0:5]**2
+        cmat[k, 0:5, 0:5] = cv[k, 0:5] ** 2
 
-    iu = np.triu_indices(5,k=1)
+    iu = np.triu_indices(5, k=1)
     for k in range(10):
         i = iu[0][k]
         j = iu[1][k]
-        cmat[:,i,j] = cv[:,i]*cv[:,j]*cv[:,k+5]
-        cmat[:,j,i] = cmat[:,i,j]
+        cmat[:, i, j] = cv[:, i] * cv[:, j] * cv[:, k + 5]
+        cmat[:, j, i] = cmat[:, i, j]
 
     for k in range(nsources):
-        cmat[k,0:5,5] = cmat[k,0:5,2]*np.atleast_1d(radial_velocity)[k]/auKmYearPerSec
-    cmat[:,5,0:5] = cmat[:,0:5,5]
-    cmat[:,5,5] = cmat[:,2,2]*(radial_velocity**2 + radial_velocity_error**2)/auKmYearPerSec**2 + \
-            (parallax*radial_velocity_error/auKmYearPerSec)**2
+        cmat[k, 0:5, 5] = cmat[k, 0:5, 2] * np.atleast_1d(radial_velocity)[k] / auKmYearPerSec
+    cmat[:, 5, 0:5] = cmat[:, 0:5, 5]
+    cmat[:, 5, 5] = cmat[:, 2, 2] * (radial_velocity ** 2 + radial_velocity_error ** 2) / auKmYearPerSec ** 2 + \
+                    (parallax * radial_velocity_error / auKmYearPerSec) ** 2
 
     return np.squeeze(cmat)

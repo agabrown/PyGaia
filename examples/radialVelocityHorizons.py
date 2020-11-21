@@ -8,7 +8,7 @@ Anthony Brown 2014
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-from pygaia.errors.spectroscopic import vradErrorSkyAvg
+from pygaia.errors.spectroscopic import vrad_error_sky_avg
 from pygaia.photometry.utils import vminiFromSpt, gabsFromSpt, vabsFromSpt
 from pygaia.photometry.transformations import vminGrvsFromVmini
 
@@ -67,7 +67,7 @@ def makePlot(args):
     vmags = vabsFromSpt(spt)+5.0*np.log10(distances)-5.0
     vmini=vminiFromSpt(spt)
     grvsmags = vmags - vminGrvsFromVmini(vmini)
-    rvError = vradErrorSkyAvg(vmags, spt)
+    rvError = vrad_error_sky_avg(vmags, spt)
     observed = (grvsmags>=5.7) & (grvsmags<=16.1)
     rvError = rvError[observed]
     # Identify the points where the relative parallax accuracy is 0.1, 1, or 10 per cent.

@@ -1,11 +1,11 @@
-__all__ = ['order_points_for_sky_plot', 'plotCoordinateTransformationOnSky']
-
-from pygaia.astrometry.coordinates import Transformations, CoordinateTransformation
-from pygaia.utils import degreesToRadians, radiansToDegrees
-from numpy import arange, argmax, roll, any, linspace, pi, zeros_like
+__all__ = ['order_points_for_sky_plot', 'plot_coordinate_transformation_on_sky']
 
 import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
+import numpy as np
+
+from pygaia.astrometry.coordinates import CoordinateTransformation
+
 
 def order_points_for_sky_plot(x, y):
     """
@@ -24,14 +24,17 @@ def order_points_for_sky_plot(x, y):
 
     x, y: Order set of (x,y) points
     """
-    xroll = roll(x,1)
-    yroll = roll(y,1)
-    distance = (xroll-x)**2 + (yroll-y)**2
-    indexmax = argmax(distance)
-    return roll(x, -indexmax), roll(y, -indexmax)
+    xroll = np.roll(x, 1)
+    yroll = np.roll(y, 1)
+    distance = (xroll - x) ** 2 + (yroll - y) ** 2
+    indexmax = np.argmax(distance)
+    return np.roll(x, -indexmax), np.roll(y, -indexmax)
 
-def plotCoordinateTransformationOnSky(transformation, outfile=None, noTitle=False, noLabels=False,
-        returnPlotObject=False, lc=plt.cm.tab10.colors[0], tc=plt.cm.tab10.colors[1], lonpos=True):
+
+def plot_coordinate_transformation_on_sky(transformation, outfile=None, no_title=False, no_labels=False,
+                                          return_plot_object=False, lc=plt.cm.get_cmap('tab10').colors[0],
+                                          tc=plt.cm.get_cmap('tab10').colors[1],
+                                          lonpos=True):
     """
     Produce a sky-plot in a given coordinate system with the meridians and paralles for another
     coordinate system overlayed. The coordinate systems are specified through the
@@ -55,85 +58,85 @@ def plotCoordinateTransformationOnSky(transformation, outfile=None, noTitle=Fals
     """
     ct = CoordinateTransformation(transformation)
 
-    parallels=arange(-80.0,90.0,10.0)
-    meridians=arange(0.0,375.0,15.0)
-    meridianMax=degreesToRadians(85.0)
-    parallelsMax=degreesToRadians(179.0)
+    parallels = np.arange(-80.0, 90.0, 10.0)
+    meridians = np.arange(0.0, 375.0, 15.0)
+    meridian_max = np.deg2rad(85.0)
 
-    defaultProj = ccrs.PlateCarree()
+    default_proj = ccrs.PlateCarree()
     addtolabel = 0
     if lonpos:
         addtolabel = 360
 
-    fig=plt.figure(figsize=(12,6))
+    fig = plt.figure(figsize=(12, 6))
     ax = fig.add_subplot(1, 1, 1, projection=ccrs.Mollweide())
     ax.invert_xaxis()
 
     for thetaDeg in parallels:
-        phi=linspace(-pi,pi,1001)
-        theta=zeros_like(phi)+degreesToRadians(thetaDeg)
+        phi = np.linspace(-np.pi, np.pi, 1001)
+        theta = np.zeros_like(phi) + np.deg2rad(thetaDeg)
         phirot, thetarot = ct.transformSkyCoordinates(phi, theta)
-        phirot[(phirot>pi)] = phirot[(phirot>pi)]-2*pi
-        x ,y = radiansToDegrees(phirot), radiansToDegrees(thetarot)
-      
-        indices=(phirot>=0.0)
-        xplot=x[indices]
-        yplot=y[indices]
+        phirot[(phirot > np.pi)] = phirot[(phirot > np.pi)] - 2 * np.pi
+        x, y = np.rad2deg(phirot), np.rad2deg(thetarot)
+
+        indices = (phirot >= 0.0)
+        xplot = x[indices]
+        yplot = y[indices]
         if any(indices):
             xplot, yplot = order_points_for_sky_plot(xplot, yplot)
-        ax.plot(xplot, yplot, '-', color=lc, transform=defaultProj)
-     
-        indices=(phirot<0.0)
-        xplot=x[indices]
-        yplot=y[indices]
+        ax.plot(xplot, yplot, '-', color=lc, transform=default_proj)
+
+        indices = (phirot < 0.0)
+        xplot = x[indices]
+        yplot = y[indices]
         if any(indices):
             xplot, yplot = order_points_for_sky_plot(xplot, yplot)
-        ax.plot(xplot, yplot, '-', color=lc, transform=defaultProj)
+        ax.plot(xplot, yplot, '-', color=lc, transform=default_proj)
 
     for phiDeg in meridians:
-        theta=linspace(-meridianMax,meridianMax,1001)
-        phi=zeros_like(theta)+degreesToRadians(phiDeg)
+        theta = np.linspace(-meridian_max, meridian_max, 1001)
+        phi = np.zeros_like(theta) + np.deg2rad(phiDeg)
         phirot, thetarot = ct.transformSkyCoordinates(phi, theta)
-        phirot[(phirot>pi)] = phirot[(phirot>pi)]-2*pi
-        x ,y = radiansToDegrees(phirot), radiansToDegrees(thetarot)
-  
-        indices=(phirot>=0.0)
-        xplot=x[indices]
-        yplot=y[indices]
+        phirot[(phirot > np.pi)] = phirot[(phirot > np.pi)] - 2 * np.pi
+        x, y = np.rad2deg(phirot), np.rad2deg(thetarot)
+
+        indices = (phirot >= 0.0)
+        xplot = x[indices]
+        yplot = y[indices]
         if any(indices):
             xplot, yplot = order_points_for_sky_plot(xplot, yplot)
-        ax.plot(xplot, yplot, '-', color=lc, transform=defaultProj)
-       
-        indices=(phirot<0.0)
-        xplot=x[indices]
-        yplot=y[indices]
+        ax.plot(xplot, yplot, '-', color=lc, transform=default_proj)
+
+        indices = (phirot < 0.0)
+        xplot = x[indices]
+        yplot = y[indices]
         if any(indices):
             xplot, yplot = order_points_for_sky_plot(xplot, yplot)
-        ax.plot(xplot, yplot, '-', color=lc, transform=defaultProj)
+        ax.plot(xplot, yplot, '-', color=lc, transform=default_proj)
 
-    if (not noTitle):
-        plt.title("Sky projection in " + ct.transformationStrings[1] + " coordinates with the corresponding " + ct.transformationStrings[0] + " grid overlayed")
+    if not no_title:
+        plt.title("Sky projection in " + ct.transformationStrings[1] + " coordinates with the corresponding " +
+                  ct.transformationStrings[0] + " grid overlayed")
 
-    if (not noLabels):
-        for theta in arange(-60,90,30):
-            phirot, thetarot=ct.transformSkyCoordinates(0.0,degreesToRadians(theta))
-            x, y = (radiansToDegrees(phirot), radiansToDegrees(thetarot))
+    if not no_labels:
+        for theta in np.arange(-60, 90, 30):
+            phirot, thetarot = ct.transformSkyCoordinates(0.0, np.deg2rad(theta))
+            x, y = (np.rad2deg(phirot), np.rad2deg(thetarot))
             ax.text(x, y, "${0}$".format(theta), fontsize=16, va='bottom', ha='center', color=tc,
-                    transform=defaultProj)
-        for phi in arange(-150,0,30):
-            phirot, thetarot=ct.transformSkyCoordinates(degreesToRadians(phi), 0.0)
-            x, y = (radiansToDegrees(phirot), radiansToDegrees(thetarot))
-            ax.text(x, y, "${0}$".format(phi+addtolabel), fontsize=16, va='bottom', ha='center', color=tc,
-                    transform=defaultProj) 
-        for phi in arange(30,210,30):
-            phirot, thetarot=ct.transformSkyCoordinates(degreesToRadians(phi), 0.0)
-            x, y = (radiansToDegrees(phirot), radiansToDegrees(thetarot))
+                    transform=default_proj)
+        for phi in np.arange(-150, 0, 30):
+            phirot, thetarot = ct.transformSkyCoordinates(np.deg2rad(phi), 0.0)
+            x, y = (np.rad2deg(phirot), np.rad2deg(thetarot))
+            ax.text(x, y, "${0}$".format(phi + addtolabel), fontsize=16, va='bottom', ha='center', color=tc,
+                    transform=default_proj)
+        for phi in np.arange(30, 210, 30):
+            phirot, thetarot = ct.transformSkyCoordinates(np.deg2rad(phi), 0.0)
+            x, y = (np.rad2deg(phirot), np.rad2deg(thetarot))
             ax.text(x, y, "${0}$".format(phi), fontsize=16, va='bottom', ha='center', color=tc,
-                    transform=defaultProj)
+                    transform=default_proj)
 
-    if (outfile != None):
+    if outfile is not None:
         plt.savefig(outfile)
-    elif (returnPlotObject):
+    elif return_plot_object:
         return plt.gca()
     else:
         plt.show()

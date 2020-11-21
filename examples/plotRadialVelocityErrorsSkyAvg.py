@@ -6,7 +6,7 @@
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-from pygaia.errors.spectroscopic import vradErrorSkyAvg
+from pygaia.errors.spectroscopic import vrad_error_sky_avg
 from pygaia.photometry.transformations import vminGrvsFromVmini
 from pygaia.photometry.utils import vminiFromSpt
 
@@ -49,7 +49,7 @@ def makePlot(args):
   for spt in spts:
     hsv[0,0,0]=(240-count*deltaHue)/360.0
     vmag = vminGrvsFromVmini(vminiFromSpt(spt)) + gRvs
-    vradErrors = vradErrorSkyAvg(vmag, spt)
+    vradErrors = vrad_error_sky_avg(vmag, spt)
     plt.plot(vmag, vradErrors, '-', label=spt, color=hsv_to_rgb(hsv)[0,0,:])
     count+=1
   plt.grid(which='both')
