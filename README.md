@@ -20,7 +20,21 @@ Astrophysics: Methods, Models, and Applications (2012, van Altena et al.)]
 * The code in this package is __not intended for accurate astrometry applications__, such as predicting in detail
  astrometric paths of stars on the sky. 
 * Epoch transformation _is_ provided, including the transformation of the astrometric covariance matrix to different
- epochs. 
+ epochs.
+ 
+## Astropy astrometry modules versus pygaia.astrometry
+
+No competition! It is higly recommended to use the Astropy facilities for handling astrometric data, including
+transformations from (Cartesian) phase space coordinates to astrometric observables and vice versa. See the 
+[`astropy.coordinates`](https://docs.astropy.org/en/stable/coordinates/index.html) package. Compared to the 
+`pygaia.astrometry` package this gives you more functionality, the use of units, and much better maintained code.
+ 
+The only functionality not (yet) provided in Astropy is the transformation of the covariance matrix of the
+astrometric observables to to a different epoch. This is implemented in the class 
+`pygaia.astrometry.coordinates.EpochPropagation`. Epoch transformation as such is implemented in Astropy as the
+ [`apply_space_motion()`](https://docs.astropy.org/en/stable/coordinates/apply_space_motion.html) function of
+  the [`SkyCoord`](https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord)
+   class.
 
 ## Documentation
 
