@@ -32,7 +32,7 @@ transformations from (Cartesian) phase space coordinates to astrometric observab
  
 The only functionality not (yet) provided in Astropy is the transformation of the covariance matrix of the
 astrometric observables to to a different epoch. This is implemented in the class 
-[`pygaia.astrometry.coordinates.EpochPropagation`](./pygaia/astrometry/coordinates). Epoch transformation as such is
+[`pygaia.astrometry.coordinates.EpochPropagation`](./pygaia/astrometry/coordinates.py). Epoch transformation as such is
 implemented in Astropy as the
  [`apply_space_motion()`](https://docs.astropy.org/en/stable/coordinates/apply_space_motion.html) function of
   the [`SkyCoord`](https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord)
