@@ -27,7 +27,8 @@ Astrophysics: Methods, Models, and Applications (2012, van Altena et al.)]
 No competition! It is higly recommended to use the Astropy facilities for handling astrometric data, including
 transformations from (Cartesian) phase space coordinates to astrometric observables and vice versa. See the 
 [`astropy.coordinates`](https://docs.astropy.org/en/stable/coordinates/index.html) package. Compared to the 
-`pygaia.astrometry` package this gives you more functionality, the use of units, and much better maintained code.
+[`pygaia.astrometry`](./pygaia/astrometry) package this gives you more functionality, the use of units, and much better
+ maintained code.
  
 The only functionality not (yet) provided in Astropy is the transformation of the covariance matrix of the
 astrometric observables to to a different epoch. This is implemented in the class 
