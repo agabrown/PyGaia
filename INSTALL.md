@@ -1,9 +1,13 @@
 To install this package in your site-wide python installation use:
 
+```
 python setup.py install
+```
 
 If you do not have root access the following should work:
 
+```
 python setup.py install --user
+```
 
 The installation will then end up in the ~/.local folder

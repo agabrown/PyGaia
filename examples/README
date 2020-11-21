@@ -1,7 +1,0 @@
-This folder contains some example scripts which use PyGaia. They have not been
-set executable (Unix) but you can change that yourself or do:
-
-python script.py <command line arguments>
-
-The examples are meant for python 2.7/3.x (counting on the argparse module) but
-versions for 2.6 are included.

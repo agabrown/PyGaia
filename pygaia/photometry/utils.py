@@ -1,6 +1,6 @@
 __all__ = ['vminiFromSpt', 'vabsFromSpt', 'gabsFromSpt']
 
-from pygaia.photometry.transformations import gminvFromVmini
+from pygaia.photometry.transformations import gminv_from_vmini
 
 _sptToVminiVabsDictionary = {'B0V': (-0.31, -3.5), 'B1V': (-0.24, -2.7), 'B5V': (-0.08, 0.0), 'A0V': (0.01, 0.0),
                              'A5V': (0.16, 1.69), 'F0V': (0.38, 2.98), 'G0V': (0.67, 4.24), 'G2V': (0.72, 4.7),
@@ -70,7 +70,7 @@ def gabsFromSpt(spt):
     The value of M_G.
     """
     if spt in _sptToVminiVabsDictionary:
-        return vabsFromSpt(spt) + gminvFromVmini(vminiFromSpt(spt))
+        return vabsFromSpt(spt) + gminv_from_vmini(vminiFromSpt(spt))
     else:
         message = "Unknown spectral type. Allowed values are: "
         for key in _sptToVminiVabsDictionary.keys():

@@ -17,9 +17,9 @@ import re
 this_folder = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README and HISTORY files
-with open(path.join(this_folder, 'README.rst'), encoding='utf-8') as f:
+with open(path.join(this_folder, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
-with open(path.join(this_folder, 'HISTORY.rst'), encoding='utf-8') as f:
+with open(path.join(this_folder, 'HISTORY.md'), encoding='utf-8') as f:
     history = f.read()
 
 # Get code version from __init__.py (see https://github.com/dfm/emcee/blob/master/setup.py)
@@ -48,7 +48,7 @@ setup(
         #packages=['pygaia', 'pygaia.errors', 'pygaia.astrometry', 'pygaia.photometry', 'pygaia.plot',
         #  'pygaia.tests'],
         packages=find_packages(exclude=['contrib', 'docs', 'tests']),
-        package_data={'': ['LICENSE', 'AUTHORS.rst', 'HISTORY.rst', 'INSTALL', 'MANIFEST.in'],
+        package_data={'': ['LICENSE', 'AUTHORS.md', 'HISTORY.md', 'INSTALL.md', 'MANIFEST.in'],
             'pygaia': ['data/*.txt']},
         include_package_data=True,
         install_requires=[ 'numpy', 'scipy' ],
