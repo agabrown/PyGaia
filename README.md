@@ -49,7 +49,7 @@ This package is intended for Python3.
 The following python packages are required:
 
 * [numpy](https://numpy.org/)
-* [scip](https://www.scipy.org/)
+* [scipy](https://www.scipy.org/)
 
 For the plotting tools:
 
