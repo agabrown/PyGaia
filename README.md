@@ -13,9 +13,8 @@ Data Processing and Analysis Consortium (DPAC) in particular its Coordination Un
 This toolkit is basically an implementation of the performance models for Gaia
 which are publicly available at:
 [http://www.cosmos.esa.int/web/gaia/science-performance](http://www.cosmos.esa.int/web/gaia/science-performance). In
-addition much of the material in chapter 4 of the book [Astrometry for
-Astrophysics: Methods, Models, and Applications (2012, van Altena et al.)]
-(http://www.cambridge.org/9780521519205) is implemented.
+addition much of the material in chapter 4 of the book [Astrometry for Astrophysics: Methods, Models, and
+ Applications (2012, van Altena et al.)](http://www.cambridge.org/9780521519205) is implemented.
 
 * The code in this package is __not intended for accurate astrometry applications__, such as predicting in detail
  astrometric paths of stars on the sky. 
