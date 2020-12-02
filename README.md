@@ -23,8 +23,9 @@ addition much of the material in chapter 4 of the book [Astrometry for Astrophys
  
 ## Astropy astrometry modules versus pygaia.astrometry
 
-No competition! It is higly recommended to use the Astropy facilities for handling astrometric data, including
-transformations from (Cartesian) phase space coordinates to astrometric observables and vice versa. See the 
+No competition! It is higly recommended to use the [Astropy](https://www.astropy.org/) facilities for handling
+ astrometric data, including transformations from (Cartesian) phase space coordinates to astrometric observables and
+  vice versa. See the 
 [`astropy.coordinates`](https://docs.astropy.org/en/stable/coordinates/index.html) package. Compared to the 
 [`pygaia.astrometry`](./pygaia/astrometry) package this gives you more functionality, the use of units, and much better
  maintained code.
