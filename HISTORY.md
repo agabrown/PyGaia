@@ -1,12 +1,12 @@
-## 2.0 (November 2020)
+## 2.0 (December 2020)
 
 * This version is for the post-Gaia EDR3 performance predictions which are extrapolated from the actual Gaia (E)DR3
  performances. See [https://www.cosmos.esa.int/web/gaia/science-performance](https://www.cosmos.esa.int/web/gaia/science-performance)
-* __Many breaking changes!__ For the pre-Gaia EDR3 version of the code see [https://github.com/agabrown/pygaia-v1](https
-://github.com/agabrown/pygaia-v1)
-* The performance predictions for astrometry now depend only on G and can only be generated for Gaia DR3/DR4/DR5
+* __MANY BREAKING CHANGES!__ For the pre-Gaia EDR3 version of the code see [https://github.com/agabrown/pygaia-v1
+](https://github.com/agabrown/pygaia-v1)
+* The performance predictions for astrometry now depend only on G and can only be generated for Gaia (E)DR3/DR4/DR5
 . Variations as a function of sky position and colour are not included.
-* Python was cleaned up, making it (more) conformant with the Python standards. This again causes many breaking
+* The code was cleaned up, making it (more) conformant with the Python standards. This again causes many breaking
  changes due to renaming of modules and functions.
 
 ## 1.32 (October 2019)
