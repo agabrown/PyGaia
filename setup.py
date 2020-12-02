@@ -8,11 +8,11 @@ https://packaging.python.org/en/latest/distributing.html
 https://github.com/pypa/sampleproject
 """
 
-from setuptools import setup, find_packages
-
+import re
 from codecs import open
 from os import path
-import re
+
+from setuptools import setup, find_packages
 
 this_folder = path.abspath(path.dirname(__file__))
 
@@ -28,40 +28,41 @@ m = open(path.join(this_folder, "pygaia", "__init__.py")).read()
 codeVersion = vre.findall(m)[0]
 
 setup(
-        name='PyGaia',
+    name='PyGaia',
 
-        version=codeVersion,
+    version=codeVersion,
 
-        description='Basic Gaia data simulation, manipulation, and analysis toolkit',
-        long_description=long_description + "\n\n"
-        + 'Changelog\n'
-        + '---------\n\n'
-        + history,
+    description='Basic Gaia data simulation, manipulation, and analysis toolkit',
+    long_description=long_description + "\n\n"
+                     + '# Changelog\n'
+                     + '\n\n'
+                     + history,
+    long_description_content_type="text/markdown",
 
-        url='https://github.com/agabrown/PyGaia',
+    url='https://github.com/agabrown/PyGaia',
 
-        author='Anthony Brown',
-        author_email='brown@strw.leidenuniv.nl',
+    author='Anthony Brown',
+    author_email='brown@strw.leidenuniv.nl',
 
-        license='LGPLv3+',
+    license='LGPLv3+',
 
-        #packages=['pygaia', 'pygaia.errors', 'pygaia.astrometry', 'pygaia.photometry', 'pygaia.plot',
-        #  'pygaia.tests'],
-        packages=find_packages(exclude=['contrib', 'docs', 'tests']),
-        package_data={'': ['LICENSE', 'AUTHORS.md', 'HISTORY.md', 'INSTALL.md', 'MANIFEST.in'],
-            'pygaia': ['data/*.txt']},
-        include_package_data=True,
-        install_requires=[ 'numpy', 'scipy' ],
+    # packages=['pygaia', 'pygaia.errors', 'pygaia.astrometry', 'pygaia.photometry', 'pygaia.plot',
+    #  'pygaia.tests'],
+    packages=find_packages(exclude=['contrib', 'docs', 'tests']),
+    package_data={'': ['LICENSE', 'AUTHORS.md', 'HISTORY.md', 'INSTALL.md', 'MANIFEST.in'],
+                  'pygaia': ['data/*.txt']},
+    include_package_data=True,
+    install_requires=['numpy', 'scipy'],
 
-        classifiers=[
-            'Development Status :: 4 - Beta',
-            'Intended Audience :: Developers',
-            'Intended Audience :: Science/Research',
-            'License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)',
-            'Operating System :: OS Independent',
-            'Programming Language :: Python :: 3',
-            'Topic :: Scientific/Engineering :: Astronomy',
-            ],
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Intended Audience :: Developers',
+        'Intended Audience :: Science/Research',
+        'License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python :: 3',
+        'Topic :: Scientific/Engineering :: Astronomy',
+    ],
 
-        entry_points={},
-        )
+    entry_points={},
+)
