@@ -1,4 +1,4 @@
-__all__ = ['CoordinateTransformation', 'Transformations', 'EpochPropagation']
+__all__ = ['CoordinateTransformation', 'Transformations', 'EpochPropagation', 'angular_distance']
 
 import numpy as np
 
