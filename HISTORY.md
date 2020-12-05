@@ -1,3 +1,7 @@
+## 2.01 (December 2020)
+
+* Minor fixes to code, documentation link in EpochPropagation class updated.
+
 ## 2.0 (December 2020)
 
 * This version is for the post-Gaia EDR3 performance predictions which are extrapolated from the actual Gaia (E)DR3
