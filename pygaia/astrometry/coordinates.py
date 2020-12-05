@@ -346,7 +346,7 @@ class EpochPropagation:
     """
     Provides methods for transforming the astrometry and radial velocity of a given source to a different
     epoch. The formulae for rigorous epoch transformation can be found on the Gaia documentation pages:
-    http://gea.esac.esa.int/archive/documentation/GDR2/Data_processing/chap_cu3ast/sec_cu3ast_intro/ssec_cu3ast_intro_tansforms.html#SSS3.P1
+    https://gea.esac.esa.int/archive/documentation/GEDR3/Data_processing/chap_cu3ast/sec_cu3ast_intro/ssec_cu3ast_intro_tansforms.html
     """
 
     def __init__(self):
