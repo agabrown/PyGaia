@@ -11,7 +11,7 @@ _science_margin = 1.2
 _mean_num_ccds = (7.0 * 9.0 - 1.0) / 7.0
 
 # End-of-mission CCD transit calibration floor on the photometric uncertainties
-_eom_calibration_floor_g = 3.0e-3 / np.np.sqrt(_mean_num_ccds)
+_eom_calibration_floor_g = 3.0e-3 / np.sqrt(_mean_num_ccds)
 _eom_calibration_floor_bp = 5.0e-3
 _eom_calibration_floor_rp = 5.0e-3
 
