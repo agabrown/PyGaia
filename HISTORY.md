@@ -1,4 +1,8 @@
-## 2.01 (December 2020)
+## 2.2 (January 2021)
+
+* Fixed the typo noted in https://github.com/agabrown/PyGaia/pull/4
+
+## 2.1 (December 2020)
 
 * Minor fixes to code, documentation link in EpochPropagation class updated.
 

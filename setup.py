@@ -1,7 +1,7 @@
 """
 Setup module for PyGaia.
 
-Anthony Brown 2012--2019
+Anthony Brown 2012--2021
 
 Based on:
 https://packaging.python.org/en/latest/distributing.html
@@ -25,12 +25,12 @@ with open(path.join(this_folder, 'HISTORY.md'), encoding='utf-8') as f:
 # Get code version from __init__.py (see https://github.com/dfm/emcee/blob/master/setup.py)
 vre = re.compile("__version__ = \"(.*?)\"")
 m = open(path.join(this_folder, "pygaia", "__init__.py")).read()
-codeVersion = vre.findall(m)[0]
+code_version = vre.findall(m)[0]
 
 setup(
     name='PyGaia',
 
-    version=codeVersion,
+    version=code_version,
 
     description='Basic Gaia data simulation, manipulation, and analysis toolkit',
     long_description=long_description + "\n\n"
