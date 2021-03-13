@@ -1,4 +1,4 @@
-__all__ = ['g_magnitude_uncertainty', 'g_magnitude_uncertainty+eom', 
+__all__ = ['g_magnitude_uncertainty', 'g_magnitude_uncertainty_eom', 
         'bp_magnitude_uncertainty', 'bp_magnitude_uncertainty_eom',
         'rp_magnitude_uncertainty', 'rp_magnitude_uncertainty_eom']
 
