@@ -68,7 +68,7 @@ _transformationStringMap = {Transformations.GAL2ICRS: ("galactic", "ICRS"),
                             Transformations.ECL2GAL: ("ecliptic", "galactic")}
 
 
-def angular_distance(phi1, theta1, phi2, theta2):
+def angular_distance(phi1, theta1, phi2, theta2, return_posangle=False):
     """
     Calculate the angular distance between pairs of sky coordinates.
 
@@ -83,6 +83,13 @@ def angular_distance(phi1, theta1, phi2, theta2):
         Longitude of second coordinate (radians).
     theta2 : float
         Latitude of second coordinate (radians).
+    return_posangle : boolean
+        If true return the position angle of the point (phi2, theta2), as defined in the tangent plane
+        at (phi1, theta1). Where the position angle is measured from local north over east and ranges between
+        0 and 2*pi. If the distance between the two points is 0 or pi to within floating point precision (as
+        given by np.finfo(float).resolution) then 0 is returned for the position angle. This is a choice for the
+        cases where mathematically the position angle is not defined. This resolution (1e-15) corresponds to about
+        0.2 nanoarcseconds.
 
     Returns
     -------
@@ -92,11 +99,19 @@ def angular_distance(phi1, theta1, phi2, theta2):
     # Formula below is more numerically stable than np.arccos( np.sin(theta1)*np.sin(theta2) +
     # np.cos(phi2-phi1)*np.cos(theta1)*np.cos(theta2) )
     # See: https://en.wikipedia.org/wiki/Great-circle_distance
-    return np.arctan(np.sqrt((np.cos(theta2) * np.sin(phi2 - phi1)) ** 2 +
-                             (np.cos(theta1) * np.sin(theta2) - np.sin(theta1) * np.cos(theta2) * np.cos(
-                                 phi2 - phi1)) ** 2) / (
-                             np.sin(theta1) * np.sin(theta2) +
-                             np.cos(phi2 - phi1) * np.cos(theta1) * np.cos(theta2)))
+    dist = np.arctan2(np.sqrt((np.cos(theta2) * np.sin(phi2 - phi1)) ** 2 +
+                              (np.cos(theta1) * np.sin(theta2) - np.sin(theta1) * np.cos(theta2) * np.cos(
+                                  phi2 - phi1)) ** 2),
+                      np.sin(theta1) * np.sin(theta2) +
+                      np.cos(phi2 - phi1) * np.cos(theta1) * np.cos(theta2))
+    if not return_posangle:
+        return dist
+    else:
+        posangle = np.arctan2(np.cos(theta2) * np.sin(phi2 - phi1),
+                              np.cos(theta1) * np.sin(theta2) -
+                              np.sin(theta1) * np.cos(theta2) * np.cos(phi2 - phi1))
+        posangle = np.where(np.isclose(np.sin(dist), 0, atol=np.finfo(float).resolution), 0.0, posangle)
+        return dist, np.squeeze(np.where(posangle < 0, posangle + 2 * np.pi, posangle))
 
 
 class CoordinateTransformation:
