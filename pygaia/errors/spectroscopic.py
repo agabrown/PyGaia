@@ -39,7 +39,9 @@ def vrad_error_sky_avg(vmag, spt, extension=0.0):
             _vradErrorACoeff[spt] * (vmag - _vradMagnitudeZeroPoint)) * errscaling
     else:
         uncertainties = np.zeros_like(vmag)
-        for i, v, s in zip(range(vmag.size), vmag, spt):
-            uncertainties[i] = _vradCalibrationFloor + _vradErrorBCoeff[s] * np.exp(
-                _vradErrorACoeff[s] * (v - _vradMagnitudeZeroPoint)) * errscaling
+        for s in np.unique(spt):
+            s_filt = (spt==s)
+            uncertainties[s_filt] = _vradCalibrationFloor + _vradErrorBCoeff[s] * np.exp(
+                _vradErrorACoeff[s] * (vmag[s_filt] - _vradMagnitudeZeroPoint)) * errscaling
+
         return uncertainties

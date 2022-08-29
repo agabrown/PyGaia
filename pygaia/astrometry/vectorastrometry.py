@@ -22,7 +22,7 @@ def spherical_to_cartesian(r, phi, theta):
 
     Returns
     -------
-  
+
     The Cartesian vector components x, y, z
     """
     ctheta = np.cos(theta)
@@ -41,16 +41,16 @@ def cartesian_to_spherical(x, y, z):
 
     Parameters
     ----------
-  
+
     x - Cartesian vector component along the X-axis
     y - Cartesian vector component along the Y-axis
     z - Cartesian vector component along the Z-axis
 
     Returns
     -------
-  
+
     The spherical coordinates r=np.sqrt(x*x+y*y+z*z), longitude phi, latitude theta.
-  
+
     NOTE THAT THE LONGITUDE ANGLE IS BETWEEN 0 AND +2PI. FOR r=0 AN EXCEPTION IS RAISED.
     """
     rCylSq = x * x + y * y
@@ -172,13 +172,10 @@ def phase_space_to_astrometry(x, y, z, vx, vy, vz):
         mutheta = np.dot(q, velocitiesArray) * parallax / au_km_year_per_sec
         vrad = np.dot(r, velocitiesArray)
     else:
-        muphistar = np.zeros_like(parallax)
-        mutheta = np.zeros_like(parallax)
-        vrad = np.zeros_like(parallax)
-        for i in range(parallax.size):
-            muphistar[i] = np.dot(p[:, i], velocitiesArray[:, i]) * parallax[i] / au_km_year_per_sec
-            mutheta[i] = np.dot(q[:, i], velocitiesArray[:, i]) * parallax[i] / au_km_year_per_sec
-            vrad[i] = np.dot(r[:, i], velocitiesArray[:, i])
+        muphistar = np.sum(p * velocitiesArray,axis=0) * parallax/au_km_year_per_sec
+        mutheta = np.sum(q * velocitiesArray,axis=0) * parallax/au_km_year_per_sec
+        vrad = np.sum(r * velocitiesArray,axis=0)
+
 
     return phi, theta, parallax, muphistar, mutheta, vrad
 

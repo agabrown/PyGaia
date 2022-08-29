@@ -230,7 +230,7 @@ class CoordinateTransformation:
 
         Returns
         -------
-        
+
         sigPhiRotStar  - The transformed standard error in the longitude-like angle (including
                          np.cos(latitude) factor)
         sigThetaRot    - The transformed standard error in the latitude-like angle.
@@ -271,7 +271,7 @@ class CoordinateTransformation:
 
         Returns
         -------
-        
+
         sigMuPhiRotStar    - The transformed standard error in the proper motion in the longitude direction
         (including np.cos(latitude) factor).
         sigMuThetaRot      - The transformed standard error in the proper motion in the longitude direction.
@@ -340,16 +340,13 @@ class CoordinateTransformation:
         z_rot = self.rotationMatrix[2, :]
 
         if p.ndim == 2:
-            z_rot_all = np.tile(z_rot, p.shape[1]).reshape(p.shape[1], 3)
+            N = p.shape[1]
+            z_rot_all = np.tile(z_rot, N).reshape( N, 3)
             p_rot = np.cross(z_rot_all, r.T)
-            norm_p_rot = np.linalg.norm(p_rot, axis=1)
-            for i in range(p_rot.shape[0]):
-                p_rot[i] = p_rot[i] / norm_p_rot[i]
-            c = np.zeros(p_rot.shape[0])
-            s = np.zeros(p_rot.shape[0])
-            for i in range(p_rot.shape[0]):
-                c[i] = np.dot(p_rot[i], p.T[i])
-                s[i] = np.dot(p_rot[i], q.T[i])
+            p_rot = p_rot/np.linalg.norm(p_rot, axis=1)[:,None]
+            c = np.sum(p_rot*p.T, axis=1)
+            s = np.sum(p_rot*q.T, axis=1)
+
             return c, s
         else:
             p_rot = np.cross(z_rot, r.T)
