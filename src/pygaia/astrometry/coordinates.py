@@ -1,10 +1,22 @@
-__all__ = ['CoordinateTransformation', 'Transformations', 'EpochPropagation', 'angular_distance']
-
+"""
+Provides tools for coordinate transformation and epoch propagation.
+"""
 import numpy as np
 
+__all__ = [
+    "CoordinateTransformation",
+    "Transformations",
+    "EpochPropagation",
+    "angular_distance",
+]
+
 from pygaia.astrometry.constants import au_km_year_per_sec
-from pygaia.astrometry.vectorastrometry import spherical_to_cartesian, cartesian_to_spherical, \
-    elementary_rotation_matrix, normal_triad
+from pygaia.astrometry.vectorastrometry import (
+    spherical_to_cartesian,
+    cartesian_to_spherical,
+    elementary_rotation_matrix,
+    normal_triad,
+)
 from pygaia.utils import enum
 
 # Obliquity of the Ecliptic (arcsec)
@@ -40,32 +52,43 @@ _rotationMatrixIcrsToGalactic = np.dot(_matC, np.dot(_matB, _matA))
 _rotationMatrixGalacticToIcrs = np.transpose(_rotationMatrixIcrsToGalactic)
 
 # Rotation matrix for the transformation from Ecliptic to ICRS coordinates.
-_rotationMatrixEclipticToIcrs = elementary_rotation_matrix("x", -1 * _obliquityOfEcliptic)
+_rotationMatrixEclipticToIcrs = elementary_rotation_matrix(
+    "x", -1 * _obliquityOfEcliptic
+)
 
 # Rotation matrix for the transformation from ICRS to Ecliptic coordinates.
 _rotationMatrixIcrsToEcliptic = np.transpose(_rotationMatrixEclipticToIcrs)
 
 # Rotation matrix for the transformation from Galactic to Ecliptic coordinates.
-_rotationMatrixGalacticToEcliptic = np.dot(_rotationMatrixIcrsToEcliptic, _rotationMatrixGalacticToIcrs)
+_rotationMatrixGalacticToEcliptic = np.dot(
+    _rotationMatrixIcrsToEcliptic, _rotationMatrixGalacticToIcrs
+)
 
 # Rotation matrix for the transformation from Ecliptic to Galactic coordinates.
 _rotationMatrixEclipticToGalactic = np.transpose(_rotationMatrixGalacticToEcliptic)
 
-Transformations = enum('Transformations', ['GAL2ICRS', 'ICRS2GAL', 'ECL2ICRS', 'ICRS2ECL', 'GAL2ECL', 'ECL2GAL'])
+Transformations = enum(
+    "Transformations",
+    ["GAL2ICRS", "ICRS2GAL", "ECL2ICRS", "ICRS2ECL", "GAL2ECL", "ECL2GAL"],
+)
 
-_rotationMatrixMap = {Transformations.GAL2ICRS: _rotationMatrixGalacticToIcrs,
-                      Transformations.ICRS2GAL: _rotationMatrixIcrsToGalactic,
-                      Transformations.ECL2ICRS: _rotationMatrixEclipticToIcrs,
-                      Transformations.ICRS2ECL: _rotationMatrixIcrsToEcliptic,
-                      Transformations.GAL2ECL: _rotationMatrixGalacticToEcliptic,
-                      Transformations.ECL2GAL: _rotationMatrixEclipticToGalactic}
+_rotationMatrixMap = {
+    Transformations.GAL2ICRS: _rotationMatrixGalacticToIcrs,
+    Transformations.ICRS2GAL: _rotationMatrixIcrsToGalactic,
+    Transformations.ECL2ICRS: _rotationMatrixEclipticToIcrs,
+    Transformations.ICRS2ECL: _rotationMatrixIcrsToEcliptic,
+    Transformations.GAL2ECL: _rotationMatrixGalacticToEcliptic,
+    Transformations.ECL2GAL: _rotationMatrixEclipticToGalactic,
+}
 
-_transformationStringMap = {Transformations.GAL2ICRS: ("galactic", "ICRS"),
-                            Transformations.ICRS2GAL: ("ICRS", "galactic"),
-                            Transformations.ECL2ICRS: ("ecliptic", "ICRS"),
-                            Transformations.ICRS2ECL: ("ICRS", "ecliptic"),
-                            Transformations.GAL2ECL: ("galactic", "ecliptic"),
-                            Transformations.ECL2GAL: ("ecliptic", "galactic")}
+_transformationStringMap = {
+    Transformations.GAL2ICRS: ("galactic", "ICRS"),
+    Transformations.ICRS2GAL: ("ICRS", "galactic"),
+    Transformations.ECL2ICRS: ("ecliptic", "ICRS"),
+    Transformations.ICRS2ECL: ("ICRS", "ecliptic"),
+    Transformations.GAL2ECL: ("galactic", "ecliptic"),
+    Transformations.ECL2GAL: ("ecliptic", "galactic"),
+}
 
 
 def angular_distance(phi1, theta1, phi2, theta2, return_posangle=False):
@@ -99,18 +122,29 @@ def angular_distance(phi1, theta1, phi2, theta2, return_posangle=False):
     # Formula below is more numerically stable than np.arccos( np.sin(theta1)*np.sin(theta2) +
     # np.cos(phi2-phi1)*np.cos(theta1)*np.cos(theta2) )
     # See: https://en.wikipedia.org/wiki/Great-circle_distance
-    dist = np.arctan2(np.sqrt((np.cos(theta2) * np.sin(phi2 - phi1)) ** 2 +
-                              (np.cos(theta1) * np.sin(theta2) - np.sin(theta1) * np.cos(theta2) * np.cos(
-                                  phi2 - phi1)) ** 2),
-                      np.sin(theta1) * np.sin(theta2) +
-                      np.cos(phi2 - phi1) * np.cos(theta1) * np.cos(theta2))
+    dist = np.arctan2(
+        np.sqrt(
+            (np.cos(theta2) * np.sin(phi2 - phi1)) ** 2
+            + (
+                np.cos(theta1) * np.sin(theta2)
+                - np.sin(theta1) * np.cos(theta2) * np.cos(phi2 - phi1)
+            )
+            ** 2
+        ),
+        np.sin(theta1) * np.sin(theta2)
+        + np.cos(phi2 - phi1) * np.cos(theta1) * np.cos(theta2),
+    )
     if not return_posangle:
         return dist
     else:
-        posangle = np.arctan2(np.cos(theta2) * np.sin(phi2 - phi1),
-                              np.cos(theta1) * np.sin(theta2) -
-                              np.sin(theta1) * np.cos(theta2) * np.cos(phi2 - phi1))
-        posangle = np.where(np.isclose(np.sin(dist), 0, atol=np.finfo(float).resolution), 0.0, posangle)
+        posangle = np.arctan2(
+            np.cos(theta2) * np.sin(phi2 - phi1),
+            np.cos(theta1) * np.sin(theta2)
+            - np.sin(theta1) * np.cos(theta2) * np.cos(phi2 - phi1),
+        )
+        posangle = np.where(
+            np.isclose(np.sin(dist), 0, atol=np.finfo(float).resolution), 0.0, posangle
+        )
         return dist, np.squeeze(np.where(posangle < 0, posangle + 2 * np.pi, posangle))
 
 
@@ -207,7 +241,9 @@ class CoordinateTransformation:
         c, s = self._get_jacobian(phi, theta)
         return c * muphistar + s * mutheta, c * mutheta - s * muphistar
 
-    def transform_sky_coordinate_errors(self, phi, theta, sigphistar, sigtheta, rho_phi_theta=0):
+    def transform_sky_coordinate_errors(
+        self, phi, theta, sigphistar, sigtheta, rho_phi_theta=0
+    ):
         """
         Converts the sky coordinate errors from one reference system to another, including the covariance
         term. Equations (1.5.4) and (1.5.20) from section 1.5 in the Hipparcos Explanatory Volume 1 are used.
@@ -230,7 +266,7 @@ class CoordinateTransformation:
 
         Returns
         -------
-        
+
         sigPhiRotStar  - The transformed standard error in the longitude-like angle (including
                          np.cos(latitude) factor)
         sigThetaRot    - The transformed standard error in the latitude-like angle.
@@ -247,9 +283,15 @@ class CoordinateTransformation:
         varphistar_rot = csqr * varphistar + ssqr * vartheta + 2.0 * covar * c * s
         vartheta_rot = ssqr * varphistar + csqr * vartheta - 2.0 * covar * c * s
         covar_rot = (csqr - ssqr) * covar + c * s * (vartheta - varphistar)
-        return np.sqrt(varphistar_rot), np.sqrt(vartheta_rot), covar_rot / np.sqrt(varphistar_rot * vartheta_rot)
+        return (
+            np.sqrt(varphistar_rot),
+            np.sqrt(vartheta_rot),
+            covar_rot / np.sqrt(varphistar_rot * vartheta_rot),
+        )
 
-    def transform_proper_motion_errors(self, phi, theta, sigmuphistar, sigmutheta, rho_muphi_mutheta=0):
+    def transform_proper_motion_errors(
+        self, phi, theta, sigmuphistar, sigmutheta, rho_muphi_mutheta=0
+    ):
         """
         Converts the proper motion errors from one reference system to another, including the covariance
         term. Equations (1.5.4) and (1.5.20) from section 1.5 in the Hipparcos Explanatory Volume 1 are used.
@@ -271,14 +313,15 @@ class CoordinateTransformation:
 
         Returns
         -------
-        
+
         sigMuPhiRotStar    - The transformed standard error in the proper motion in the longitude direction
         (including np.cos(latitude) factor).
         sigMuThetaRot      - The transformed standard error in the proper motion in the longitude direction.
         rhoMuPhiMuThetaRot - The transformed correlation coefficient.
         """
-        return self.transform_sky_coordinate_errors(phi, theta, sigmuphistar, sigmutheta,
-                                                    rho_phi_theta=rho_muphi_mutheta)
+        return self.transform_sky_coordinate_errors(
+            phi, theta, sigmuphistar, sigmutheta, rho_phi_theta=rho_muphi_mutheta
+        )
 
     def transform_covariance_matrix(self, phi, theta, covmat):
         """
@@ -367,7 +410,9 @@ class EpochPropagation:
     def __init__(self):
         self.mastorad = np.pi / (180 * 3600 * 1000)
 
-    def propagate_astrometry(self, phi, theta, parallax, muphistar, mutheta, vrad, t0, t1):
+    def propagate_astrometry(
+        self, phi, theta, parallax, muphistar, mutheta, vrad, t0, t1
+    ):
         """
         Propagate the position of a source from the reference epoch t0 to the new epoch t1.
 
@@ -406,18 +451,18 @@ class EpochPropagation:
         pmra0 = muphistar * self.mastorad
         pmdec0 = mutheta * self.mastorad
         pmr0 = vrad * parallax / au_km_year_per_sec * self.mastorad
-        pmtot0sqr = (muphistar ** 2 + mutheta ** 2) * self.mastorad ** 2
+        pmtot0sqr = (muphistar**2 + mutheta**2) * self.mastorad**2
 
         # Proper motion vector
         pmvec0 = pmra0 * p0 + pmdec0 * q0
 
-        f = (1 + 2 * pmr0 * t + (pmtot0sqr + pmr0 ** 2) * t ** 2) ** (-0.5)
+        f = (1 + 2 * pmr0 * t + (pmtot0sqr + pmr0**2) * t**2) ** (-0.5)
         u = (r0 * (1 + pmr0 * t) + pmvec0 * t) * f
 
         _, phi1, theta1 = cartesian_to_spherical(u[0], u[1], u[2])
         parallax1 = parallax * f
-        pmr1 = (pmr0 + (pmtot0sqr + pmr0 ** 2) * t) * f ** 2
-        pmvec1 = (pmvec0 * (1 + pmr0 * t) - r0 * pmr0 ** 2 * t) * f ** 3
+        pmr1 = (pmr0 + (pmtot0sqr + pmr0**2) * t) * f**2
+        pmvec1 = (pmvec0 * (1 + pmr0 * t) - r0 * pmr0**2 * t) * f**3
         p1, q1, r1 = normal_triad(phi1, theta1)
         muphistar1 = np.sum(p1 * pmvec1 / self.mastorad, axis=0)
         mutheta1 = np.sum(q1 * pmvec1 / self.mastorad, axis=0)
@@ -454,9 +499,16 @@ class EpochPropagation:
 
         Coordinates phi and theta at new epoch (in radians)
         """
-        phi1, theta1, parallax1, muphistar1, mutheta1, vrad1 = self.propagate_astrometry(phi, theta, parallax,
-                                                                                         muphistar, mutheta, vrad, t0,
-                                                                                         t1)
+        (
+            phi1,
+            theta1,
+            parallax1,
+            muphistar1,
+            mutheta1,
+            vrad1,
+        ) = self.propagate_astrometry(
+            phi, theta, parallax, muphistar, mutheta, vrad, t0, t1
+        )
         return phi1, theta1
 
     def propagate_astrometry_and_covariance_matrix(self, a0, c0, t0, t1):
@@ -514,9 +566,9 @@ class EpochPropagation:
 
         # Auxiliary quantities
         tau2 = tau * tau
-        pm02 = pma0 ** 2 + pmd0 ** 2
+        pm02 = pma0**2 + pmd0**2
         w = one + pmr0 * tau
-        f2 = one / (one + two * pmr0 * tau + (pm02 + pmr0 ** 2) * tau2)
+        f2 = one / (one + two * pmr0 * tau + (pm02 + pmr0**2) * tau2)
         f = np.sqrt(f2)
         f3 = f2 * f
         f4 = f2 * f2
@@ -527,8 +579,8 @@ class EpochPropagation:
         par = par0 * f
 
         # Proper motion vector and radial proper motion at t1
-        pmvec = (pmvec0 * (one + pmr0 * tau) - r0 * pmr0 ** 2 * tau) * f3
-        pmr = (pmr0 + (pm02 + pmr0 ** 2) * tau) * f2
+        pmvec = (pmvec0 * (one + pmr0 * tau) - r0 * pmr0**2 * tau) * f3
+        pmr = (pmr0 + (pm02 + pmr0**2) * tau) * f2
 
         # Normal triad at t1
         p, q, r = normal_triad(ra, dec)
@@ -586,15 +638,23 @@ class EpochPropagation:
         jacobian[:, 3, 0] = -pp0 * pm02 * tau * f3 - pr0 * pma0 * w * f3
         jacobian[:, 3, 1] = -pq0 * pm02 * tau * f3 - pr0 * pmd0 * w * f3
         jacobian[:, 3, 2] = zero
-        jacobian[:, 3, 3] = pp0 * w * f3 - two * pr0 * pma0 * tau * f3 - three * pma * pma0 * tau2 * f2
-        jacobian[:, 3, 4] = pq0 * w * f3 - two * pr0 * pmd0 * tau * f3 - three * pma * pmd0 * tau2 * f2
+        jacobian[:, 3, 3] = (
+            pp0 * w * f3 - two * pr0 * pma0 * tau * f3 - three * pma * pma0 * tau2 * f2
+        )
+        jacobian[:, 3, 4] = (
+            pq0 * w * f3 - two * pr0 * pmd0 * tau * f3 - three * pma * pmd0 * tau2 * f2
+        )
         jacobian[:, 3, 5] = ppmz * tau * f2
 
         jacobian[:, 4, 0] = -qp0 * pm02 * tau * f3 - qr0 * pma0 * w * f3
         jacobian[:, 4, 1] = -qq0 * pm02 * tau * f3 - qr0 * pmd0 * w * f3
         jacobian[:, 4, 2] = zero
-        jacobian[:, 4, 3] = qp0 * w * f3 - two * qr0 * pma0 * tau * f3 - three * pmd * pma0 * tau2 * f2
-        jacobian[:, 4, 4] = qq0 * w * f3 - two * qr0 * pmd0 * tau * f3 - three * pmd * pmd0 * tau2 * f2
+        jacobian[:, 4, 3] = (
+            qp0 * w * f3 - two * qr0 * pma0 * tau * f3 - three * pmd * pma0 * tau2 * f2
+        )
+        jacobian[:, 4, 4] = (
+            qq0 * w * f3 - two * qr0 * pmd0 * tau * f3 - three * pmd * pmd0 * tau2 * f2
+        )
         jacobian[:, 4, 5] = qpmz * tau * f2
 
         jacobian[:, 5, 0] = zero
@@ -602,14 +662,16 @@ class EpochPropagation:
         jacobian[:, 5, 2] = zero
         jacobian[:, 5, 3] = two * pma0 * w * tau * f4
         jacobian[:, 5, 4] = two * pmd0 * w * tau * f4
-        jacobian[:, 5, 5] = (w ** 2 - pm02 * tau2) * f4
+        jacobian[:, 5, 5] = (w**2 - pm02 * tau2) * f4
 
         jacobian_transposed = np.zeros_like(jacobian)
         for i in range(jacobian.shape[0]):
             jacobian_transposed[i] = jacobian[i].T
 
         if c0.ndim == 2:
-            c = np.matmul(jacobian, np.matmul(c0[np.newaxis, :, :], jacobian_transposed))
+            c = np.matmul(
+                jacobian, np.matmul(c0[np.newaxis, :, :], jacobian_transposed)
+            )
         else:
             c = np.matmul(jacobian, np.matmul(c0, jacobian_transposed))
 

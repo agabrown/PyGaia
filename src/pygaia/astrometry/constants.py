@@ -4,6 +4,15 @@ Provides numerical constants useful for astrometric calculations.
 
 import numpy as np
 
+__all__ = [
+    "au_in_meter",
+    "au_mas_parsec",
+    "julian_year_seconds",
+    "au_km_year_per_sec",
+    "au_mas_km_year_per_sec",
+    "parsec",
+]
+
 # Astronomical Unit in meter, IAU constant and defining length
 au_in_meter = 149597870700.0
 

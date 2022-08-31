@@ -1,9 +1,14 @@
-__all__ = ['spherical_to_cartesian', 'cartesian_to_spherical', 'normal_triad', 'elementary_rotation_matrix',
-           'phase_space_to_astrometry', 'astrometry_to_phase_space']
-
 import numpy as np
-
 from .constants import au_mas_parsec, au_km_year_per_sec
+
+__all__ = [
+    "spherical_to_cartesian",
+    "cartesian_to_spherical",
+    "normal_triad",
+    "elementary_rotation_matrix",
+    "phase_space_to_astrometry",
+    "astrometry_to_phase_space",
+]
 
 
 def spherical_to_cartesian(r, phi, theta):
@@ -22,7 +27,7 @@ def spherical_to_cartesian(r, phi, theta):
 
     Returns
     -------
-  
+
     The Cartesian vector components x, y, z
     """
     ctheta = np.cos(theta)
@@ -41,16 +46,16 @@ def cartesian_to_spherical(x, y, z):
 
     Parameters
     ----------
-  
+
     x - Cartesian vector component along the X-axis
     y - Cartesian vector component along the Y-axis
     z - Cartesian vector component along the Z-axis
 
     Returns
     -------
-  
+
     The spherical coordinates r=np.sqrt(x*x+y*y+z*z), longitude phi, latitude theta.
-  
+
     NOTE THAT THE LONGITUDE ANGLE IS BETWEEN 0 AND +2PI. FOR r=0 AN EXCEPTION IS RAISED.
     """
     rCylSq = x * x + y * y
@@ -112,18 +117,30 @@ def elementary_rotation_matrix(axis, rotationAngle):
 
     rotmat = elementaryRotationMatrix("y", pi/6.0)
     """
-    if (axis == "x" or axis == "X"):
-        return np.array([[1.0, 0.0, 0.0], [0.0, np.cos(rotationAngle), np.sin(rotationAngle)], [0.0,
-                                                                                                -np.sin(rotationAngle),
-                                                                                                np.cos(rotationAngle)]])
-    elif (axis == "y" or axis == "Y"):
-        return np.array([[np.cos(rotationAngle), 0.0, -np.sin(rotationAngle)], [0.0, 1.0, 0.0], [np.sin(rotationAngle),
-                                                                                                 0.0, np.cos(
-                rotationAngle)]])
-    elif (axis == "z" or axis == "Z"):
-        return np.array([[np.cos(rotationAngle), np.sin(rotationAngle), 0.0], [-np.sin(rotationAngle),
-                                                                               np.cos(rotationAngle), 0.0],
-                         [0.0, 0.0, 1.0]])
+    if axis == "x" or axis == "X":
+        return np.array(
+            [
+                [1.0, 0.0, 0.0],
+                [0.0, np.cos(rotationAngle), np.sin(rotationAngle)],
+                [0.0, -np.sin(rotationAngle), np.cos(rotationAngle)],
+            ]
+        )
+    elif axis == "y" or axis == "Y":
+        return np.array(
+            [
+                [np.cos(rotationAngle), 0.0, -np.sin(rotationAngle)],
+                [0.0, 1.0, 0.0],
+                [np.sin(rotationAngle), 0.0, np.cos(rotationAngle)],
+            ]
+        )
+    elif axis == "z" or axis == "Z":
+        return np.array(
+            [
+                [np.cos(rotationAngle), np.sin(rotationAngle), 0.0],
+                [-np.sin(rotationAngle), np.cos(rotationAngle), 0.0],
+                [0.0, 0.0, 1.0],
+            ]
+        )
     else:
         raise Exception("Unknown rotation axis " + axis + "!")
 
@@ -176,8 +193,16 @@ def phase_space_to_astrometry(x, y, z, vx, vy, vz):
         mutheta = np.zeros_like(parallax)
         vrad = np.zeros_like(parallax)
         for i in range(parallax.size):
-            muphistar[i] = np.dot(p[:, i], velocitiesArray[:, i]) * parallax[i] / au_km_year_per_sec
-            mutheta[i] = np.dot(q[:, i], velocitiesArray[:, i]) * parallax[i] / au_km_year_per_sec
+            muphistar[i] = (
+                np.dot(p[:, i], velocitiesArray[:, i])
+                * parallax[i]
+                / au_km_year_per_sec
+            )
+            mutheta[i] = (
+                np.dot(q[:, i], velocitiesArray[:, i])
+                * parallax[i]
+                / au_km_year_per_sec
+            )
             vrad[i] = np.dot(r[:, i], velocitiesArray[:, i])
 
     return phi, theta, parallax, muphistar, mutheta, vrad
@@ -228,8 +253,12 @@ def astrometry_to_phase_space(phi, theta, parallax, muphistar, mutheta, vrad):
     x, y, z = spherical_to_cartesian(au_mas_parsec / parallax, phi, theta)
     p, q, r = normal_triad(phi, theta)
     transverseMotionArray = np.array(
-        [muphistar * au_km_year_per_sec / parallax, mutheta * au_km_year_per_sec / parallax,
-         vrad])
+        [
+            muphistar * au_km_year_per_sec / parallax,
+            mutheta * au_km_year_per_sec / parallax,
+            vrad,
+        ]
+    )
     if np.isscalar(parallax):
         velocityArray = np.dot(np.transpose(np.array([p, q, r])), transverseMotionArray)
         vx = velocityArray[0]
@@ -240,7 +269,10 @@ def astrometry_to_phase_space(phi, theta, parallax, muphistar, mutheta, vrad):
         vy = np.zeros_like(parallax)
         vz = np.zeros_like(parallax)
         for i in range(parallax.size):
-            velocityArray = np.dot(np.transpose(np.array([p[:, i], q[:, i], r[:, i]])), transverseMotionArray[:, i])
+            velocityArray = np.dot(
+                np.transpose(np.array([p[:, i], q[:, i], r[:, i]])),
+                transverseMotionArray[:, i],
+            )
             vx[i] = velocityArray[0]
             vy[i] = velocityArray[1]
             vz[i] = velocityArray[2]

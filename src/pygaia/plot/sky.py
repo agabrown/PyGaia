@@ -1,13 +1,16 @@
-__all__ = ['order_points_for_sky_plot', 'plot_coordinate_transformation_on_sky']
-
+"""
+Function for visualizing coordinate transformations on the sky.
+"""
 import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
 import numpy as np
 
 from pygaia.astrometry.coordinates import CoordinateTransformation
 
+__all__ = ["plot_coordinate_transformation_on_sky"]
 
-def order_points_for_sky_plot(x, y):
+
+def _order_points_for_sky_plot(x, y):
     """
     This code takes care of ordering the points (x,y), calculated for a sky map parallel or merdian, such
     that the drawing code can start at one end of the curve and end at the other (so no artifacts due to
@@ -31,10 +34,16 @@ def order_points_for_sky_plot(x, y):
     return np.roll(x, -indexmax), np.roll(y, -indexmax)
 
 
-def plot_coordinate_transformation_on_sky(transformation, outfile=None, no_title=False, no_labels=False,
-                                          return_plot_object=False, lc=plt.cm.get_cmap('tab10').colors[0],
-                                          tc=plt.cm.get_cmap('tab10').colors[1],
-                                          lonpos=True):
+def plot_coordinate_transformation_on_sky(
+    transformation,
+    outfile=None,
+    no_title=False,
+    no_labels=False,
+    return_plot_object=False,
+    lc=plt.cm.get_cmap("tab10").colors[0],
+    tc=plt.cm.get_cmap("tab10").colors[1],
+    lonpos=True,
+):
     """
     Produce a sky-plot in a given coordinate system with the meridians and paralles for another
     coordinate system overlayed. The coordinate systems are specified through the
@@ -78,19 +87,19 @@ def plot_coordinate_transformation_on_sky(transformation, outfile=None, no_title
         phirot[(phirot > np.pi)] = phirot[(phirot > np.pi)] - 2 * np.pi
         x, y = np.rad2deg(phirot), np.rad2deg(thetarot)
 
-        indices = (phirot >= 0.0)
+        indices = phirot >= 0.0
         xplot = x[indices]
         yplot = y[indices]
         if any(indices):
-            xplot, yplot = order_points_for_sky_plot(xplot, yplot)
-        ax.plot(xplot, yplot, '-', color=lc, transform=default_proj)
+            xplot, yplot = _order_points_for_sky_plot(xplot, yplot)
+        ax.plot(xplot, yplot, "-", color=lc, transform=default_proj)
 
-        indices = (phirot < 0.0)
+        indices = phirot < 0.0
         xplot = x[indices]
         yplot = y[indices]
         if any(indices):
-            xplot, yplot = order_points_for_sky_plot(xplot, yplot)
-        ax.plot(xplot, yplot, '-', color=lc, transform=default_proj)
+            xplot, yplot = _order_points_for_sky_plot(xplot, yplot)
+        ax.plot(xplot, yplot, "-", color=lc, transform=default_proj)
 
     for phiDeg in meridians:
         theta = np.linspace(-meridian_max, meridian_max, 1001)
@@ -99,40 +108,69 @@ def plot_coordinate_transformation_on_sky(transformation, outfile=None, no_title
         phirot[(phirot > np.pi)] = phirot[(phirot > np.pi)] - 2 * np.pi
         x, y = np.rad2deg(phirot), np.rad2deg(thetarot)
 
-        indices = (phirot >= 0.0)
+        indices = phirot >= 0.0
         xplot = x[indices]
         yplot = y[indices]
         if any(indices):
-            xplot, yplot = order_points_for_sky_plot(xplot, yplot)
-        ax.plot(xplot, yplot, '-', color=lc, transform=default_proj)
+            xplot, yplot = _order_points_for_sky_plot(xplot, yplot)
+        ax.plot(xplot, yplot, "-", color=lc, transform=default_proj)
 
-        indices = (phirot < 0.0)
+        indices = phirot < 0.0
         xplot = x[indices]
         yplot = y[indices]
         if any(indices):
-            xplot, yplot = order_points_for_sky_plot(xplot, yplot)
-        ax.plot(xplot, yplot, '-', color=lc, transform=default_proj)
+            xplot, yplot = _order_points_for_sky_plot(xplot, yplot)
+        ax.plot(xplot, yplot, "-", color=lc, transform=default_proj)
 
     if not no_title:
-        plt.title("Sky projection in " + ct.transformationStrings[1] + " coordinates with the corresponding " +
-                  ct.transformationStrings[0] + " grid overlayed")
+        plt.title(
+            "Sky projection in "
+            + ct.transformationStrings[1]
+            + " coordinates with the corresponding "
+            + ct.transformationStrings[0]
+            + " grid overlayed"
+        )
 
     if not no_labels:
         for theta in np.arange(-60, 90, 30):
             phirot, thetarot = ct.transform_sky_coordinates(0.0, np.deg2rad(theta))
             x, y = (np.rad2deg(phirot), np.rad2deg(thetarot))
-            ax.text(x, y, "${0}$".format(theta), fontsize=16, va='bottom', ha='center', color=tc,
-                    transform=default_proj)
+            ax.text(
+                x,
+                y,
+                "${0}$".format(theta),
+                fontsize=16,
+                va="bottom",
+                ha="center",
+                color=tc,
+                transform=default_proj,
+            )
         for phi in np.arange(-150, 0, 30):
             phirot, thetarot = ct.transform_sky_coordinates(np.deg2rad(phi), 0.0)
             x, y = (np.rad2deg(phirot), np.rad2deg(thetarot))
-            ax.text(x, y, "${0}$".format(phi + addtolabel), fontsize=16, va='bottom', ha='center', color=tc,
-                    transform=default_proj)
+            ax.text(
+                x,
+                y,
+                "${0}$".format(phi + addtolabel),
+                fontsize=16,
+                va="bottom",
+                ha="center",
+                color=tc,
+                transform=default_proj,
+            )
         for phi in np.arange(30, 210, 30):
             phirot, thetarot = ct.transform_sky_coordinates(np.deg2rad(phi), 0.0)
             x, y = (np.rad2deg(phirot), np.rad2deg(thetarot))
-            ax.text(x, y, "${0}$".format(phi), fontsize=16, va='bottom', ha='center', color=tc,
-                    transform=default_proj)
+            ax.text(
+                x,
+                y,
+                "${0}$".format(phi),
+                fontsize=16,
+                va="bottom",
+                ha="center",
+                color=tc,
+                transform=default_proj,
+            )
 
     if outfile is not None:
         plt.savefig(outfile)

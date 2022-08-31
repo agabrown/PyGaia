@@ -1,6 +1,9 @@
-__all__ = ['calc_z_plx', 'calc_z_gmag', 'calc_z_bprp']
-
+"""
+Utility functions for the uncertainty simulations.
+"""
 import numpy as np
+
+__all__ = ["calc_z_plx", "calc_z_gmag", "calc_z_bprp"]
 
 _bright_floor_star_plx = 13.0
 _bright_floor_star_gmag = 12.0
@@ -26,7 +29,7 @@ def calc_z_plx(gmag):
         result = np.amax((gatefloor, np.power(10.0, 0.4 * (gmag - 15.0))))
     else:
         result = np.power(10.0, 0.4 * (gmag - 15.0))
-        indices = (result < gatefloor)
+        indices = result < gatefloor
         result[indices] = gatefloor
     return result
 
@@ -50,7 +53,7 @@ def calc_z_gmag(gmag):
         result = np.amax((gatefloor, np.power(10.0, 0.4 * (gmag - 15.0))))
     else:
         result = np.power(10.0, 0.4 * (gmag - 15.0))
-        indices = (result < gatefloor)
+        indices = result < gatefloor
         result[indices] = gatefloor
     return result
 
@@ -76,6 +79,6 @@ def calc_z_bprp(gmag):
         result = np.amax((gatefloor, np.power(10.0, 0.4 * (gmag - 15.0))))
     else:
         result = np.power(10.0, 0.4 * (gmag - 15.0))
-        indices = (result < gatefloor)
+        indices = result < gatefloor
         result[indices] = gatefloor
     return result

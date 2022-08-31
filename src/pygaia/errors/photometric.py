@@ -1,10 +1,20 @@
-__all__ = ['g_magnitude_uncertainty', 'g_magnitude_uncertainty_eom', 
-        'bp_magnitude_uncertainty', 'bp_magnitude_uncertainty_eom',
-        'rp_magnitude_uncertainty', 'rp_magnitude_uncertainty_eom']
-
+r"""
+Provides functions for simulating the photometric (:math:`G`,
+:math;`G_\mathrm{BP}`, :math:`G_\mathrm{RP}`) uncertainties on the Gaia
+catalogue data.
+"""
 import numpy as np
 
 from pygaia.errors.utils import calc_z_gmag, calc_z_bprp
+
+__all__ = [
+    "g_magnitude_uncertainty",
+    "g_magnitude_uncertainty_eom",
+    "bp_magnitude_uncertainty",
+    "bp_magnitude_uncertainty_eom",
+    "rp_magnitude_uncertainty",
+    "rp_magnitude_uncertainty_eom",
+]
 
 # Margin to include on predicted standard uncertainties (i.e. multiply prediction by this value).
 _science_margin = 1.2
@@ -59,8 +69,16 @@ def g_magnitude_uncertainty_eom(gmag, nobs=70, extension=0.0):
         The G band photometric standard uncertainty in units of magnitude.
     """
     nobs_scaled = round((5.0 + extension) / 5.0 * nobs)
-    return np.sqrt((np.power(g_magnitude_uncertainty(gmag) / _science_margin, 2) +
-                    _eom_calibration_floor_g * _eom_calibration_floor_g) / nobs_scaled) * _science_margin
+    return (
+        np.sqrt(
+            (
+                np.power(g_magnitude_uncertainty(gmag) / _science_margin, 2)
+                + _eom_calibration_floor_g * _eom_calibration_floor_g
+            )
+            / nobs_scaled
+        )
+        * _science_margin
+    )
 
 
 def bp_magnitude_uncertainty(gmag, vmini):
@@ -82,10 +100,27 @@ def bp_magnitude_uncertainty(gmag, vmini):
         The BP band photometric standard uncertainty in units of magnitude.
     """
     z = calc_z_bprp(gmag)
-    a = -0.000562 * np.power(vmini, 3) + 0.044390 * vmini * vmini + 0.355123 * vmini + 1.043270
-    b = -0.000400 * np.power(vmini, 3) + 0.018878 * vmini * vmini + 0.195768 * vmini + 1.465592
-    c = +0.000262 * np.power(vmini, 3) + 0.060769 * vmini * vmini - 0.205807 * vmini - 1.866968
-    return 1.0e-3 * np.sqrt(np.power(10.0, a) * z * z + np.power(10.0, b) * z + np.power(10.0, c))
+    a = (
+        -0.000562 * np.power(vmini, 3)
+        + 0.044390 * vmini * vmini
+        + 0.355123 * vmini
+        + 1.043270
+    )
+    b = (
+        -0.000400 * np.power(vmini, 3)
+        + 0.018878 * vmini * vmini
+        + 0.195768 * vmini
+        + 1.465592
+    )
+    c = (
+        +0.000262 * np.power(vmini, 3)
+        + 0.060769 * vmini * vmini
+        - 0.205807 * vmini
+        - 1.866968
+    )
+    return 1.0e-3 * np.sqrt(
+        np.power(10.0, a) * z * z + np.power(10.0, b) * z + np.power(10.0, c)
+    )
 
 
 def bp_magnitude_uncertainty_eom(gmag, vmini, nobs=70, extension=0.0):
@@ -113,8 +148,16 @@ def bp_magnitude_uncertainty_eom(gmag, vmini, nobs=70, extension=0.0):
         The BP band photometric standard uncertainty in units of magnitude.
     """
     nobs_scaled = round((5.0 + extension) / 5.0 * nobs)
-    return np.sqrt((np.power(bp_magnitude_uncertainty(gmag, vmini) / _science_margin, 2) +
-                    _eom_calibration_floor_bp * _eom_calibration_floor_bp) / nobs_scaled) * _science_margin
+    return (
+        np.sqrt(
+            (
+                np.power(bp_magnitude_uncertainty(gmag, vmini) / _science_margin, 2)
+                + _eom_calibration_floor_bp * _eom_calibration_floor_bp
+            )
+            / nobs_scaled
+        )
+        * _science_margin
+    )
 
 
 def rp_magnitude_uncertainty(gmag, vmini):
@@ -136,10 +179,27 @@ def rp_magnitude_uncertainty(gmag, vmini):
         The RP band photometric standard uncertainty in units of magnitude.
     """
     z = calc_z_bprp(gmag)
-    a = -0.007597 * np.power(vmini, 3) + 0.114126 * vmini * vmini - 0.636628 * vmini + 1.615927
-    b = -0.003803 * np.power(vmini, 3) + 0.057112 * vmini * vmini - 0.318499 * vmini + 1.783906
-    c = -0.001923 * np.power(vmini, 3) + 0.027352 * vmini * vmini - 0.091569 * vmini - 3.042268
-    return 1.0e-3 * np.sqrt(np.power(10.0, a) * z * z + np.power(10.0, b) * z + np.power(10.0, c))
+    a = (
+        -0.007597 * np.power(vmini, 3)
+        + 0.114126 * vmini * vmini
+        - 0.636628 * vmini
+        + 1.615927
+    )
+    b = (
+        -0.003803 * np.power(vmini, 3)
+        + 0.057112 * vmini * vmini
+        - 0.318499 * vmini
+        + 1.783906
+    )
+    c = (
+        -0.001923 * np.power(vmini, 3)
+        + 0.027352 * vmini * vmini
+        - 0.091569 * vmini
+        - 3.042268
+    )
+    return 1.0e-3 * np.sqrt(
+        np.power(10.0, a) * z * z + np.power(10.0, b) * z + np.power(10.0, c)
+    )
 
 
 def rp_magnitude_uncertainty_eom(gmag, vmini, nobs=70, extension=0.0):
@@ -166,5 +226,13 @@ def rp_magnitude_uncertainty_eom(gmag, vmini, nobs=70, extension=0.0):
         The RP band photometric standard uncertainty in units of magnitude.
     """
     nobs_scaled = round((5.0 + extension) / 5.0 * nobs)
-    return np.sqrt((np.power(rp_magnitude_uncertainty(gmag, vmini) / _science_margin, 2) +
-                    _eom_calibration_floor_rp * _eom_calibration_floor_rp) / nobs_scaled) * _science_margin
+    return (
+        np.sqrt(
+            (
+                np.power(rp_magnitude_uncertainty(gmag, vmini) / _science_margin, 2)
+                + _eom_calibration_floor_rp * _eom_calibration_floor_rp
+            )
+            / nobs_scaled
+        )
+        * _science_margin
+    )
