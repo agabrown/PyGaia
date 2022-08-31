@@ -3,12 +3,11 @@ Unit tests for the errors.astrometric module.
 """
 
 import numpy as np
-from numpy.testing import TestCase
 
 from pygaia.errors import astrometric as astrom
 
 
-class TestErrorsAstrometric(TestCase):
+class TestErrorsAstrometric(np.testing.TestCase):
     def test_parallax_uncertainty(self):
         """
         Verify that the function works for reasonable combinations of array and scalar input parameters.

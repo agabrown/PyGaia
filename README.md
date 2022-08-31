@@ -42,14 +42,23 @@ implemented in Astropy as the
 
 All classes and methods/functions are documented so use the python help() function to find out more.
 
-## Installation notes
+## Installation
+
+To install from source.
+
+```bash
+git clone https://github.com/agabrown/PyGaia.git
+cd PyGaia
+python -m pip install .
+```
+
+## Dependencies
 
 This package is intended for Python3.
 
 The following python packages are required:
 
 * [numpy](https://numpy.org/)
-* [scipy](https://www.scipy.org/)
 
 For the plotting tools:
 
@@ -63,16 +72,4 @@ Please acknowledge the Gaia Project Scientist Support Team and the Gaia Data Pro
 
 ## License
 
-Copyright (c) 2012-2020 Anthony Brown, Leiden University, Gaia Data Processing and Analysis Consortium
-
-PyGaia is open source and free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by the
-Free Software Foundation, either version 3 of the License, or (at your option)
-any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with
-this program. If not, see [https://www.gnu.org/licenses/licenses.html](https://www.gnu.org/licenses/licenses.html).
+Copyright (c) 2012-2022 Anthony Brown, Leiden University, Gaia Data Processing and Analysis Consortium
