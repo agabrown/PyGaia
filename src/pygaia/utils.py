@@ -1,30 +1,11 @@
 """
-Utility functions for pygaia.
+Utility functions for PyGaia.
 """
 import numpy as np
 
 from pygaia.astrometry.constants import au_km_year_per_sec
 
-__all__ = ["enum", "construct_covariance_matrix"]
-
-
-def enum(typename, field_names):
-    """
-    Create a new enumeration type.
-
-    Code is copyright (c) Gabriel Genellina, 2010, MIT License.
-
-    Parameters
-    ----------
-
-    typename - Name of the enumerated type
-    field_names - Names of the fields of the enumerated type
-    """
-
-    if isinstance(field_names, str):
-        field_names = field_names.replace(",", " ").split()
-    d = dict((reversed(nv) for nv in enumerate(field_names)), __slots__=())
-    return type(typename, (object,), d)()
+__all__ = ["construct_covariance_matrix"]
 
 
 def construct_covariance_matrix(cvec, parallax, radial_velocity, radial_velocity_error):
@@ -34,29 +15,29 @@ def construct_covariance_matrix(cvec, parallax, radial_velocity, radial_velocity
 
     Parameters
     ----------
-
     cvec : array_like
-        Array of shape (15,) (1 source) or (n,15) (n sources) for the astrometric parameter standard
-        uncertainties and their correlations, as listed in the Gaia catalogue [ra_error, dec_error,
-        parallax_error, pmra_error, pmdec_error, ra_dec_corr, ra_parallax_corr, ra_pmra_corr,
-        ra_pmdec_corr, dec_parallax_corr, dec_pmra_corr, dec_pmdec_corr, parallax_pmra_corr,
-        parallax_pmdec_corr, pmra_pmdec_corr]. Units are (mas^2, mas^2/yr, mas^2/yr^2).
-
-    parallax : array_like (n elements)
-        Source parallax (mas).
-
-    radial_velocity : array_like (n elements)
-        Source radial velocity (km/s, does not have to be from Gaia RVS!). If the radial velocity is not
-        known it can be set to zero.
-
-    radial_velocity_error : array_like (n elements)
-        Source radial velocity  uncertainty (km/s). If the radial velocity is not know this can be set to
-        the radial velocity dispersion for the population the source was drawn from.
+        Array of shape (15,) (1 source) or (N,15) (N sources) for the
+        astrometric parameter standard uncertainties and their correlations, as
+        listed in the Gaia catalogue [ra_error, dec_error, parallax_error,
+        pmra_error, pmdec_error, ra_dec_corr, ra_parallax_corr, ra_pmra_corr,
+        ra_pmdec_corr, dec_parallax_corr, dec_pmra_corr, dec_pmdec_corr,
+        parallax_pmra_corr, parallax_pmdec_corr, pmra_pmdec_corr]. Units are
+        (mas^2, mas^2/yr, mas^2/yr^2).
+    parallax : array_like
+        Source parallax(es) array of shape (N,) (mas).
+    radial_velocity : array_like
+        Source radial velocity (km/s, does not have to be from Gaia RVS!) as
+        array of shape (N,). If the radial velocity is not known it can be set
+        to zero.
+    radial_velocity_error : array_like
+        Source radial velocity  uncertainty (km/s), array of shape (N,). If the
+        radial velocity is not know this can be set to the radial velocity
+        dispersion for the population the source was drawn from.
 
     Returns
     -------
-
-    Covariance matrix as a 6x6 array.
+    cmat : float array
+        Covariance matrix as a 6x6 array.
     """
 
     if np.ndim(cvec) == 1:

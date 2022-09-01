@@ -1,14 +1,9 @@
 """
 Provides tools for coordinate transformation and epoch propagation.
 """
+from re import A
 import numpy as np
-
-__all__ = [
-    "CoordinateTransformation",
-    "Transformations",
-    "EpochPropagation",
-    "angular_distance",
-]
+from enum import Enum, auto
 
 from pygaia.astrometry.constants import au_km_year_per_sec
 from pygaia.astrometry.vectorastrometry import (
@@ -17,9 +12,15 @@ from pygaia.astrometry.vectorastrometry import (
     elementary_rotation_matrix,
     normal_triad,
 )
-from pygaia.utils import enum
 
-# Obliquity of the Ecliptic (arcsec)
+__all__ = [
+    "CoordinateTransformation",
+    "Transformations",
+    "EpochPropagation",
+    "angular_distance",
+]
+
+# Obliquity of the Ecliptic (arcsec expressed in radians)
 _obliquityOfEcliptic = np.deg2rad(84381.41100 / 3600.0)
 
 # Galactic pole in ICRS coordinates (see Hipparcos Explanatory Vol 1 section 1.5, and Murray, 1983,
@@ -67,27 +68,42 @@ _rotationMatrixGalacticToEcliptic = np.dot(
 # Rotation matrix for the transformation from Ecliptic to Galactic coordinates.
 _rotationMatrixEclipticToGalactic = np.transpose(_rotationMatrixGalacticToEcliptic)
 
-Transformations = enum(
-    "Transformations",
-    ["GAL2ICRS", "ICRS2GAL", "ECL2ICRS", "ICRS2ECL", "GAL2ECL", "ECL2GAL"],
-)
 
-_rotationMatrixMap = {
+class Transformations(Enum):
+    """
+    Enumeration with the available coordinate tranformations.
+
+    Attributes
+    ----------
+    GAL2ICRS : Transformation
+        Galactic to ICRS coordinate transformation.
+    ICRS2GAL : Transformation
+        ICRS to Galactic coordinate transformation.
+    ECL2ICRS : Transformation
+        Ecliptic to ICRS coordinate transformation.
+    ICRS2ECL : Transformation
+        ICRS to Ecliptic coordinate transformation.
+    ECL2ICRS : Transformation
+        Ecliptic to ICRS coordinate transformation.
+    ICRS2ECL : Transformation
+        ICRS to Ecliptic coordinate transformation.
+    """
+
+    GAL2ICRS = auto()
+    ICRS2GAL = auto()
+    ECL2ICRS = auto()
+    ICRS2ECL = auto()
+    GAL2ECL = auto()
+    ECL2GAL = auto()
+
+
+_rotation_matrix_dict = {
     Transformations.GAL2ICRS: _rotationMatrixGalacticToIcrs,
     Transformations.ICRS2GAL: _rotationMatrixIcrsToGalactic,
     Transformations.ECL2ICRS: _rotationMatrixEclipticToIcrs,
     Transformations.ICRS2ECL: _rotationMatrixIcrsToEcliptic,
     Transformations.GAL2ECL: _rotationMatrixGalacticToEcliptic,
     Transformations.ECL2GAL: _rotationMatrixEclipticToGalactic,
-}
-
-_transformationStringMap = {
-    Transformations.GAL2ICRS: ("galactic", "ICRS"),
-    Transformations.ICRS2GAL: ("ICRS", "galactic"),
-    Transformations.ECL2ICRS: ("ecliptic", "ICRS"),
-    Transformations.ICRS2ECL: ("ICRS", "ecliptic"),
-    Transformations.GAL2ECL: ("galactic", "ecliptic"),
-    Transformations.ECL2GAL: ("ecliptic", "galactic"),
 }
 
 
@@ -97,7 +113,6 @@ def angular_distance(phi1, theta1, phi2, theta2, return_posangle=False):
 
     Parameters
     ----------
-
     phi1 : float
         Longitude of first coordinate (radians).
     theta1 : float
@@ -116,10 +131,12 @@ def angular_distance(phi1, theta1, phi2, theta2, return_posangle=False):
 
     Returns
     -------
-
-    Angular distance in radians.
+    angdist : float
+        Angular distance in radians.
+    posangle : float
+        Position angle as defined above in radians.
     """
-    # Formula below is more numerically stable than np.arccos( np.sin(theta1)*np.sin(theta2) +
+    # The Formula below is numerically more stable than np.arccos( np.sin(theta1)*np.sin(theta2) +
     # np.cos(phi2-phi1)*np.cos(theta1)*np.cos(theta2) )
     # See: https://en.wikipedia.org/wiki/Great-circle_distance
     dist = np.arctan2(
@@ -151,13 +168,26 @@ def angular_distance(phi1, theta1, phi2, theta2, return_posangle=False):
 class CoordinateTransformation:
     """
     Provides methods for carrying out transformations between different coordinate (reference) systems.
-    Currently the following are supported:
+    Transformations between the following systems are supported:
 
     ICRS or Equatorial (right ascension, declination)
     Galactic (longitude, latitude)
     Ecliptic (longitude, latitude)
 
     The transformations can be applied to sky coordinates or Cartesian coordinates.
+
+    .. note::
+        The transformations here are only intended for systems that represent a
+        rotated version of the ICRS. For transformations from and to non-ICRS
+        systems (such as FK5) refer to Astropy's `coordinates
+        <https://docs.astropy.org/en/stable/coordinates/index.html>`_ package.
+
+    Attributes
+    ----------
+    transformation : Transformations
+        The transformation represented by the instance of this class.
+    rotationMatrix : array
+        Rotation matrix corresponding to the transformation.
     """
 
     def __init__(self, desired_transformation):
@@ -166,51 +196,62 @@ class CoordinateTransformation:
 
         Parameters
         ----------
-
-        desiredTransformation - The kind of coordinate transformation that should be provided. For example
-        Transformations.GAL2ECL
+        desiredTransformation : Transformations
+            The kind of coordinate transformation that should be provided. For
+            example Transformations.GAL2ECL.
         """
-        self.rotationMatrix = _rotationMatrixMap[desired_transformation]
-        self.transformationStrings = _transformationStringMap[desired_transformation]
+        self.transformation = desired_transformation
+        self.rotationMatrix = _rotation_matrix_dict[desired_transformation]
 
     def transform_cartesian_coordinates(self, x, y, z):
         """
-        Rotates Cartesian coordinates from one reference system to another using the rotation matrix with
-        which the class was initialized. The inputs  can be scalars or 1-dimensional numpy arrays.
+        Rotate Cartesian coordinates from one reference system to another.
+
+        Use the rotation matrix with which the class was initialized. The inputs
+        can be scalars or 1-dimensional numpy arrays. The length scale units of
+        the inputs can be arbitrary but should of course be consistent.
 
         Parameters
         ----------
-
-        x - Value of X-coordinate in original reference system
-        y - Value of Y-coordinate in original reference system
-        z - Value of Z-coordinate in original reference system
+        x : float or array
+            Value of X-coordinate in original reference system.
+        y : float or array
+            Value of Y-coordinate in original reference system.
+        z : float or array
+            Value of Z-coordinate in original reference system.
 
         Returns
         -------
-
-        xrot - Value of X-coordinate after rotation
-        yrot - Value of Y-coordinate after rotation
-        zrot - Value of Z-coordinate after rotation
+        xrot : float or array
+            Value of X-coordinate after rotation
+        yrot : float or array
+            Value of Y-coordinate after rotation
+        zrot : float or array
+            Value of Z-coordinate after rotation
         """
         xrot, yrot, zrot = np.dot(self.rotationMatrix, [x, y, z])
         return xrot, yrot, zrot
 
     def transform_sky_coordinates(self, phi, theta):
         """
-        Converts sky coordinates from one reference system to another, making use of the rotation matrix with
-        which the class was initialized. Inputs can be scalars or 1-dimensional numpy arrays.
+        Convert sky coordinates from one reference system to another.
+
+        Use of the rotation matrix with which the class was initialized. Inputs
+        can be scalars or 1-dimensional numpy arrays.
 
         Parameters
         ----------
-
-        phi   - Value of the azimuthal angle (right ascension, longitude) in radians.
-        theta - Value of the elevation angle (declination, latitude) in radians.
+        phi : float or array
+            Value of the longitude-like angle (right ascension, longitude) in radians.
+        theta : float or array
+            Value of the latitude-like angle (declination, latitude) in radians.
 
         Returns
         -------
-
-        phirot   - Value of the transformed azimuthal angle in radians.
-        thetarot - Value of the transformed elevation angle in radians.
+        phirot : float or array
+            Value of the transformed longitude-like angle in radians.
+        thetarot : float or array
+            Value of the transformed latitude-like angle in radians.
         """
         r = np.ones_like(phi)
         x, y, z = spherical_to_cartesian(r, phi, theta)
@@ -220,23 +261,31 @@ class CoordinateTransformation:
 
     def transform_proper_motions(self, phi, theta, muphistar, mutheta):
         """
-        Converts proper motions from one reference system to another, using the prescriptions in section
-        1.5.3 of the Hipparcos Explanatory Volume 1 (equations 1.5.18, 1.5.19).
+        Converts proper motions from one reference system to another.
+
+        Use the prescriptions in section 1.5.3 of the `Hipparcos Explanatory
+        Volume 1
+        <https://www.cosmos.esa.int/documents/532822/552851/vol1_all.pdf/99adf6e3-6893-4824-8fc2-8d3c9cbba2b5>`_
+        (equations 1.5.18, 1.5.19).
 
         Parameters
         ----------
-
-        phi       - The longitude-like angle of the position of the source (radians).
-        theta     - The latitude-like angle of the position of the source (radians).
-        muphistar - Value of the proper motion in the longitude-like angle, multiplied by np.cos(latitude).
-        mutheta   - Value of the proper motion in the latitude-like angle.
+        phi : float or array
+            The longitude-like angle of the position of the source (radians).
+        theta : float or array
+            The latitude-like angle of the position of the source (radians).
+        muphistar : float or array
+            Value of the proper motion in the longitude-like angle, multiplied by cos(latitude).
+        mutheta : float or array
+            Value of the proper motion in the latitude-like angle.
 
         Returns
         -------
-
-        muphistarrot - Value of the transformed proper motion in the longitude-like angle (including the
-        np.cos(latitude) factor).
-        muthetarot   - Value of the transformed proper motion in the latitude-like angle.
+        muphistarrot : float or array
+            Value of the transformed proper motion in the longitude-like angle
+            (including the cos(latitude) factor).
+        muthetarot : float or array
+            Value of the transformed proper motion in the latitude-like angle.
         """
         c, s = self._get_jacobian(phi, theta)
         return c * muphistar + s * mutheta, c * mutheta - s * muphistar
@@ -245,32 +294,38 @@ class CoordinateTransformation:
         self, phi, theta, sigphistar, sigtheta, rho_phi_theta=0
     ):
         """
-        Converts the sky coordinate errors from one reference system to another, including the covariance
-        term. Equations (1.5.4) and (1.5.20) from section 1.5 in the Hipparcos Explanatory Volume 1 are used.
+        Converts the sky coordinate uncertainties from one reference system to another, including the covariance
+        term.
+
+        Equations (1.5.4) and (1.5.20) from section 1.5 in the `Hipparcos
+        Explanatory Volume 1
+        <https://www.cosmos.esa.int/documents/532822/552851/vol1_all.pdf/99adf6e3-6893-4824-8fc2-8d3c9cbba2b5>`_
+        are used.
 
         Parameters
         ----------
-
-        phi         - The longitude-like angle of the position of the source (radians).
-        theta       - The latitude-like angle of the position of the source (radians).
-        sigphistar  - Standard error in the longitude-like angle of the position of the source (radians or
-                      sexagesimal units, including np.cos(latitude) term)
-        sigtheta    - Standard error in the latitude-like angle of the position of the source (radians or
-                      sexagesimal units)
-
-        Keywords (optional)
-        -------------------
-
-        rho_phi_theta - Correlation coefficient of the position errors. Set to zero if this keyword is not
-                      provided.
+        phi : float or array
+            The longitude-like angle of the position of the source (radians).
+        theta : float or array
+            The latitude-like angle of the position of the source (radians).
+        sigphistar : float or array
+            Uncertainty in the longitude-like angle of the position of the
+            source (radians or sexagesimal units, including cos(latitude) term)
+        sigtheta : float or array
+            Uncertainty in the latitude-like angle of the position of the source
+            (radians or sexagesimal units)
+        rho_phi_theta : float or array
+            Correlation coefficient of the position uncertainties. Zero by default
 
         Returns
         -------
-
-        sigPhiRotStar  - The transformed standard error in the longitude-like angle (including
-                         np.cos(latitude) factor)
-        sigThetaRot    - The transformed standard error in the latitude-like angle.
-        rhoPhiThetaRot - The transformed correlation coefficient.
+        sigPhiRotStar : float or array
+            The transformed uncertainty in the longitude-like angle (including
+            cos(latitude) factor)
+        sigThetaRot : float or array
+            The transformed uncertainty in the latitude-like angle.
+        rhoPhiThetaRot : float or array
+            The transformed correlation coefficient.
         """
         if np.isscalar(rho_phi_theta) and not np.isscalar(sigtheta):
             rho_phi_theta = np.zeros_like(sigtheta) + rho_phi_theta
@@ -293,31 +348,37 @@ class CoordinateTransformation:
         self, phi, theta, sigmuphistar, sigmutheta, rho_muphi_mutheta=0
     ):
         """
-        Converts the proper motion errors from one reference system to another, including the covariance
-        term. Equations (1.5.4) and (1.5.20) from section 1.5 in the Hipparcos Explanatory Volume 1 are used.
+        Converts the proper motion uncertainties from one reference system to another, including the covariance
+        term.
+
+        Equations (1.5.4) and (1.5.20) from section 1.5 in the `Hipparcos
+        Explanatory Volume 1
+        <https://www.cosmos.esa.int/documents/532822/552851/vol1_all.pdf/99adf6e3-6893-4824-8fc2-8d3c9cbba2b5>`_
+        are used.
 
         Parameters
         ----------
-
-        phi             - The longitude-like angle of the position of the source (radians).
-        theta           - The latitude-like angle of the position of the source (radians).
-        sigmuphistar    - Standard error in the proper motion in the longitude-like direction (including
-        np.cos(latitude) factor).
-        sigmutheta      - Standard error in the proper motion in the latitude-like direction.
-
-        Keywords (optional)
-        -------------------
-
-        rho_muphi_mutheta - Correlation coefficient of the proper motion errors. Set to zero if this
-                          keyword is not provided.
+        phi : float or array
+            The longitude-like angle of the position of the source (radians).
+        theta : float or array
+            The latitude-like angle of the position of the source (radians).
+        sigmuphistar : float or attay
+            Uncertainty in the proper motion in the longitude-like direction
+            (including cos(latitude) factor).
+        sigmutheta : float or array
+            Uncertainty in the proper motion in the latitude-like direction.
+        rho_muphi_mutheta : float or array
+            Correlation coefficient of the proper motion errors. Zero by default.
 
         Returns
         -------
-
-        sigMuPhiRotStar    - The transformed standard error in the proper motion in the longitude direction
-        (including np.cos(latitude) factor).
-        sigMuThetaRot      - The transformed standard error in the proper motion in the longitude direction.
-        rhoMuPhiMuThetaRot - The transformed correlation coefficient.
+        sigMuPhiRotStar : float or array
+            The transformed uncertainty in the proper motion in the longitude
+            direction (including np.cos(latitude) factor).
+        sigMuThetaRot : float or array
+            The transformed uncertainty in the proper motion in the longitude direction.
+        rhoMuPhiMuThetaRot : float or array
+            The transformed correlation coefficient.
         """
         return self.transform_sky_coordinate_errors(
             phi, theta, sigmuphistar, sigmutheta, rho_phi_theta=rho_muphi_mutheta
@@ -329,15 +390,17 @@ class CoordinateTransformation:
 
         Parameters
         ----------
-
-        phi       - The longitude-like angle of the position of the source (radians).
-        theta     - The latitude-like angle of the position of the source (radians).
-        covmat    - Covariance matrix (5x5) of the astrometric parameters.
+        phi : float
+            The longitude-like angle of the position of the source (radians).
+        theta : float
+            The latitude-like angle of the position of the source (radians).
+        covmat : array
+            Covariance matrix (5,5) of the astrometric parameters.
 
         Returns
         -------
-
-        covmat_rot - Covariance matrix in its representation in the new coordinate system.
+        covmat_rot : array
+            Covariance matrix in its representation in the new coordinate system.
         """
 
         c, s = self._get_jacobian(phi, theta)
@@ -354,27 +417,34 @@ class CoordinateTransformation:
         return np.dot(np.dot(jacobian, covmat), jacobian.T)
 
     def _get_jacobian(self, phi, theta):
-        """
-        Calculates the Jacobian for the transformation of the position errors and proper motion errors
-        between coordinate systems. This Jacobian is also the rotation matrix for the transformation of
-        proper motions. See section 1.5.3 of the Hipparcos Explanatory Volume 1 (equation 1.5.20). This
-        matrix has the following form:
+        r"""
+        Calculates the Jacobian for the transformation of the position and proper motion uncertainties
+        between coordinate systems.
+        
+        This Jacobian is also the rotation matrix for the transformation of
+        proper motions. See section 1.5.3 of the `Hipparcos Explanatory Volume 1
+        <https://www.cosmos.esa.int/documents/532822/552851/vol1_all.pdf/99adf6e3-6893-4824-8fc2-8d3c9cbba2b5>`_
+        (equation 1.5.20). This matrix has the following form:
 
-            |  c  s |
-        J = |       |
-            | -s  c |
+        .. math::
+
+            J = \begin{pmatrix}
+                c & s \\
+                -s & c \\
+            \end{pmatrix}
 
         Parameters
         ----------
-
-        phi       - The longitude-like angle of the position of the source (radians).
-        theta     - The latitude-like angle of the position of the source (radians).
+        phi : float or array
+            The longitude-like angle of the position of the source (radians).
+        theta : float or array
+            The latitude-like angle of the position of the source (radians).
 
         Returns
         -------
-
-        c, s - The Jacobian matrix elements c and s corresponding to (phi, theta) and the currently
-               desired coordinate system transformation.
+        c, s : float or array
+            The Jacobian matrix elements c and s corresponding to (phi, theta)
+            and the currently desired coordinate system transformation.
         """
 
         p, q, r = normal_triad(phi, theta)
@@ -402,23 +472,33 @@ class CoordinateTransformation:
 
 class EpochPropagation:
     """
-    Provides methods for transforming the astrometry and radial velocity of a given source to a different
-    epoch. The formulae for rigorous epoch transformation can be found on the Gaia documentation pages:
-    https://gea.esac.esa.int/archive/documentation/GEDR3/Data_processing/chap_cu3ast/sec_cu3ast_intro/ssec_cu3ast_intro_tansforms.html
+    Provides methods for transforming the astrometry and radial velocity of a
+    given source to a different epoch.
+
+    The formulae for rigorous epoch transformation can be found on the `Gaia
+    documentation pages
+    <https://gea.esac.esa.int/archive/documentation/GDR3/Data_processing/chap_cu3ast/sec_cu3ast_intro/ssec_cu3ast_intro_tansforms.html>`_.
+
+    Attributes
+    ----------
+    mastorad : float
+        Numerical factor to convert milliarcseconds ro radians.
     """
 
     def __init__(self):
+        """
+        Class constructor/initializer.
+        """
         self.mastorad = np.pi / (180 * 3600 * 1000)
 
     def propagate_astrometry(
         self, phi, theta, parallax, muphistar, mutheta, vrad, t0, t1
     ):
         """
-        Propagate the position of a source from the reference epoch t0 to the new epoch t1.
+        Propagate the astrometric parameters of a source from the reference epoch t0 to the new epoch t1.
 
         Parameters
         ----------
-
         phi : float
             Longitude at reference epoch (radians).
         theta : float
@@ -438,9 +518,9 @@ class EpochPropagation:
 
         Returns
         -------
-
-        Astrometric parameters, including the "radial proper motion" (NOT the radial velocity), at the new epoch.
-        phi1, theta1, parallax1, muphistar1, mutheta1, mur1 = epoch_prop_pos(..., t0, t1)
+        phi1, theta1, parallax1, muphistar1, mutheta1, murad1 : float or array
+            Astrometric parameters, including the "radial proper motion" (NOT
+            the radial velocity), at the new epoch.
         """
 
         t = t1 - t0
@@ -476,7 +556,6 @@ class EpochPropagation:
 
         Parameters
         ----------
-
         phi : float
             Longitude at reference epoch (radians).
         theta : float
@@ -496,57 +575,46 @@ class EpochPropagation:
 
         Returns
         -------
-
-        Coordinates phi and theta at new epoch (in radians)
+        phi, theta : float
+            Coordinates the new epoch (in radians)
         """
-        (
-            phi1,
-            theta1,
-            parallax1,
-            muphistar1,
-            mutheta1,
-            vrad1,
-        ) = self.propagate_astrometry(
+        (phi1, theta1, _, _, _, _,) = self.propagate_astrometry(
             phi, theta, parallax, muphistar, mutheta, vrad, t0, t1
         )
         return phi1, theta1
 
     def propagate_astrometry_and_covariance_matrix(self, a0, c0, t0, t1):
         """
-        Propagate the covariance matrix of the astrometric parameters and radial proper motion of a
-        source from epoch t0 to epoch t1.
+        Propagate the astrometric parameters iand radial proper motion, as well
+        as the corresponding covariance matrix, from epoch t0 to epoch t1.
 
         Code based on the Hipparcos Fortran implementation by Lennart Lindegren.
 
         Parameters
         ----------
-
         a0 : array_like
             6-element vector: (phi, theta, parallax, muphistar, mutheta, vrad) in units of (radians,
             radians, mas, mas/yr, mas/yr, km/s). Shape of a should be (6,) or (6,N), with N the number of
             sources for which the astrometric parameters are provided.
-
         c0 : array_like
             Covariance matrix stored in a 6x6 element array. This can be constructed from the columns
             listed in the Gaia catalogue. The units are [mas^2, mas^2/yr, mas^2/yr^2] for the various
             elements. Note that the elements in the 6th row and column should be:
             c[6,i]=c[i,6]=c[i,3]*vrad/auKmYearPerSec for i=1,..,5 and
             c[6,6]=c[3,3]*(vrad^2+vrad_error^2)/auKmYearPerSec^2+(parallax*vrad_error/auKmYearPerSec)^2
-
-            Shape of c0 should be (6,6) or (N,6,6).
-
+            The shape of c0 should be (6,6) or (N,6,6).
         t0 : float
             Reference epoch (Julian years).
-
         t1 : float
             New epoch (Julian years).
 
         Returns
         -------
-
-        Astrometric parameters, including the "radial proper motion" (NOT the radial velocity), and
-        covariance matrix at the new epoch as a 2D matrix with the new variances on the diagonal and the
-        covariance in the off-diagonal elements.
+        a, c : array
+            Astrometric parameters, including the "radial proper motion" (NOT
+            the radial velocity), and the covariance matrix at the new epoch as
+            a 2D matrix with the new variances on the diagonal and the
+            covariance in the off-diagonal elements.
         """
 
         zero, one, two, three = 0, 1, 2, 3
