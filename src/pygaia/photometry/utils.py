@@ -34,13 +34,18 @@ def vminiFromSpt(spt):
 
     Parameters
     ----------
-
-    spt - String representing the spectral type of the star.
+    spt : str
+        String representing the spectral type of the star.
 
     Returns
     -------
+    vmini : float
+        The value of (V-I).
 
-    The value of (V-I).
+    Raises
+    ------
+    ValueError
+        When an unknown spectral type is specified.
     """
     if spt in _sptToVminiVabsDictionary:
         return _sptToVminiVabsDictionary[spt][0]
@@ -48,7 +53,7 @@ def vminiFromSpt(spt):
         message = "Unknown spectral type. Allowed values are: "
         for key in _sptToVminiVabsDictionary.keys():
             message += key + " "
-        raise Exception(message)
+        raise ValueError(message)
 
 
 def vabsFromSpt(spt):
@@ -57,13 +62,18 @@ def vabsFromSpt(spt):
 
     Parameters
     ----------
-
-    spt - String representing the spectral type of the star.
+    spt : str
+        String representing the spectral type of the star.
 
     Returns
     -------
+    vabs : float
+        The value of M_V.
 
-    The value of M_V.
+    Raises
+    ------
+    ValueError
+        When an unknown spectral type is specified.
     """
     if spt in _sptToVminiVabsDictionary:
         return _sptToVminiVabsDictionary[spt][1]
@@ -71,7 +81,7 @@ def vabsFromSpt(spt):
         message = "Unknown spectral type. Allowed values are: "
         for key in _sptToVminiVabsDictionary.keys():
             message += key + " "
-        raise Exception(message)
+        raise ValueError(message)
 
 
 def gabsFromSpt(spt):
@@ -80,13 +90,18 @@ def gabsFromSpt(spt):
 
     Parameters
     ----------
-
-    spt - String representing the spectral type of the star.
+    spt : str
+        String representing the spectral type of the star.
 
     Returns
     -------
+    gabs : float
+        The value of M_G.
 
-    The value of M_G.
+    Raises
+    ------
+    ValueError
+        When an unknown spectral type is specified.
     """
     if spt in _sptToVminiVabsDictionary:
         return vabsFromSpt(spt) + gminv_from_vmini(vminiFromSpt(spt))

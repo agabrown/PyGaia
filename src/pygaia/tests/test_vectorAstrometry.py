@@ -79,7 +79,8 @@ class test_vectorAstrometry(np.testing.TestCase):
 
     def test_elementaryRotationMatrix(self):
         """
-        Check that elementary rotation matrices are generated as expected and also work as expected.
+        Check that elementary rotation matrices are generated as expected and also work
+        as expected.
         """
         rotAngle = 0.0
         rotMatrix = elementary_rotation_matrix("x", rotAngle)

@@ -11,7 +11,8 @@ from pygaia.astrometry.constants import au_km_year_per_sec
 class test_utils(np.testing.TestCase):
     def test_construct_covariance_matrix_onesource(self):
         """
-        Check that the covariance matrix is constructed correctly from the inputs provided.
+        Check that the covariance matrix is constructed correctly from the inputs
+        provided.
         """
 
         cvec = np.arange(15) + 1
@@ -42,7 +43,8 @@ class test_utils(np.testing.TestCase):
 
     def test_construct_covariance_matrix_nsources(self):
         """
-        Check that the covariance matrix is constructed correctly from the inputs provided.
+        Check that the covariance matrix is constructed correctly from the inputs
+        provided.
         """
 
         cvec = np.zeros((2, 15))

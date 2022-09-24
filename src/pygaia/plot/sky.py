@@ -12,20 +12,21 @@ __all__ = ["plot_coordinate_transformation_on_sky"]
 
 def _order_points_for_sky_plot(x, y):
     """
-    This code takes care of ordering the points (x,y), calculated for a sky map parallel or merdian, such
-    that the drawing code can start at one end of the curve and end at the other (so no artifacts due to
-    connecting the disjoint ends occur).
+    This code takes care of ordering the points (x,y), calculated for a sky map parallel
+    or merdian, such that the drawing code can start at one end of the curve and end at
+    the other (so no artifacts due to connecting the disjoint ends occur).
 
     Parameters
     ----------
-
-    x - Set of x coordinates
-    y - Set of y coordinates
+    x : float array
+        Set of x coordinates
+    y : float array
+        Set of y coordinates
 
     Returns
     -------
-
-    x, y: Order set of (x,y) points
+    x, y : float arrays
+        Ordered set of (x,y) points
     """
     xroll = np.roll(x, 1)
     yroll = np.roll(y, 1)
@@ -45,25 +46,33 @@ def plot_coordinate_transformation_on_sky(
     lonpos=True,
 ):
     """
-    Produce a sky-plot in a given coordinate system with the meridians and paralles for another
-    coordinate system overlayed. The coordinate systems are specified through the
-    pygaia.coordinates.Transformations enum. For example for Transformations.GAL2ECL the sky plot will be
-    in Ecliptic coordinates with the Galactic coordinate grid overlayed.
+    Produce a sky-plot in a given coordinate system with the meridians and paralles for
+    another coordinate system overlayed. The coordinate systems are specified through
+    the pygaia.coordinates.Transformations enum. For example for Transformations.GAL2ECL
+    the sky plot will be in Ecliptic coordinates with the Galactic coordinate grid
+    overlayed.
 
-    Keywords
+    Parameters
     --------
-
-    transformation - The coordinate transformation for which to make the plot (e.g.,
-                     Transformations.GAL2ECL).
-    outfile        - Save plot to this output file (default is to plot on screen). Make sure an extension
-                     (.pdf, .png, etc) is included.
-    noTitle        - If true do not include the plot title.
-    noLabels       - If true do not include plot labels.
-    returnPlotObject - If true return the matplotlib object used for plotting. Further plot elements can
-                       then be added.
-    lc             - Colour for gridlines.
-    tc             - Colour for text labels.
-    lonpos         - If true use longitude labels between 0 and 360 degrees.
+    transformation : pygaia.astrometry.coordinates.Transformations instance
+        The coordinate transformation for which to make the plot (e.g.,
+        Transformations.GAL2ECL).
+    outfile: str
+        Save plot to this output file (default is to plot on screen). Make sure an
+        extension (.pdf, .png, etc) is included.
+    noTitle : boolean
+        If true do not include the plot title.
+    noLabels : boolean
+        If true do not include plot labels.
+    returnPlotObject : boolean
+        If true return the matplotlib object used for plotting. Further plot elements
+        can then be added.
+    lc : Matplotlib colour
+        Colour for gridlines.
+    tc : Matplotlib colour
+        Colour for text labels.
+    lonpos : boolean
+        If true use longitude labels between 0 and 360 degrees.
     """
     ct = CoordinateTransformation(transformation)
 

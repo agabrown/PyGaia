@@ -40,7 +40,8 @@ class TestCoordinates(np.testing.TestCase):
 
     def test_galacticToIcrs(self):
         """
-        Verify correctness of transformations from the Galactic to ICRS coordinate systems.
+        Verify correctness of transformations from the Galactic to ICRS coordinate
+        systems.
         """
         ct = CoordinateTransformation(Transformations.GAL2ICRS)
         x, y, z = ct.transform_cartesian_coordinates(
@@ -67,7 +68,8 @@ class TestCoordinates(np.testing.TestCase):
 
     def test_icrsToGalactic(self):
         """
-        Verify correctness of transformations from the ICRS to Galactic coordinate systems.
+        Verify correctness of transformations from the ICRS to Galactic coordinate
+        systems.
         """
         ct = CoordinateTransformation(Transformations.ICRS2GAL)
         x, y, z = ct.transform_cartesian_coordinates(
@@ -90,7 +92,8 @@ class TestCoordinates(np.testing.TestCase):
 
     def test_icrsToEcliptic(self):
         """
-        Verify correctness of transformations from the ICRS to Ecliptic coordinate systems.
+        Verify correctness of transformations from the ICRS to Ecliptic coordinate
+        systems.
         """
         ct = CoordinateTransformation(Transformations.ICRS2ECL)
         x, y, z = ct.transform_cartesian_coordinates(
@@ -125,7 +128,8 @@ class TestCoordinates(np.testing.TestCase):
 
     def test_eclipticToIcrs(self):
         """
-        Verify correctness of transformations from the Ecliptic to ICRS coordinate systems.
+        Verify correctness of transformations from the Ecliptic to ICRS coordinate
+        systems.
         """
         ct = CoordinateTransformation(Transformations.ECL2ICRS)
         x, y, z = ct.transform_cartesian_coordinates(
@@ -160,7 +164,8 @@ class TestCoordinates(np.testing.TestCase):
 
     def test_eclipticToGalactic(self):
         """
-        Verify correctness of transformations from the Ecliptic to Galactic coordinate systems.
+        Verify correctness of transformations from the Ecliptic to Galactic coordinate
+        systems.
         """
         ct = CoordinateTransformation(Transformations.ECL2GAL)
         x, y, z = ct.transform_cartesian_coordinates(
@@ -189,7 +194,8 @@ class TestCoordinates(np.testing.TestCase):
 
     def test_galacticToEcliptic(self):
         """
-        Verify correctness of transformations from the Galactic to Ecliptic coordinate systems.
+        Verify correctness of transformations from the Galactic to Ecliptic coordinate
+        systems.
         """
         ct = CoordinateTransformation(Transformations.GAL2ECL)
         x, y, z = ct.transform_cartesian_coordinates(
@@ -214,8 +220,9 @@ class TestCoordinates(np.testing.TestCase):
             np.array([0.0, np.pi / 2.0, 0.0]), np.array([0.0, 0.0, np.pi / 2.0])
         )
         #
-        # Note the abs() in the line below is required to avoid an error when -pi and pi are compared.
-        # The better solution of course is to write an npt.assert function that can handle modulo 2*pi cases.
+        # Note the abs() in the line below is required to avoid an error when -pi and pi
+        # are compared. The better solution of course is to write an npt.assert
+        # function that can handle modulo 2*pi cases.
         #
         npt.assert_array_almost_equal(abs(expectedLambda), abs(lambdaEcl), decimal=1)
         npt.assert_array_almost_equal(expectedBeta, betaEcl, decimal=1)
@@ -229,7 +236,8 @@ class TestCoordinates(np.testing.TestCase):
 
     def test_transformProperMotions(self):
         """
-        Verify the correct implementation of the direct transformation of proper motions.
+        Verify the correct implementation of the direct transformation of proper
+        motions.
         """
         ct = CoordinateTransformation(Transformations.ICRS2GAL)
         nTests = 100
@@ -273,7 +281,8 @@ class TestCoordinates(np.testing.TestCase):
 
     def test_transformSkyCoordinateErrors(self):
         """
-        Verify that the transformed covariance matrix for the positions remains a covariance matrix.
+        Verify that the transformed covariance matrix for the positions remains a
+        covariance matrix.
         """
         ct = CoordinateTransformation(Transformations.ICRS2GAL)
         nTests = 100
@@ -321,7 +330,8 @@ class TestCoordinates(np.testing.TestCase):
 
     def test_transformProperMotionErrors(self):
         """
-        Verify that the transformed covariance matrix for the proper motions remains a covariance matrix.
+        Verify that the transformed covariance matrix for the proper motions remains a
+        covariance matrix.
         """
         ct = CoordinateTransformation(Transformations.ICRS2GAL)
         nTests = 100
@@ -373,9 +383,9 @@ class TestCoordinates(np.testing.TestCase):
         self.assertEquals(mutheta1, 0.0)
         self.assertGreater(pmr1, 0.0)
 
-        # For propagation into the future check that in absence of radial motion the parallaxes and
-        # proper motions always diminish with respect to the reference epoch, while the radial proper
-        # motion always becomes positive non-zero.
+        # For propagation into the future check that in absence of radial motion the
+        # parallaxes and proper motions always diminish with respect to the reference
+        # epoch, while the radial proper motion always becomes positive non-zero.
         nTests = 100
         phi = 2.0 * np.pi * rng.uniform(size=nTests)
         theta = np.arcsin(-1 + 2 * rng.uniform(size=nTests))
@@ -392,9 +402,9 @@ class TestCoordinates(np.testing.TestCase):
         )
         npt.assert_array_less(0.0, pmr1)
 
-        # For propagation into the past check that in absence of radial motion the parallaxes and
-        # proper motions always diminish with respect to the reference epoch, while the radial proper
-        # motion always becomes negative non-zero.
+        # For propagation into the past check that in absence of radial motion the
+        # parallaxes and proper motions always diminish with respect to the reference
+        # epoch, while the radial proper motion always becomes negative non-zero.
         phi2, theta2, parallax2, muphistar2, mutheta2, pmr2 = ep.propagate_astrometry(
             phi, theta, parallax, muphistar, mutheta, vrad, t0, t2
         )
@@ -404,9 +414,9 @@ class TestCoordinates(np.testing.TestCase):
         )
         npt.assert_array_less(pmr2, 0.0)
 
-        # For propagation into the future check that In the absence of proper motion and for positive
-        # radial velocity and positive parallax at the current epoch: the parallax always decreases,
-        # the radial proper motion decreases.
+        # For propagation into the future check that In the absence of proper motion and
+        # for positive radial velocity and positive parallax at the current epoch: the
+        # parallax always decreases, the radial proper motion decreases.
         muphistar = np.zeros_like(phi)
         mutheta = np.zeros_like(phi)
         vrad = rng.uniform(size=nTests) * 50.0 + 1.0
@@ -421,9 +431,9 @@ class TestCoordinates(np.testing.TestCase):
         npt.assert_almost_equal(mutheta1, mutheta, 12)
         npt.assert_array_less(pmr1, pmr)
 
-        # For propagation into the past check that In the absence of proper motion and for positive
-        # radial velocity and positive parallax at the current epoch: the parallax always increases, the
-        # radial proper motion always increases.
+        # For propagation into the past check that In the absence of proper motion and
+        # for positive radial velocity and positive parallax at the current epoch: the
+        # parallax always increases, the radial proper motion always increases.
         phi2, theta2, parallax2, muphistar2, mutheta2, pmr2 = ep.propagate_astrometry(
             phi, theta, parallax, muphistar, mutheta, vrad, t0, t2
         )
@@ -434,9 +444,9 @@ class TestCoordinates(np.testing.TestCase):
         npt.assert_almost_equal(mutheta2, mutheta, 12)
         npt.assert_array_less(pmr, pmr2)
 
-        # For propagation into the future check that In the absence of proper motion and for negative
-        # radial velocity and positive parallax at the current epoch: the parallax always increases,
-        # the radial proper motion always decreases.
+        # For propagation into the future check that In the absence of proper motion and
+        # for negative radial velocity and positive parallax at the current epoch: the
+        # parallax always increases, the radial proper motion always decreases.
         vrad = -1.0 - 70 * rng.uniform(size=nTests)
         pmr = vrad * parallax / au_km_year_per_sec
         phi1, theta1, parallax1, muphistar1, mutheta1, pmr1 = ep.propagate_astrometry(
@@ -449,9 +459,9 @@ class TestCoordinates(np.testing.TestCase):
         npt.assert_almost_equal(mutheta1, mutheta, 12)
         npt.assert_array_less(pmr1, pmr)
 
-        # For propagation into the past check that In the absence of proper motion and for negative
-        # radial velocity and positive parallax at the current epoch: the parallax always decreases, and
-        # the radial proper motion always increases.
+        # For propagation into the past check that In the absence of proper motion and
+        # for negative radial velocity and positive parallax at the current epoch: the
+        # parallax always decreases, and the radial proper motion always increases.
         phi2, theta2, parallax2, muphistar2, mutheta2, pmr2 = ep.propagate_astrometry(
             phi, theta, parallax, muphistar, mutheta, vrad, t0, t2
         )
@@ -462,8 +472,8 @@ class TestCoordinates(np.testing.TestCase):
         npt.assert_almost_equal(mutheta2, mutheta, 12)
         npt.assert_array_less(pmr, pmr2)
 
-        # Check that angular distance between old and new position is close to that obtained from a naive
-        # epoch propagation.
+        # Check that angular distance between old and new position is close to that
+        # obtained from a naive epoch propagation.
         nTests = 10000
         phi = 2.0 * np.pi * rng.uniform(size=nTests)
         theta = np.arcsin(-1 + 2 * rng.uniform(size=nTests))
@@ -484,7 +494,8 @@ class TestCoordinates(np.testing.TestCase):
         npt.assert_allclose(rho_naive1, rho1, rtol=0.1)
         npt.assert_allclose(rho_naive2, rho2, rtol=0.1)
 
-        # Check that for zero parallax the propgation still works, leaving parallax unchanged.
+        # Check that for zero parallax the propgation still works, leaving parallax
+        # unchanged.
         nTests = 100
         phi = 2.0 * np.pi * rng.uniform(size=nTests)
         theta = np.arcsin(-1 + 2 * rng.uniform(size=nTests))
@@ -503,9 +514,9 @@ class TestCoordinates(np.testing.TestCase):
         npt.assert_array_less(0.0, pmr1)
         npt.assert_array_less(pmr2, 0.0)
 
-        # For propagation into the future check that In the absence of proper motion and for positive
-        # radial velocity and negative parallax at the current epoch: the parallax always decreases,
-        # the radial proper motion decreases.
+        # For propagation into the future check that In the absence of proper motion and
+        # for positive radial velocity and negative parallax at the current epoch: the
+        # parallax always decreases, the radial proper motion decreases.
         nTests = 100
         phi = 2.0 * np.pi * rng.uniform(size=nTests)
         theta = np.arcsin(-1 + 2 * rng.uniform(size=nTests))
@@ -524,9 +535,9 @@ class TestCoordinates(np.testing.TestCase):
         npt.assert_almost_equal(mutheta1, mutheta, 12)
         npt.assert_array_less(pmr1, pmr)
 
-        # For propagation into the past check that In the absence of proper motion and for positive
-        # radial velocity and negative parallax at the current epoch: the parallax always increases, the
-        # radial proper motion always increases.
+        # For propagation into the past check that In the absence of proper motion and
+        # for positive radial velocity and negative parallax at the current epoch: the
+        # parallax always increases, the radial proper motion always increases.
         phi2, theta2, parallax2, muphistar2, mutheta2, pmr2 = ep.propagate_astrometry(
             phi, theta, parallax, muphistar, mutheta, vrad, t0, t2
         )
@@ -537,9 +548,9 @@ class TestCoordinates(np.testing.TestCase):
         npt.assert_almost_equal(mutheta2, mutheta, 12)
         npt.assert_array_less(pmr, pmr2)
 
-        # For propagation into the future check that In the absence of proper motion and for negative
-        # radial velocity and negative parallax at the current epoch: the parallax always increases,
-        # the radial proper motion always decreases.
+        # For propagation into the future check that In the absence of proper motion and
+        # for negative radial velocity and negative parallax at the current epoch: the
+        # parallax always increases, the radial proper motion always decreases.
         vrad = -1.0 - 70 * rng.uniform(size=nTests)
         pmr = vrad * parallax / au_km_year_per_sec
         phi1, theta1, parallax1, muphistar1, mutheta1, pmr1 = ep.propagate_astrometry(
@@ -552,9 +563,9 @@ class TestCoordinates(np.testing.TestCase):
         npt.assert_almost_equal(mutheta1, mutheta, 12)
         npt.assert_array_less(pmr1, pmr)
 
-        # For propagation into the past check that In the absence of proper motion and for negative
-        # radial velocity and negative parallax at the current epoch: the parallax always decreases, and
-        # the radial proper motion always increases.
+        # For propagation into the past check that In the absence of proper motion and
+        # for negative radial velocity and negative parallax at the current epoch: the
+        # parallax always decreases, and the radial proper motion always increases.
         phi2, theta2, parallax2, muphistar2, mutheta2, pmr2 = ep.propagate_astrometry(
             phi, theta, parallax, muphistar, mutheta, vrad, t0, t2
         )
@@ -674,20 +685,22 @@ class TestCoordinates(np.testing.TestCase):
     @staticmethod
     def _generateRandomCovarianceMatrices(num):
         """
-        Generate random covariance matrices through the transformation of diagonal positive definite
-        matrices.
+        Generate random covariance matrices through the transformation of diagonal
+        positive definite matrices.
 
         Parameters
         ----------
-
-        num - Number of matrices to generate.
+        num : int
+            Number of matrices to generate.
 
         Returns
         -------
-
-        sigma1 - Square root of variance of first variable.
-        sigma2 - Square root of variance of second variable.
-        rho12  - Correlation coefficient between errors on variables 1 and 2
+        sigma1 : float
+            Square root of variance of first variable.
+        sigma2 : float
+            Square root of variance of second variable.
+        rho12 : float
+            Correlation coefficient between errors on variables 1 and 2
         """
         varDiag1 = rng.uniform(size=num) * 99.0 + 1.0
         varDiag2 = rng.uniform(size=num) * 99.0 + 1.0

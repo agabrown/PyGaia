@@ -10,7 +10,8 @@ from pygaia.errors import astrometric as astrom
 class TestErrorsAstrometric(np.testing.TestCase):
     def test_parallax_uncertainty(self):
         """
-        Verify that the function works for reasonable combinations of array and scalar input parameters.
+        Verify that the function works for reasonable combinations of array and scalar
+        input parameters.
         """
         self.assertTrue(astrom.parallax_uncertainty(15.0) > 0.0)
         self.assertTrue(astrom.parallax_uncertainty(15.0, release="dr4") > 0.0)
@@ -27,7 +28,8 @@ class TestErrorsAstrometric(np.testing.TestCase):
 
     def test_position_uncertainty(self):
         """
-        Verify that the function works for reasonable combinations of array and scalar input parameters.
+        Verify that the function works for reasonable combinations of array and scalar
+        input parameters.
         """
         sigalphastar, sigdelta = astrom.position_uncertainty(15.0)
         self.assertTrue(sigalphastar > 0.0)
@@ -56,7 +58,8 @@ class TestErrorsAstrometric(np.testing.TestCase):
 
     def test_proper_motion_uncertainty(self):
         """
-        Verify that the function works for reasonable combinations of array and scalar input parameters.
+        Verify that the function works for reasonable combinations of array and scalar
+        input parameters.
         """
         sigpmra, sigpmdec = astrom.proper_motion_uncertainty(15.0)
         self.assertTrue(sigpmra > 0.0)
