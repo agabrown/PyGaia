@@ -67,7 +67,6 @@ def calc_z_bprp(gmag):
 
     Parameters
     ----------
-
     gmag : float or array
         Value of G-band magnitude.
 
