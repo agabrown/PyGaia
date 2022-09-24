@@ -5,7 +5,7 @@ setup(
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     package_data={
-        "": ["LICENSE", "AUTHORS.md", "HISTORY.md", "INSTALL.md", "MANIFEST.in"],
+        "": ["LICENSE", "AUTHORS.md", "HISTORY.md", "INSTALL.md"],
         "pygaia": ["data/*"],
     },
     include_package_data=True,
