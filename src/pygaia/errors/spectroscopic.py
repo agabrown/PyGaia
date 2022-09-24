@@ -39,25 +39,24 @@ _nominal_mission_length = 5.0
 
 def vrad_error_sky_avg(vmag, spt, extension=0.0):
     """
-    Calculate radial velocity error from V and the spectral type. The value of the error is an average over
-    the sky.
+    Calculate radial velocity uncertainty from V and the spectral type. The value of the
+    error is an average over the sky.
 
     Parameters
     ----------
-
-    vmag : Value(s) of V-band magnitude.
-    spt  : String or array of strings representing the spectral type of the star.
-
-    Keywords
-    --------
-
-    extension : Add this amount of years to the mission lifetime and scale the errors accordingly. Value can be
-      negative for shorter mission spans (early data releases).
+    vmag : float or float array
+        Value(s) of V-band magnitude.
+    spt : str or str array
+        String(s) representing the spectral type of the star.
+    extension : float
+        Add this amount of years to the mission lifetime and scale the errors
+        accordingly. Value can be negative for shorter mission spans (early data
+        releases).
 
     Returns
     -------
-
-    The radial velocity error in km/s.
+    uncertainties : float or float array
+        The radial velocity uncertainty in km/s.
     """
     errscaling = 1.0 / np.sqrt(
         (_nominal_mission_length + extension) / _nominal_mission_length

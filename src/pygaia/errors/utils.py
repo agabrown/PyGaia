@@ -12,7 +12,8 @@ _bright_floor_star_bprp = 11.0
 
 def calc_z_plx(gmag):
     """
-    Calculate the value for the parameter z in the formula for parallax errors as a function of G and (V-I).
+    Calculate the value for the parameter z in the formula for parallax errors as a
+    function of G and (V-I).
 
     Parameters
     ----------
@@ -36,7 +37,8 @@ def calc_z_plx(gmag):
 
 def calc_z_gmag(gmag):
     """
-    Calculate the value for the parameter z in the formula for G magnitude errors as a function of G and (V-I).
+    Calculate the value for the parameter z in the formula for G magnitude errors as a
+    function of G and (V-I).
 
     Parameters
     ----------
@@ -60,8 +62,8 @@ def calc_z_gmag(gmag):
 
 def calc_z_bprp(gmag):
     """
-    Calculate the value for the parameter z in the formula for the BP and RP magnitude errors as a
-    function of G and (V-I).
+    Calculate the value for the parameter z in the formula for the BP and RP magnitude
+    errors as a function of G and (V-I).
 
     Parameters
     ----------

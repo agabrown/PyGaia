@@ -1,7 +1,6 @@
 r"""
-Provides functions for simulating the photometric (:math:`G`,
-:math;`G_\mathrm{BP}`, :math:`G_\mathrm{RP}`) uncertainties on the Gaia
-catalogue data.
+Provides functions for simulating the photometric (:math:`G`, :math;`G_\mathrm{BP}`,
+:math:`G_\mathrm{RP}`) uncertainties on the Gaia catalogue data.
 """
 import numpy as np
 
@@ -16,7 +15,8 @@ __all__ = [
     "rp_magnitude_uncertainty_eom",
 ]
 
-# Margin to include on predicted standard uncertainties (i.e. multiply prediction by this value).
+# Margin to include on predicted standard uncertainties (i.e. multiply prediction by
+# this value).
 _science_margin = 1.2
 
 # Mean number of CCDs crossed by a source in the AF field (G-band photometry)
@@ -30,8 +30,8 @@ _eom_calibration_floor_rp = 5.0e-3
 
 def g_magnitude_uncertainty(gmag):
     """
-    Calculate the single-field-of-view-transit photometric standard uncertainty in the G band as a function
-    of G. A 20% margin is included.
+    Calculate the single-field-of-view-transit photometric standard uncertainty in the G
+    band as a function of G. A 20% margin is included.
 
     Parameters
     ----------
@@ -49,19 +49,19 @@ def g_magnitude_uncertainty(gmag):
 
 def g_magnitude_uncertainty_eom(gmag, nobs=70, extension=0.0):
     """
-    Calculate the end of mission photometric standard uncertainty in the G band as a function
-    of G. A 20% margin is included.
+    Calculate the end of mission photometric standard uncertainty in the G band as a
+    function of G. A 20% margin is included.
 
     Parameters
     ----------
     gmag : float or array
         Value(s) of G-band magnitude.
-
     nobs : int
         Number of observations collected (default 70).
     extension : float
-        Add this amount of years to the mission lifetime and scale the uncertainties accordingly. Value can be
-        negative for shorter mission spans (early data releases).
+        Add this amount of years to the mission lifetime and scale the uncertainties
+        accordingly. Value can be negative for shorter mission spans (early data
+        releases).
 
     Returns
     -------
@@ -83,9 +83,9 @@ def g_magnitude_uncertainty_eom(gmag, nobs=70, extension=0.0):
 
 def bp_magnitude_uncertainty(gmag, vmini):
     """
-    Calculate the single-field-of-view-transit photometric standard uncertainty in the BP band as a function
-    of G and (V-I). Note: this refers to the integrated flux from the BP spectrophotometer. A margin of 20%
-    is included.
+    Calculate the single-field-of-view-transit photometric standard uncertainty in the
+    BP band as a function of G and (V-I). Note: this refers to the integrated flux from
+    the BP spectrophotometer. A margin of 20% is included.
 
     Parameters
     ----------
@@ -125,22 +125,22 @@ def bp_magnitude_uncertainty(gmag, vmini):
 
 def bp_magnitude_uncertainty_eom(gmag, vmini, nobs=70, extension=0.0):
     """
-    Calculate the end-of-mission photometric standard uncertainty in the BP band as a function of G and (V-I).
-    Note: this refers to the integrated flux from the BP spectrophotometer. A margin of 20% is included.
+    Calculate the end-of-mission photometric standard uncertainty in the BP band as a
+    function of G and (V-I). Note: this refers to the integrated flux from the BP
+    spectrophotometer. A margin of 20% is included.
 
     Parameters
     ----------
-
     gmag : float or array
         Value(s) of G-band magnitude.
     vmini : float or array
         Value(s) of (V-I) colour.
-
     nobs : int
         Number of observations collected (default 70).
     extension : float
-        Add this amount of years to the mission lifetime and scale the uncertainties accordingly. Value can be
-        negative for shorter mission spans (early data releases).
+        Add this amount of years to the mission lifetime and scale the uncertainties
+        accordingly. Value can be negative for shorter mission spans (early data
+        releases).
 
     Returns
     -------
@@ -162,9 +162,9 @@ def bp_magnitude_uncertainty_eom(gmag, vmini, nobs=70, extension=0.0):
 
 def rp_magnitude_uncertainty(gmag, vmini):
     """
-    Calculate the single-field-of-view-transit photometric standard uncertainty in the RP band as a function
-    of G and (V-I). Note: this refers to the integrated flux from the RP spectrophotometer. A margin of 20%
-    is included.
+    Calculate the single-field-of-view-transit photometric standard uncertainty in the
+    RP band as a function of G and (V-I). Note: this refers to the integrated flux from
+    the RP spectrophotometer. A margin of 20% is included.
 
     Parameters
     ----------
@@ -204,8 +204,9 @@ def rp_magnitude_uncertainty(gmag, vmini):
 
 def rp_magnitude_uncertainty_eom(gmag, vmini, nobs=70, extension=0.0):
     """
-    Calculate the end-of-mission photometric standard uncertainty in the RP band as a function of G and (V-I).
-    Note: this refers to the integrated flux from the RP spectrophotometer. A margin of 20% is included.
+    Calculate the end-of-mission photometric standard uncertainty in the RP band as a
+    function of G and (V-I). Note: this refers to the integrated flux from the RP
+    spectrophotometer. A margin of 20% is included.
 
     Parameters
     ----------
@@ -213,12 +214,12 @@ def rp_magnitude_uncertainty_eom(gmag, vmini, nobs=70, extension=0.0):
         Value(s) of G-band magnitude.
     vmini : float or array
         Value(s) of (V-I) colour.
-
     nobs : int
         Number of observations collected (default 70).
     extension : float
-        Add this amount of years to the mission lifetime and scale the uncertainties accordingly. Value can be
-        negative for shorter mission spans (early data releases).
+        Add this amount of years to the mission lifetime and scale the uncertainties
+        accordingly. Value can be negative for shorter mission spans (early data
+        releases).
 
     Returns
     -------
