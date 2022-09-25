@@ -14,7 +14,7 @@ keywords = ["plotting, data analysis, numerical tools"]
 classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Development Status :: 0 - Alpha",
+    "Development Status :: 4 - Beta",
     "License :: OSI Approved :: BSD-3-Clause license",
     "Topic :: Scientific/Engineering :: Astronomy",
     "Intended Audience :: Science/Research",

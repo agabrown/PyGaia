@@ -1,4 +1,3 @@
-from multiprocessing import Value
 import numpy as np
 from .constants import au_mas_parsec, au_km_year_per_sec
 
