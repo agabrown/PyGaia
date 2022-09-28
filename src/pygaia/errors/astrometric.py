@@ -34,9 +34,8 @@ _scaling_for_proper_motions = {
 # motion precisions scale as t**(-1.5). The extra factor 1/t is included in the scaling
 # factors above.
 #
-# The predictions for DR4 and DR5 are based on the (E)DR3 uncertainties, inflated by a
-# 'science margin' of 10 percent (factor 1.1).
-_science_margin = 1.1
+# The predictions for DR4 and DR5 are based on the (E)DR3 uncertainties, where the
+# latter are inflated by a 'science margin' of 10 percent (factor 1.1).
 _t_factor = {"dr3": 1.0, "dr4": 0.749, "dr5": 0.527}
 _default_release = "dr4"
 
@@ -63,13 +62,10 @@ def parallax_uncertainty(gmag, release=_default_release):
     ValueError
         When an invalid string is specified for the release parameter.
     """
-    if not (str in ["dr3", "dr4", "dr5"]):
+    if not (release in ["dr3", "dr4", "dr5"]):
         raise ValueError("Release must be one of dr3, dr4, dr5")
     z = calc_z_plx(gmag)
-    if release == "dr3":
-        return np.sqrt(40 + 800 * z + 30 * z * z) * _t_factor[release] / _science_margin
-    else:
-        return np.sqrt(40 + 800 * z + 30 * z * z) * _t_factor[release]
+    return np.sqrt(40 + 800 * z + 30 * z * z) * _t_factor[release]
 
 
 def position_uncertainty(gmag, release=_default_release):
@@ -100,7 +96,7 @@ def position_uncertainty(gmag, release=_default_release):
     The uncertainties are for sky positions in the ICRS (i.e., right ascension,
     declination). Make sure your simulated astrometry is also on the ICRS.
     """
-    if not (str in ["dr3", "dr4", "dr5"]):
+    if not (release in ["dr3", "dr4", "dr5"]):
         raise ValueError("Release must be one of dr3, dr4, dr5")
     plx_unc = parallax_uncertainty(gmag, release=release)
     return (
@@ -138,7 +134,7 @@ def proper_motion_uncertainty(gmag, release=_default_release):
     The uncertainties are for proper motions in the ICRS (i.e., right ascension,
     declination). Make sure your simulated astrometry is also on the ICRS.
     """
-    if not (str in ["dr3", "dr4", "dr5"]):
+    if not (release in ["dr3", "dr4", "dr5"]):
         raise ValueError("Release must be one of dr3, dr4, dr5")
     plx_unc = parallax_uncertainty(gmag, release=release)
     return (
@@ -177,7 +173,7 @@ def total_position_uncertainty(gmag, release=_default_release):
     The uncertainties are for positions in the ICRS (i.e., right ascension,
     declination). Make sure your simulated astrometry is also on the ICRS.
     """
-    if not (str in ["dr3", "dr4", "dr5"]):
+    if not (release in ["dr3", "dr4", "dr5"]):
         raise ValueError("Release must be one of dr3, dr4, dr5")
     plx_unc = parallax_uncertainty(gmag, release=release)
     return _scaling_for_positions[release]["Total"] * plx_unc
@@ -212,7 +208,7 @@ def total_proper_motion_uncertainty(gmag, release=_default_release):
     The uncertainties are for proper motions in the ICRS (i.e., right ascension,
     declination). Make sure your simulated astrometry is also on the ICRS.
     """
-    if not (str in ["dr3", "dr4", "dr5"]):
+    if not (release in ["dr3", "dr4", "dr5"]):
         raise ValueError("Release must be one of dr3, dr4, dr5")
     plx_unc = parallax_uncertainty(gmag, release=release)
     return _scaling_for_proper_motions[release]["Total"] * plx_unc
