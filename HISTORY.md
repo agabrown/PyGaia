@@ -1,3 +1,13 @@
+## 3.0 (September 2022)
+
+* Renamed master branch to main.
+* Added new performance predictions for photometry and radial velocities (appeared on Gaia science performance pages after
+  Gaia DR3).
+* Changed repository layout.
+* Updated to using pyproject.toml configuration and using pip to install from source.
+* Cleaned up documentation and published on readthedocs.io.
+* Changed license.
+
 ## 2.2 (January 2021)
 
 * Fixed the typo noted in https://github.com/agabrown/PyGaia/pull/4

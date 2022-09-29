@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel", "setuptools_scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "PyGaia"
+description = "Gaia science performance simulation toolkit'"
+version = "3.0"
+authors = [{ name = "Anthony G.A. Brown", email = "brown@strw.leidenuniv.nl" }]
+readme = "README.md"
+requires-python = ">=3.6"
+license = { text = "" }
+keywords = ["plotting, data analysis, numerical tools"]
+classifiers = [
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: BSD-3-Clause license",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "Intended Audience :: Science/Research",
+]
+dependencies = ["matplotlib>=3.0", "numpy>=1.19", "cartopy>=0.18"]
+
+[project.urls]
+"Homepage" = "https://github.com/agabrown/PyGaia"
+"Documentation" = "https://PyGaia.readthedocs.io/en/latest/"
+"Source" = "https://github.com/agabrown/PyGaia"
+"Bug Tracker" = "https://github.com/agabrown/PyGaia/issues"
+
+[project.optional-dependencies]
+docs = [
+    "sphinx>=4.4.0",
+    "myst-parser>=0.18",
+    "sphinx-book-theme>=0.3.3",
+    "sphinx-automodapi>=0.14",
+]
