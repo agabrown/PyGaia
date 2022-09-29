@@ -25,7 +25,7 @@ _scaling_for_positions = {
 }
 #scaled by _t_factor**2
 _scaling_for_proper_motions = {
-    "dr3": {"Total": 1.48, "AlphaStar": 1.58, "Delta": 1.37},
+    "dr2": {"Total": 1.48, "AlphaStar": 1.58, "Delta": 1.37},
     "dr3": {"Total": 0.96, "AlphaStar": 1.03, "Delta": 0.89},
     "dr4": {"Total": 0.54, "AlphaStar": 0.58, "Delta": 0.50},
     "dr5": {"Total": 0.27, "AlphaStar": 0.29, "Delta": 0.25},
