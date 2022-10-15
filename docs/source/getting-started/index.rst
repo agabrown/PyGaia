@@ -27,6 +27,8 @@ Dependencies
 The following python packages are required:
 
 * `numpy <http://www.numpy.org/>`_
+* `scipy <https://scipy.org/>`_
+* `pandas <https://pandas.pydata.org/>`_
 
 For the plotting tools the following packages are required:
 

@@ -1,239 +1,191 @@
 r"""
-Provides functions for simulating the photometric (:math:`G`, :math;`G_\mathrm{BP}`,
-:math:`G_\mathrm{RP}`) uncertainties on the Gaia catalogue data.
+Provides functions for simulating the photometric (:math:`G`, :math:`G_\mathrm{BP}`,
+:math:`G_\mathrm{RP}`) uncertainties on the Gaia borad-band photometry.
+
+Code taken from the notebook at
+https://github.com/gaia-dpci/gaia-dr3-photometric-uncertainties
 """
+import os
+import pandas as pd
 import numpy as np
+import scipy.interpolate as interpolate
 
-from pygaia.errors.utils import calc_z_gmag, calc_z_bprp
-
-__all__ = [
-    "g_magnitude_uncertainty",
-    "g_magnitude_uncertainty_eom",
-    "bp_magnitude_uncertainty",
-    "bp_magnitude_uncertainty_eom",
-    "rp_magnitude_uncertainty",
-    "rp_magnitude_uncertainty_eom",
-]
-
-# Margin to include on predicted standard uncertainties (i.e. multiply prediction by
-# this value).
-_science_margin = 1.2
-
-# Mean number of CCDs crossed by a source in the AF field (G-band photometry)
-_mean_num_ccds = (7.0 * 9.0 - 1.0) / 7.0
-
-# End-of-mission CCD transit calibration floor on the photometric uncertainties
-_eom_calibration_floor_g = 3.0e-3 / np.sqrt(_mean_num_ccds)
-_eom_calibration_floor_bp = 5.0e-3
-_eom_calibration_floor_rp = 5.0e-3
+_ROOT = os.path.abspath(os.path.dirname(__file__))
+_spline_csv_file = os.path.join(_ROOT, "data", "LogErrVsMagSpline.csv")
+_default_release = "dr4"
+_nobs_drs_bands = {
+    "dr3": {"g": 351, "bp": 40, "rp": 40},
+    "dr4": {"g": 620, "bp": 70, "rp": 70},
+    "dr5": {"g": 1240, "bp": 140, "rp": 140},
+}
 
 
-def g_magnitude_uncertainty(gmag):
+class LogMagUncertainty:
+    r"""
+    Estimate the log(mag) vs mag uncertainty for :math:`G`, :math:`G_\mathrm{BP}`,
+    :math:`G_\mathrm{RP}` based on Gaia EDR3 photometry.
+
+    The code in this class is a modified version of the Edr3LogMagUncertainty code in
+    the Jypyter notebook EDR3_Photometric_Uncertainties.ipynb at
+    https://github.com/gaia-dpci/gaia-dr3-photometric-uncertainties. The additional function estimate_for_maglist() is included to facilitate calculating the uncertainties for the number of observationis corresponding to a given Gaia data release and for the input list of magnitudes.
     """
-    Calculate the single-field-of-view-transit photometric standard uncertainty in the G
-    band as a function of G. A 20% margin is included.
 
-    Parameters
-    ----------
-    gmag : float or array
-        Value(s) of G-band magnitude.
+    def __init__(self):
+        """ """
+        _df = pd.read_csv(_spline_csv_file)
+        splines = dict()
+        splines["g"] = self.__init_spline(_df, "knots_G", "coeff_G")
+        splines["bp"] = self.__init_spline(_df, "knots_BP", "coeff_BP")
+        splines["rp"] = self.__init_spline(_df, "knots_RP", "coeff_RP")
+        self.__splines = splines
+        self.__nobs = {"g": 200, "bp": 20, "rp": 20}
+        self.__nobs_drs = _nobs_drs_bands
 
-    Returns
-    -------
-    gmag_uncertainty : floar or array
-        The G band photometric standard uncertainty in units of magnitude.
-    """
-    z = calc_z_gmag(gmag)
-    return 1.0e-3 * np.sqrt(0.04895 * z * z + 1.8633 * z + 0.0001985) * _science_margin
+    def estimate(
+        self, band, nobs: np.array([], int) = 0, mag_range=None, mag_samples=1000
+    ):
+        """
+        Estimate the log(mag) vs mag uncertainty
 
+        Parameters
+        ----------
+        band : str
+            name of the band for which the uncertainties should be estimated (case-insensitive)
+        nobs : ndarray, int
+            number of observations for which the uncertainties should be estimated.
+            Must be a scalar integer value or an array of integer values.
+        mag_range : array_like
+            Magnitude range over which the spline should be evaluated.
+            The default and maximum valid range is (4, 21)
+        mag_samples : int
+            Number evenly spaced magnitudes (over the mag_range interval) at which the
+            splines will be estimated. Default: 1000
 
-def g_magnitude_uncertainty_eom(gmag, nobs=70, extension=0.0):
-    """
-    Calculate the end of mission photometric standard uncertainty in the G band as a
-    function of G. A 20% margin is included.
+        Raises
+        ------
+        ValueError
+            For wrong inputs.
 
-    Parameters
-    ----------
-    gmag : float or array
-        Value(s) of G-band magnitude.
-    nobs : int
-        Number of observations collected (default 70).
-    extension : float
-        Add this amount of years to the mission lifetime and scale the uncertainties
-        accordingly. Value can be negative for shorter mission spans (early data
-        releases).
+        Returns
+        -------
+        df : DataFrame
+            Pandas dataframe with the interpolated log(mag) uncertainty vs mag.
+            The magnitude column is named mag_g, mag_bp, or mag_rp depending of the requested band.
+            A column for each value of nobs is provided, in the default case the column is logU_200.
+        """
+        band = band.lower()
+        if band not in ["g", "bp", "rp"]:
+            raise ValueError(f"Unknown band: {band}")
+        if mag_range is None:
+            mag_range = (4.0, 21.0)
+        else:
+            if mag_range[0] < 4.0:
+                raise ValueError(
+                    f"Uncertainties can be estimated only in the range {band}[4, 21]"
+                )
+            elif mag_range[1] > 21.0:
+                raise ValueError(
+                    f"Uncertainties can be estimated only in the range {band}[4, 21]"
+                )
+            elif mag_range[0] > mag_range[1]:
+                raise ValueError("Malformed magnitude range")
+        #
+        xx = np.linspace(mag_range[0], mag_range[1], mag_samples)
+        __cols = self.__compute_nobs(band, xx, nobs)
+        __dc = {f"mag_{band}": xx, **__cols}
+        return pd.DataFrame(data=__dc)
 
-    Returns
-    -------
-    gmag_uncertainty : floar or array
-        The G band photometric standard uncertainty in units of magnitude.
-    """
-    nobs_scaled = round((5.0 + extension) / 5.0 * nobs)
-    return (
-        np.sqrt(
-            (
-                np.power(g_magnitude_uncertainty(gmag) / _science_margin, 2)
-                + _eom_calibration_floor_g * _eom_calibration_floor_g
+    def estimate_for_maglist(
+        self, band, maglist: np.array([], float) = 15.0, release=_default_release
+    ):
+        """
+        Estimate the log(mag) vs mag uncertainty
+
+        Parameters
+        ----------
+        band : str
+            name of the band for which the uncertainties should be estimated (case-insensitive)
+        maglist : ndarray, float
+            List of magnitudes (corresponding to the requested band) for which the
+            uncertainties should be estimated. Must be a scalar float value or an array
+            of float values. The values must be in the range [4, 21].
+        release : str
+            Gaia data release for which the uncertainties are simulated. Must be one of "dr3", "dr4", or "dr5".
+
+        Raises
+        ------
+        ValueError
+            For wrong inputs.
+
+        Returns
+        -------
+        df : DataFrame
+            Pandas dataframe with the interpolated log(mag) uncertainty vs mag.
+            The magnitude column is named mag_g, mag_bp, or mag_rp depending of the requested band.
+            A column for each value of nobs is provided, in the default case the column is logU_200.
+        """
+        band = band.lower()
+        release = release.lower()
+        if band not in ["g", "bp", "rp"]:
+            raise ValueError(f"Unknown band: {band}")
+        if release not in ["dr3", "dr4", "dr5"]:
+            raise ValueError(f"Unknown data release: {release}")
+        if np.any(maglist < 4.0) or np.any(maglist > 21.0):
+            raise ValueError(
+                f"One or more of the values in maglist is outside the range [4, 21]"
             )
-            / nobs_scaled
+        #
+        __cols = self.__compute_nobs(band, maglist, self.__nobs_drs[release][band])
+        __dc = {f"mag_{band}": maglist, **__cols}
+        return pd.DataFrame(data=__dc)
+
+    def __init_spline(self, df, col_knots, col_coeff):
+        __ddff = df[[col_knots, col_coeff]].dropna()
+        return interpolate.BSpline(
+            __ddff[col_knots], __ddff[col_coeff], 3, extrapolate=True
         )
-        * _science_margin
-    )
+
+    def __compute_nobs(self, band, xx, nobs):
+        if isinstance(nobs, int):
+            nobs = [nobs]
+        __out = dict()
+        for num in nobs:
+            if num < 0:
+                raise ValueError(f"Number of observations should be strictly positive")
+            if num == 0:
+                __out[f"logU_{self.__nobs[band]:d}"] = self.__splines[band](xx)
+            else:
+                __out[f"logU_{num:d}"] = self.__splines[band](xx) - np.log10(
+                    np.sqrt(num) / np.sqrt(self.__nobs[band])
+                )
+        return __out
 
 
-def bp_magnitude_uncertainty(gmag, vmini):
-    """
-    Calculate the single-field-of-view-transit photometric standard uncertainty in the
-    BP band as a function of G and (V-I). Note: this refers to the integrated flux from
-    the BP spectrophotometer. A margin of 20% is included.
-
-    Parameters
-    ----------
-    gmag : float or array
-        Value(s) of G-band magnitude.
-    vmini : float or array
-        Value(s) of (V-I) colour.
-
-    Returns
-    -------
-    bpmag_uncertainty : float or array
-        The BP band photometric standard uncertainty in units of magnitude.
-    """
-    z = calc_z_bprp(gmag)
-    a = (
-        -0.000562 * np.power(vmini, 3)
-        + 0.044390 * vmini * vmini
-        + 0.355123 * vmini
-        + 1.043270
-    )
-    b = (
-        -0.000400 * np.power(vmini, 3)
-        + 0.018878 * vmini * vmini
-        + 0.195768 * vmini
-        + 1.465592
-    )
-    c = (
-        +0.000262 * np.power(vmini, 3)
-        + 0.060769 * vmini * vmini
-        - 0.205807 * vmini
-        - 1.866968
-    )
-    return 1.0e-3 * np.sqrt(
-        np.power(10.0, a) * z * z + np.power(10.0, b) * z + np.power(10.0, c)
-    )
-
-
-def bp_magnitude_uncertainty_eom(gmag, vmini, nobs=70, extension=0.0):
-    """
-    Calculate the end-of-mission photometric standard uncertainty in the BP band as a
-    function of G and (V-I). Note: this refers to the integrated flux from the BP
-    spectrophotometer. A margin of 20% is included.
+def magnitude_uncertainty(
+    band, maglist: np.array([], float) = 15.0, release=_default_release
+):
+    r"""
+    Provide the uncertainty for :math:`G`, :math:`G_\mathrm{BP}`, :math:`G_\mathrm{RP}`.
 
     Parameters
     ----------
-    gmag : float or array
-        Value(s) of G-band magnitude.
-    vmini : float or array
-        Value(s) of (V-I) colour.
-    nobs : int
-        Number of observations collected (default 70).
-    extension : float
-        Add this amount of years to the mission lifetime and scale the uncertainties
-        accordingly. Value can be negative for shorter mission spans (early data
-        releases).
+    band : str
+        name of the band for which the uncertainties are requested case-insensitive)
+    maglist : ndarray, float
+        List of magnitudes for which the uncertainties are requested Must be a scalar
+        float value or an array of float values. The values must be in the range [4,
+        21].
+    release : str
+        Gaia data release for which the uncertainties are requested. Must be one of
+        "dr3", "dr4", or "dr5".
 
     Returns
     -------
-    bpmag_uncertainty : float or array
-        The BP band photometric standard uncertainty in units of magnitude.
+    uncs : ndarray, float
+        Array with uncertainties in units of mmag.
     """
-    nobs_scaled = round((5.0 + extension) / 5.0 * nobs)
-    return (
-        np.sqrt(
-            (
-                np.power(bp_magnitude_uncertainty(gmag, vmini) / _science_margin, 2)
-                + _eom_calibration_floor_bp * _eom_calibration_floor_bp
-            )
-            / nobs_scaled
-        )
-        * _science_margin
-    )
-
-
-def rp_magnitude_uncertainty(gmag, vmini):
-    """
-    Calculate the single-field-of-view-transit photometric standard uncertainty in the
-    RP band as a function of G and (V-I). Note: this refers to the integrated flux from
-    the RP spectrophotometer. A margin of 20% is included.
-
-    Parameters
-    ----------
-    gmag : float or array
-        Value(s) of G-band magnitude.
-    vmini : float or array
-        Value(s) of (V-I) colour.
-
-    Returns
-    -------
-    rpmag_uncertainty : float or array
-        The RP band photometric standard uncertainty in units of magnitude.
-    """
-    z = calc_z_bprp(gmag)
-    a = (
-        -0.007597 * np.power(vmini, 3)
-        + 0.114126 * vmini * vmini
-        - 0.636628 * vmini
-        + 1.615927
-    )
-    b = (
-        -0.003803 * np.power(vmini, 3)
-        + 0.057112 * vmini * vmini
-        - 0.318499 * vmini
-        + 1.783906
-    )
-    c = (
-        -0.001923 * np.power(vmini, 3)
-        + 0.027352 * vmini * vmini
-        - 0.091569 * vmini
-        - 3.042268
-    )
-    return 1.0e-3 * np.sqrt(
-        np.power(10.0, a) * z * z + np.power(10.0, b) * z + np.power(10.0, c)
-    )
-
-
-def rp_magnitude_uncertainty_eom(gmag, vmini, nobs=70, extension=0.0):
-    """
-    Calculate the end-of-mission photometric standard uncertainty in the RP band as a
-    function of G and (V-I). Note: this refers to the integrated flux from the RP
-    spectrophotometer. A margin of 20% is included.
-
-    Parameters
-    ----------
-    gmag : float or array
-        Value(s) of G-band magnitude.
-    vmini : float or array
-        Value(s) of (V-I) colour.
-    nobs : int
-        Number of observations collected (default 70).
-    extension : float
-        Add this amount of years to the mission lifetime and scale the uncertainties
-        accordingly. Value can be negative for shorter mission spans (early data
-        releases).
-
-    Returns
-    -------
-    rpmag_uncertainty : float or array
-        The RP band photometric standard uncertainty in units of magnitude.
-    """
-    nobs_scaled = round((5.0 + extension) / 5.0 * nobs)
-    return (
-        np.sqrt(
-            (
-                np.power(rp_magnitude_uncertainty(gmag, vmini) / _science_margin, 2)
-                + _eom_calibration_floor_rp * _eom_calibration_floor_rp
-            )
-            / nobs_scaled
-        )
-        * _science_margin
-    )
+    lmu = LogMagUncertainty()
+    logunc = lmu.estimate_for_maglist(band, maglist, release)[
+        f"logU_{_nobs_drs_bands[release][band]}"
+    ].to_numpy()
+    return np.power(10.0, logunc) * 1000

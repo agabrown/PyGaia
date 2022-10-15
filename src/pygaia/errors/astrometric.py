@@ -34,9 +34,12 @@ _scaling_for_proper_motions = {
 # motion precisions scale as t**(-1.5). The extra factor 1/t is included in the scaling
 # factors above.
 #
+# The assumed mission lengths are compatible with the assumptions on the science
+# performance pages.
+#
 # The predictions for DR4 and DR5 are based on the (E)DR3 uncertainties, where the
 # latter are inflated by a 'science margin' of 10 percent (factor 1.1).
-_t_factor = {"dr3": 1.0, "dr4": 0.749, "dr5": 0.527}
+_t_factor = {"dr3": 1.0, "dr4": 0.749, "dr5": 0.528}
 _default_release = "dr4"
 
 

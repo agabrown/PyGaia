@@ -6,7 +6,7 @@ setup(
     package_dir={"": "src"},
     package_data={
         "": ["LICENSE", "AUTHORS.md", "HISTORY.md", "INSTALL.md"],
-        "pygaia": ["data/*"],
+        "pygaia.errors": ["data/*"],
     },
     include_package_data=True,
 )
