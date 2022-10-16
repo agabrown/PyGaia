@@ -10,21 +10,21 @@ __all__ = ["gbrminv_from_vminic", "gminv_from_vmini", "vmingrvs_from_vmini"]
 
 def gbrminv_from_vminic(vminic):
     r"""
-    Transformation from Johnson-Cousins :math:`$V-I_\mathrm{c}$` to Gaia magnitudes.
+    Transformation from Johnson-Cousins :math:`V-I_\mathrm{c}` to Gaia magnitudes.
 
-    Calculate :math:`$G-V$`, :math:`$G_\mathrm{BP}-V$, :math:`G_\mathrm{RP}-V`, and
+    Calculate :math:`G-V`, :math:`G_\mathrm{BP}-V`, :math:`G_\mathrm{RP}-V`, and
     :math:`G_\mathrm{BP}-G_\mathrm{RP}` from the input values of
-    :math:`$V-I_\mathrm{c}$`
+    :math:`V-I_\mathrm{c}`
 
     Parameters
     ----------
     vminic : ndarray, float
-        Value(s) of :math:`$V-I_\mathrm{c}$` for which to calculate the Gaia magnitudes
+        Value(s) of :math:`V-I_\mathrm{c}` for which to calculate the Gaia magnitudes
 
     Returns
     -------
     gminv, gbpminv, grpmin, gbpmingrp : ndarray, float
-        The value(s) of :math:`$G-V$`, :math:`$G_\mathrm{BP}-V$,
+        The value(s) of :math:`G-V`, :math:`G_\mathrm{BP}-V`,
         :math:`G_\mathrm{RP}-V`, and :math:`G_\mathrm{BP}-G_\mathrm{RP}`
     """
     vminic2 = vminic * vminic

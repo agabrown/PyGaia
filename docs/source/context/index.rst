@@ -21,7 +21,7 @@ transformations from (Cartesian) phase space coordinates to astrometric observab
 vice versa. See the `astropy.coordinates
 <https://docs.astropy.org/en/stable/coordinates/index.html>`_ package. Compared to the
 ``pygaia.astrometry`` package this gives you more functionality, the use of units, and
-much better maintained code.
+much better, and much better maintained, code.
 
 The only functionality not (yet) provided in Astropy is the transformation of the
 covariance matrix of the astrometric observables to to a different epoch. This is
