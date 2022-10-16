@@ -10,8 +10,10 @@ import pandas as pd
 import numpy as np
 import scipy.interpolate as interpolate
 
+__all__ = ["LogMagUncertainty", "magnitude_uncertainty"]
+
 _ROOT = os.path.abspath(os.path.dirname(__file__))
-_spline_csv_file = os.path.join(_ROOT, "data", "LogErrVsMagSpline.csv")
+_spline_csv_file = os.path.join(_ROOT, "data", "LogErrVsMagSpline-mod.csv")
 _default_release = "dr4"
 _nobs_drs_bands = {
     "dr3": {"g": 351, "bp": 40, "rp": 40},
@@ -142,7 +144,7 @@ class LogMagUncertainty:
     def __init_spline(self, df, col_knots, col_coeff):
         __ddff = df[[col_knots, col_coeff]].dropna()
         return interpolate.BSpline(
-            __ddff[col_knots], __ddff[col_coeff], 3, extrapolate=True
+            __ddff[col_knots], __ddff[col_coeff], 3, extrapolate=False
         )
 
     def __compute_nobs(self, band, xx, nobs):
