@@ -21,7 +21,9 @@ Applications (2012, van Altena et al.) <http://www.cambridge.org/9780521519205>`
 implemented.
 
 .. warning:: 
-   The code in this package is **not intended for accurate astrometry applications**,
+   The code in this package is intended for simulating Gaia catalogue uncertainties and
+   manipulating (Gaia) astrometric data, but
+   **is not intended for accurate on-sky astrometry applications**,
    such as predicting in detail astrometric paths of stars on the sky.
    
 .. toctree::
@@ -29,6 +31,7 @@ implemented.
 
    getting-started/index
    context/index
+   user-documentation/index
    api
 
 Indices and tables
