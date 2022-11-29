@@ -1,0 +1,28 @@
+text.usetex: False
+font.family: sans-serif
+font.size: 18
+
+xtick.major.size: 6
+xtick.minor.size: 4
+xtick.major.width: 2
+xtick.minor.width: 2
+xtick.direction: out
+
+ytick.major.size: 6
+ytick.minor.size: 4
+ytick.major.width: 2
+ytick.minor.width: 2
+ytick.direction: out
+
+grid.color: cbcbcb
+grid.linestyle: -
+grid.linewidth: 1
+grid.alpha: 1
+
+lines.linewidth: 2
+
+axes.linewidth: 2
+axes.facecolor: white
+
+axes.spines.right: off
+axes.spines.top: off

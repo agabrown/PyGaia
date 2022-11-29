@@ -1,5 +1,7 @@
 .vscode/
 
+sandbox/
+
 examples/*.pdf
 examples/*.png
 

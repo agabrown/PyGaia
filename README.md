@@ -1,6 +1,9 @@
 # PyGaia
 
-Python toolkit for basic Gaia data simulation and data manipulation
+Python toolkit for basic Gaia data simulation and data manipulation.
+
+> **Warning**
+> __2022.11.29__ I'm in the process of modifying the code to version 3, intended for Gaia DR3+ performance simulations. The changes to implement the most recent astrometry, photometry, and radial velocity uncertainty models from the [Gaia science performance pages](https://www.cosmos.esa.int/web/gaia/science-performance) are in place. However the code is not yet fully tested and documented, so for now use at your own risk. If you don't want to do this, use the most recent stable version 2.2 from PyPi.
 
 ## Description
 

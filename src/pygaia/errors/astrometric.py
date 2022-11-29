@@ -1,5 +1,6 @@
 """
-Provides functions for simulation the astrometric uncertainties on the Gaia catalogue data.
+Provides functions for simulation the astrometric uncertainties in the Gaia catalogue
+data for Gaia DR3+. The code reproduces the uncertainty model described on the `Gaia science performance pages <https://www.cosmos.esa.int/web/gaia/science-performance#astrometric%20performance>`_.
 """
 import numpy as np
 

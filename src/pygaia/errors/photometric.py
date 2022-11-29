@@ -1,8 +1,11 @@
 r"""
 Provides functions for simulating the photometric (:math:`G`, :math:`G_\mathrm{BP}`,
-:math:`G_\mathrm{RP}`) uncertainties on the Gaia borad-band photometry.
+:math:`G_\mathrm{RP}`) uncertainties on the Gaia broad-band photometry for Gaia DR3+.
+The code reproduces the uncertainty model described on the `Gaia science performance
+<https://www.cosmos.esa.int/web/gaia/science-performance#photometric%20performance>`_
+pages.
 
-Code taken from the notebook at
+Code taken (with permission) from the notebook at
 https://github.com/gaia-dpci/gaia-dr3-photometric-uncertainties
 """
 import os
@@ -13,7 +16,7 @@ import scipy.interpolate as interpolate
 __all__ = ["LogMagUncertainty", "magnitude_uncertainty"]
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))
-_spline_csv_file = os.path.join(_ROOT, "data", "LogErrVsMagSpline-mod.csv")
+_spline_csv_file = os.path.join(_ROOT, "data", "LogErrVsMagSpline2.csv")
 _default_release = "dr4"
 _nobs_drs_bands = {
     "dr3": {"g": 351, "bp": 40, "rp": 40},
@@ -167,16 +170,18 @@ def magnitude_uncertainty(
     band, maglist: np.array([], float) = 15.0, release=_default_release
 ):
     r"""
-    Provide the uncertainty for :math:`G`, :math:`G_\mathrm{BP}`, :math:`G_\mathrm{RP}`.
+    Provide the uncertainty for :math:`G`, :math:`G_\mathrm{BP}`, and
+    :math:`G_\mathrm{RP}` as a function of magnitude (math:`G`, :math:`G_\mathrm{BP}`,
+    and :math:`G_\mathrm{RP}`, respectively).
 
     Parameters
     ----------
     band : str
         name of the band for which the uncertainties are requested case-insensitive)
     maglist : ndarray, float
-        List of magnitudes for which the uncertainties are requested Must be a scalar
-        float value or an array of float values. The values must be in the range [4,
-        21].
+        List of magnitudes in the same band for which the uncertainties are requested.
+        Must be a scalar float value or an array of float values. The values must be in
+        the range [4, 21].
     release : str
         Gaia data release for which the uncertainties are requested. Must be one of
         "dr3", "dr4", or "dr5".
