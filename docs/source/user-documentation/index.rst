@@ -5,3 +5,4 @@ User documentation
     :maxdepth: 2
 
     astrometry
+    photometry

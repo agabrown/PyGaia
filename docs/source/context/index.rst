@@ -40,3 +40,4 @@ Other Python packages for astrometry
 * `astromet <https://github.com/zpenoyre/astromet.py>`_  A simple python package for generating astrometric tracks of single stars and the center of light of unresolved binaries, blended and lensed systems. Includes a close emulation of Gaia's astrometric fitting pipeline.
 * `HTOF <https://github.com/gmbrandt/HTOF>`_ HTOF: Code which parses the intermediate data from Hipparcos and Gaia and fits astrometric solutions to those data. Capable of computing likelyhoods and parameter errors in line with the catalog.
 * `orvara <https://github.com/t-brandt/orvara>`_ Package for fitting orbits of bright stars and their faint companions (exoplanets, brown dwarfs, white dwarfs, and low-mass stars).
+* `orbitize <https://orbitize.readthedocs.io/en/latest/>`_ Package for fitting orbits of directly imaged planets.

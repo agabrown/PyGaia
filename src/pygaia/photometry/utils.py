@@ -1,11 +1,11 @@
+r"""
+Provides utility functions for photometric transformations. Values of :math:`M_V` and :math:`V-I_\mathrm{c}` from `Pickles (1998) <https://ui.adsabs.harvard.edu/abs/1998PASP..110..863P/abstract>`_.
 """
-Provides utility functions for photometric transformations.
-"""
-from pygaia.photometry.transformations import gminv_from_vmini
+from pygaia.photometry.transformations import gbrminv_from_vminic
 
-__all__ = ["vminiFromSpt", "vabsFromSpt", "gabsFromSpt"]
+__all__ = ["vminic_from_spt", "vabs_from_spt", "gabs_from_spt"]
 
-_sptToVminiVabsDictionary = {
+_spt_to_vminic_vabs = {
     "B0V": (-0.31, -3.5),
     "B1V": (-0.24, -2.7),
     "B5V": (-0.08, 0.0),
@@ -28,9 +28,9 @@ _sptToVminiVabsDictionary = {
 }
 
 
-def vminiFromSpt(spt):
-    """
-    Obtain (V-I) for the input spectral type.
+def vminic_from_spt(spt):
+    r"""
+    Obtain :math:`(V-I_\mathrm{c})` for the input spectral type.
 
     Parameters
     ----------
@@ -40,25 +40,25 @@ def vminiFromSpt(spt):
     Returns
     -------
     vmini : float
-        The value of (V-I).
+        The value of :math:`(V-I_\mathrm{c})`.
 
     Raises
     ------
     ValueError
         When an unknown spectral type is specified.
     """
-    if spt in _sptToVminiVabsDictionary:
-        return _sptToVminiVabsDictionary[spt][0]
+    if spt in _spt_to_vminic_vabs:
+        return _spt_to_vminic_vabs[spt][0]
     else:
         message = "Unknown spectral type. Allowed values are: "
-        for key in _sptToVminiVabsDictionary.keys():
+        for key in _spt_to_vminic_vabs.keys():
             message += key + " "
         raise ValueError(message)
 
 
-def vabsFromSpt(spt):
-    """
-    Obtain M_V (absolute magnitude in V-band) for the input spectral type.
+def vabs_from_spt(spt):
+    r"""
+    Obtain :math:`M_V` (absolute magnitude in :math:`V`-band) for the input spectral type.
 
     Parameters
     ----------
@@ -68,25 +68,25 @@ def vabsFromSpt(spt):
     Returns
     -------
     vabs : float
-        The value of M_V.
+        The value of :math:`M_V`.
 
     Raises
     ------
     ValueError
         When an unknown spectral type is specified.
     """
-    if spt in _sptToVminiVabsDictionary:
-        return _sptToVminiVabsDictionary[spt][1]
+    if spt in _spt_to_vminic_vabs:
+        return _spt_to_vminic_vabs[spt][1]
     else:
         message = "Unknown spectral type. Allowed values are: "
-        for key in _sptToVminiVabsDictionary.keys():
+        for key in _spt_to_vminic_vabs.keys():
             message += key + " "
         raise ValueError(message)
 
 
-def gabsFromSpt(spt):
-    """
-    Obtain M_G (absolute magnitude in G-band) for the input spectral type.
+def gabs_from_spt(spt):
+    r"""
+    Obtain :math:`M_G` (absolute magnitude in :math:`G`-band) for the input spectral type.
 
     Parameters
     ----------
@@ -96,17 +96,19 @@ def gabsFromSpt(spt):
     Returns
     -------
     gabs : float
-        The value of M_G.
+        The value of :math:`M_G`.
 
     Raises
     ------
     ValueError
         When an unknown spectral type is specified.
     """
-    if spt in _sptToVminiVabsDictionary:
-        return vabsFromSpt(spt) + gminv_from_vmini(vminiFromSpt(spt))
+    if spt in _spt_to_vminic_vabs:
+        vminic = vminic_from_spt(spt)
+        gminv, _, _ = gbrminv_from_vminic(vminic)
+        return vabs_from_spt(spt) + gminv
     else:
         message = "Unknown spectral type. Allowed values are: "
-        for key in _sptToVminiVabsDictionary.keys():
+        for key in _spt_to_vminic_vabs.keys():
             message += key + " "
         raise Exception(message)
