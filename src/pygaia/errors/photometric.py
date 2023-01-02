@@ -55,7 +55,7 @@ class LogMagUncertainty:
         Parameters
         ----------
         band : str
-            name of the band for which the uncertainties should be estimated (case-insensitive)
+            name of the band for which the uncertainties should be estimated (case-insensitive). Must be one of "g", "gbp", or "grp".
         nobs : ndarray, int
             number of observations for which the uncertainties should be estimated.
             Must be a scalar integer value or an array of integer values.
@@ -109,13 +109,13 @@ class LogMagUncertainty:
         Parameters
         ----------
         band : str
-            name of the band for which the uncertainties should be estimated (case-insensitive)
+            name of the band for which the uncertainties should be estimated (case-insensitive). Must be one of "g", "gbp", or "grp".
         maglist : ndarray, float
             List of magnitudes (corresponding to the requested band) for which the
             uncertainties should be estimated. Must be a scalar float value or an array
             of float values. The values must be in the range [4, 21].
         release : str
-            Gaia data release for which the uncertainties are simulated. Must be one of "dr3", "dr4", or "dr5".
+            Gaia data release for which the uncertainties are simulated (case-insensitive). Must be one of "dr3", "dr4", or "dr5".
 
         Raises
         ------
@@ -177,14 +177,13 @@ def magnitude_uncertainty(
     Parameters
     ----------
     band : str
-        name of the band for which the uncertainties are requested case-insensitive)
+        name of the band for which the uncertainties are requested (case-insensitive). Must be one of "g", "gbp", or "grp".
     maglist : ndarray, float
         List of magnitudes in the same band for which the uncertainties are requested.
         Must be a scalar float value or an array of float values. The values must be in
         the range [4, 21].
     release : str
-        Gaia data release for which the uncertainties are requested. Must be one of
-        "dr3", "dr4", or "dr5".
+        Gaia data release for which the uncertainties are requested (case-insensitive). Must be one of "dr3", "dr4", or "dr5".
 
     Returns
     -------
@@ -193,6 +192,6 @@ def magnitude_uncertainty(
     """
     lmu = LogMagUncertainty()
     logunc = lmu.estimate_for_maglist(band, maglist, release)[
-        f"logU_{_nobs_drs_bands[release][band]}"
+        f"logU_{_nobs_drs_bands[release.lower()][band.lower()]}"
     ].to_numpy()
     return np.power(10.0, logunc) * 1000
