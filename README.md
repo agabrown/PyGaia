@@ -62,6 +62,8 @@ This package is intended for Python3.
 The following python packages are required:
 
 * [numpy](https://numpy.org/)
+* [scipy](https://scipy.org/)
+* [pandas](https://pandas.pydata.org/)
 * [UltraJSON](https://github.com/ultrajson/ultrajson)
 
 For the plotting tools:
