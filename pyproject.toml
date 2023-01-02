@@ -19,7 +19,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Astronomy",
     "Intended Audience :: Science/Research",
 ]
-dependencies = ["matplotlib>=3.0", "numpy>=1.19", "cartopy>=0.18"]
+dependencies = ["matplotlib>=3.0", "numpy>=1.19", "cartopy>=0.18a", "ujson>=5"]
 
 [project.urls]
 "Homepage" = "https://github.com/agabrown/PyGaia"

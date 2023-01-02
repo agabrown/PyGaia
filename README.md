@@ -62,6 +62,7 @@ This package is intended for Python3.
 The following python packages are required:
 
 * [numpy](https://numpy.org/)
+* [UltraJSON](https://github.com/ultrajson/ultrajson)
 
 For the plotting tools:
 
