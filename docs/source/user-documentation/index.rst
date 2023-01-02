@@ -6,3 +6,5 @@ User documentation
 
     astrometry
     photometry
+    errors
+    plot

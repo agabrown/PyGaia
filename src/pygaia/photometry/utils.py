@@ -1,5 +1,5 @@
 r"""
-Provides utility functions for photometric transformations. Values of :math:`M_V` and :math:`V-I_\mathrm{c}` from `Pickles (1998) <https://ui.adsabs.harvard.edu/abs/1998PASP..110..863P/abstract>`_.
+Provides utility functions for photometric transformations. Values of :math:`M_V` and :math:`V-I_\mathrm{c}` are from `Pickles (1998) <https://ui.adsabs.harvard.edu/abs/1998PASP..110..863P/abstract>`_.
 """
 from pygaia.photometry.transformations import gbrminv_from_vminic
 

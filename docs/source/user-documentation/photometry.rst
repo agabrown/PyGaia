@@ -10,11 +10,11 @@ Transformations
 
 Detailed API: :py:mod:`pygaia.photometry.transformations`
 
-rovides transformations between Gaia and a few other photometric systems.
+Provides transformations between Gaia and a few other photometric systems.
 
 Utilities
 ---------
 
 Detailed API: :py:mod:`pygaia.photometry.utils`
 
-Provides utility functions for the handling of Gaia photometry. At the moment only functions to calculate photometric colours from the input spectral types.
+Provides utility functions for the handling of Gaia photometry. At the moment only provides a basic mapping from spectral type to :math:`(V-I)_\mathrm{c}`, :math:`M_V`, and :math:`M_G`.
