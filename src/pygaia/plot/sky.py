@@ -3,6 +3,7 @@ Function for visualizing coordinate transformations on the sky.
 """
 import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
+from matplotlib.axes import Axes
 import numpy as np
 
 from pygaia.astrometry.coordinates import CoordinateTransformation
@@ -37,16 +38,16 @@ def _order_points_for_sky_plot(x, y):
 
 def plot_coordinate_transformation_on_sky(
     transformation,
+    fig,
     outfile=None,
     no_title=False,
     no_labels=False,
-    return_plot_object=False,
     lc=plt.cm.get_cmap("tab10").colors[0],
     tc=plt.cm.get_cmap("tab10").colors[1],
     lonpos=True,
 ):
     """
-    Produce a sky-plot in a given coordinate system with the meridians and paralles for
+    Produce a sky-plot in a given coordinate system with the meridians and parallels for
     another coordinate system overlayed. The coordinate systems are specified through
     the pygaia.coordinates.Transformations enum. For example for Transformations.GAL2ECL
     the sky plot will be in Ecliptic coordinates with the Galactic coordinate grid
@@ -57,19 +58,19 @@ def plot_coordinate_transformation_on_sky(
     transformation : pygaia.astrometry.coordinates.Transformations instance
         The coordinate transformation for which to make the plot (e.g.,
         Transformations.GAL2ECL).
+    fig : matplotlib.figure.Figure
+        Empty Figure instance in which to create the plot.
     outfile: str
-        Save plot to this output file (default is to plot on screen). Make sure an
-        extension (.pdf, .png, etc) is included.
+        Save plot to this output file. Make sure an extension (.pdf, .png, etc) is included.
     noTitle : boolean
         If true do not include the plot title.
     noLabels : boolean
         If true do not include plot labels.
-    returnPlotObject : boolean
-        If true return the matplotlib object used for plotting. Further plot elements
-        can then be added.
-    lc : Matplotlib colour
+    inax : matplotlib.axes.Axes
+        If provided use the input Axes instance for plotting.
+    lc : Matplotlib color specification
         Colour for gridlines.
-    tc : Matplotlib colour
+    tc : Matplotlib color specification
         Colour for text labels.
     lonpos : boolean
         If true use longitude labels between 0 and 360 degrees.
@@ -85,7 +86,6 @@ def plot_coordinate_transformation_on_sky(
     if lonpos:
         addtolabel = 360
 
-    fig = plt.figure(figsize=(12, 6))
     ax = fig.add_subplot(1, 1, 1, projection=ccrs.Mollweide())
     ax.invert_xaxis()
 
@@ -133,10 +133,10 @@ def plot_coordinate_transformation_on_sky(
 
     if not no_title:
         plt.title(
-            "Sky projection in "
-            + ct.transformationStrings[1]
+            "Mollweide projection in "
+            + ct.target_coordinates()
             + " coordinates with the corresponding "
-            + ct.transformationStrings[0]
+            + ct.start_coordinates()
             + " grid overlayed"
         )
 
@@ -183,7 +183,3 @@ def plot_coordinate_transformation_on_sky(
 
     if outfile is not None:
         plt.savefig(outfile)
-    elif return_plot_object:
-        return plt.gca()
-    else:
-        plt.show()
