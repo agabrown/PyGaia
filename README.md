@@ -69,7 +69,6 @@ The following python packages are required:
 For the plotting tools:
 
 * [matplotlib](https://matplotlib.org/)
-* [Cartopy](https://scitools.org.uk/cartopy/docs/latest/)
 
 ## Attribution
 
@@ -78,4 +77,4 @@ Please acknowledge the Gaia Project Scientist Support Team and the Gaia Data Pro
 
 ## License
 
-Copyright (c) 2012-2022 Anthony Brown, Leiden University, Gaia Data Processing and Analysis Consortium
+Copyright (c) 2012-2023 Anthony Brown, Leiden University, Gaia Data Processing and Analysis Consortium

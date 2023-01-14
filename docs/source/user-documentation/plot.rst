@@ -1,7 +1,7 @@
 Plotting utilities
 ==================
 
-Provides plotting utilities built on top of `Matplotlib <https://matplotlib.org/>`_ and `Cartopy <https://scitools.org.uk/cartopy/docs/latest/>`_
+Provides plotting utilities built on top of `Matplotlib <https://matplotlib.org/>`_.
 
 Coordinate transformations
 --------------------------

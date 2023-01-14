@@ -24,7 +24,6 @@ dependencies = [
     "scipy>=1.9",
     "pandas>=1.4",
     "matplotlib>=3.0",
-    "cartopy>=0.18a",
     "ujson>=5",
 ]
 

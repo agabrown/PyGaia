@@ -34,4 +34,3 @@ The following python packages are required:
 For the plotting tools the following packages are required:
 
 * `matplotlib <https://matplotlib.org/>`_
-* `Cartopy <https://scitools.org.uk/cartopy/docs/latest/>`_
