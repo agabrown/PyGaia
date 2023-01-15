@@ -227,21 +227,9 @@ def phase_space_to_astrometry(x, y, z, vx, vy, vz):
         mutheta = np.dot(q, velocitiesArray) * parallax / au_km_year_per_sec
         vrad = np.dot(r, velocitiesArray)
     else:
-        muphistar = np.zeros_like(parallax)
-        mutheta = np.zeros_like(parallax)
-        vrad = np.zeros_like(parallax)
-        for i in range(parallax.size):
-            muphistar[i] = (
-                np.dot(p[:, i], velocitiesArray[:, i])
-                * parallax[i]
-                / au_km_year_per_sec
-            )
-            mutheta[i] = (
-                np.dot(q[:, i], velocitiesArray[:, i])
-                * parallax[i]
-                / au_km_year_per_sec
-            )
-            vrad[i] = np.dot(r[:, i], velocitiesArray[:, i])
+        muphistar = np.sum(p * velocitiesArray,axis=0) * parallax/au_km_year_per_sec
+        mutheta = np.sum(q * velocitiesArray,axis=0) * parallax/au_km_year_per_sec
+        vrad = np.sum(r * velocitiesArray,axis=0)
 
     return phi, theta, parallax, muphistar, mutheta, vrad
 
