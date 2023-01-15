@@ -41,12 +41,25 @@ _scaling_for_proper_motions = {
 # The predictions for DR4 and DR5 are based on the (E)DR3 uncertainties, where the
 # latter are inflated by a 'science margin' of 10 percent (factor 1.1).
 _t_factor = {"dr3": 1.0, "dr4": 0.749, "dr5": 0.527}
-supported_releases = list(_t_factor.keys())
-
+_supported_releases = list(_t_factor.keys())
 _default_release = "dr4"
 
-def check_release(release):
-    if not (release in supported_releases):
+
+def _check_release(release):
+    """
+    Check if the release requested by the user is supported.
+
+    Parameters
+    ----------
+    release : str
+        Release for which performance predictions are requested.
+
+    Raises
+    ------
+    ValueError
+        When an invalid string is specified for the release parameter.
+    """
+    if not (release in _supported_releases):
         raise ValueError("Release must be one of dr3, dr4, dr5, dr2")
 
 
@@ -72,7 +85,7 @@ def parallax_uncertainty(gmag, release=_default_release):
     ValueError
         When an invalid string is specified for the release parameter.
     """
-    check_release(release)
+    _check_release(release)
 
     z = calc_z_plx(gmag)
     return np.sqrt(40 + 800 * z + 30 * z * z) * _t_factor[release]
@@ -106,7 +119,7 @@ def position_uncertainty(gmag, release=_default_release):
     The uncertainties are for sky positions in the ICRS (i.e., right ascension,
     declination). Make sure your simulated astrometry is also on the ICRS.
     """
-    check_release(release)
+    _check_release(release)
     plx_unc = parallax_uncertainty(gmag, release=release)
     return (
         _scaling_for_positions[release]["AlphaStar"] * plx_unc,
@@ -143,7 +156,7 @@ def proper_motion_uncertainty(gmag, release=_default_release):
     The uncertainties are for proper motions in the ICRS (i.e., right ascension,
     declination). Make sure your simulated astrometry is also on the ICRS.
     """
-    check_release(release)
+    _check_release(release)
     plx_unc = parallax_uncertainty(gmag, release=release)
     return (
         _scaling_for_proper_motions[release]["AlphaStar"] * plx_unc,
@@ -181,7 +194,7 @@ def total_position_uncertainty(gmag, release=_default_release):
     The uncertainties are for positions in the ICRS (i.e., right ascension,
     declination). Make sure your simulated astrometry is also on the ICRS.
     """
-    check_release(release)
+    _check_release(release)
     plx_unc = parallax_uncertainty(gmag, release=release)
     return _scaling_for_positions[release]["Total"] * plx_unc
 
@@ -215,6 +228,6 @@ def total_proper_motion_uncertainty(gmag, release=_default_release):
     The uncertainties are for proper motions in the ICRS (i.e., right ascension,
     declination). Make sure your simulated astrometry is also on the ICRS.
     """
-    check_release(release)
+    _check_release(release)
     plx_unc = parallax_uncertainty(gmag, release=release)
     return _scaling_for_proper_motions[release]["Total"] * plx_unc

@@ -170,9 +170,7 @@ def angular_distance(phi1, theta1, phi2, theta2, return_posangle=False):
     posangle : float
         Position angle as defined above in radians.
     """
-    # The Formula below is numerically more stable than np.arccos( np.sin(theta1)*np.sin(theta2) +
-    # np.cos(phi2-phi1)*np.cos(theta1)*np.cos(theta2) )
-    # See: https://en.wikipedia.org/wiki/Great-circle_distance
+    # The Formula below is numerically more stable than np.arccos( np.sin(theta1)*np.sin(theta2) + np.cos(phi2-phi1)*np.cos(theta1)*np.cos(theta2) ). See: https://en.wikipedia.org/wiki/Great-circle_distance
     dist = np.arctan2(
         np.sqrt(
             (np.cos(theta2) * np.sin(phi2 - phi1)) ** 2
@@ -509,14 +507,13 @@ class CoordinateTransformation:
         # z_rot = z-axis of new coordinate system expressed in terms of old system
         z_rot = self.rotationMatrix[2, :]
 
-
         if p.ndim == 2:
             N = p.shape[1]
-            z_rot_all = np.tile(z_rot, N).reshape( N, 3)
+            z_rot_all = np.tile(z_rot, N).reshape(N, 3)
             p_rot = np.cross(z_rot_all, r.T)
-            p_rot = p_rot/np.linalg.norm(p_rot, axis=1)[:,None]
-            c = np.sum(p_rot*p.T, axis=1)
-            s = np.sum(p_rot*q.T, axis=1)
+            p_rot = p_rot / np.linalg.norm(p_rot, axis=1)[:, None]
+            c = np.sum(p_rot * p.T, axis=1)
+            s = np.sum(p_rot * q.T, axis=1)
 
             return c, s
         else:
