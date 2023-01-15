@@ -1,6 +1,9 @@
 # PyGaia
 
-Python toolkit for basic Gaia data simulation and data manipulation
+Python toolkit for basic Gaia data simulation and data manipulation.
+
+> **Warning**
+> __2022.11.29__ I'm in the process of modifying the code to version 3, intended for Gaia DR3+ performance simulations. The changes to implement the most recent astrometry, photometry, and radial velocity uncertainty models from the [Gaia science performance pages](https://www.cosmos.esa.int/web/gaia/science-performance) are in place. However the code is not yet fully tested and documented, so for now use at your own risk. If you don't want to do this, use the most recent stable version 2.2 from PyPi.
 
 ## Description
 
@@ -23,20 +26,9 @@ addition much of the material in chapter 4 of the book [Astrometry for Astrophys
  
 ## Astropy astrometry modules versus pygaia.astrometry
 
-No competition! It is higly recommended to use the [Astropy](https://www.astropy.org/) facilities for handling
- astrometric data, including transformations from (Cartesian) phase space coordinates to astrometric observables and
-  vice versa. See the 
-[`astropy.coordinates`](https://docs.astropy.org/en/stable/coordinates/index.html) package. Compared to the 
-[`pygaia.astrometry`](./pygaia/astrometry) package this gives you more functionality, the use of units, and much better
- maintained code.
+No competition! It is highly recommended to use the [Astropy](https://www.astropy.org/) facilities for handling astrometric data, including transformations from (Cartesian) phase space coordinates to astrometric observables and vice versa. See the [`astropy.coordinates`](https://docs.astropy.org/en/stable/coordinates/index.html) package. Compared to the [`pygaia.astrometry`](./pygaia/astrometry) package this gives you more functionality, the use of units, and much better maintained code.
  
-The only functionality not (yet) provided in Astropy is the transformation of the covariance matrix of the
-astrometric observables to to a different epoch. This is implemented in the class 
-[`pygaia.astrometry.coordinates.EpochPropagation`](./pygaia/astrometry/coordinates.py). Epoch transformation as such is
-implemented in Astropy as the
- [`apply_space_motion()`](https://docs.astropy.org/en/stable/coordinates/apply_space_motion.html) function of
-  the [`SkyCoord`](https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord)
-   class.
+The only functionality not (yet) provided in Astropy is the propagation of the covariance matrix of the astrometric observables to to a different epoch. This is implemented in the class [`pygaia.astrometry.coordinates.EpochPropagation`](./pygaia/astrometry/coordinates.py). Epoch propagation as such is implemented in Astropy as the [`apply_space_motion()`](https://docs.astropy.org/en/stable/coordinates/apply_space_motion.html) function of the [`SkyCoord`](https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord) class.
 
 ## Documentation
 
@@ -59,11 +51,13 @@ This package is intended for Python3.
 The following python packages are required:
 
 * [numpy](https://numpy.org/)
+* [scipy](https://scipy.org/)
+* [pandas](https://pandas.pydata.org/)
+* [UltraJSON](https://github.com/ultrajson/ultrajson)
 
 For the plotting tools:
 
 * [matplotlib](https://matplotlib.org/)
-* [Cartopy](https://scitools.org.uk/cartopy/docs/latest/)
 
 ## Attribution
 
@@ -72,4 +66,4 @@ Please acknowledge the Gaia Project Scientist Support Team and the Gaia Data Pro
 
 ## License
 
-Copyright (c) 2012-2022 Anthony Brown, Leiden University, Gaia Data Processing and Analysis Consortium
+Copyright (c) 2012-2023 Anthony Brown, Leiden University, Gaia Data Processing and Analysis Consortium

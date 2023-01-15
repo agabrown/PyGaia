@@ -21,12 +21,11 @@ transformations from (Cartesian) phase space coordinates to astrometric observab
 vice versa. See the `astropy.coordinates
 <https://docs.astropy.org/en/stable/coordinates/index.html>`_ package. Compared to the
 ``pygaia.astrometry`` package this gives you more functionality, the use of units, and
-much better maintained code.
+much better, and much better maintained, code.
 
-The only functionality not (yet) provided in Astropy is the transformation of the
+The only functionality not (yet) provided in Astropy is the propagation of the
 covariance matrix of the astrometric observables to to a different epoch. This is
-implemented in the class ``pygaia.astrometry.coordinates.EpochPropagation``.  Epoch
-transformation as such is implemented in Astropy as the `apply_space_motion
+implemented in the class ``pygaia.astrometry.coordinates.EpochPropagation``.  Epoch propagation as such is implemented in Astropy as the `apply_space_motion
 <https://docs.astropy.org/en/stable/coordinates/apply_space_motion.html>`_ function of
 the `SkyCoord
 <https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord>`_
@@ -40,3 +39,4 @@ Other Python packages for astrometry
 * `astromet <https://github.com/zpenoyre/astromet.py>`_  A simple python package for generating astrometric tracks of single stars and the center of light of unresolved binaries, blended and lensed systems. Includes a close emulation of Gaia's astrometric fitting pipeline.
 * `HTOF <https://github.com/gmbrandt/HTOF>`_ HTOF: Code which parses the intermediate data from Hipparcos and Gaia and fits astrometric solutions to those data. Capable of computing likelyhoods and parameter errors in line with the catalog.
 * `orvara <https://github.com/t-brandt/orvara>`_ Package for fitting orbits of bright stars and their faint companions (exoplanets, brown dwarfs, white dwarfs, and low-mass stars).
+* `orbitize <https://orbitize.readthedocs.io/en/latest/>`_ Package for fitting orbits of directly imaged planets.

@@ -18,7 +18,7 @@ import pygaia
 # -- Project information -----------------------------------------------------
 
 project = "PyGaia"
-copyright = "2012-2022, Anthony Brown, Leiden University, Gaia Data Processing and Analysis Consortium"
+copyright = "2012-2023, Anthony Brown, Leiden University, Gaia Data Processing and Analysis Consortium"
 author = "Anthony Brown"
 
 # The full version, including alpha/beta/rc tags

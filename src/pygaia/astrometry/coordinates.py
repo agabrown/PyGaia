@@ -74,29 +74,60 @@ _rotationMatrixEclipticToGalactic = np.transpose(_rotationMatrixGalacticToEclipt
 class Transformations(Enum):
     """
     Enumeration with the available coordinate tranformations.
-
-    Attributes
-    ----------
-    GAL2ICRS : Transformation
-        Galactic to ICRS coordinate transformation.
-    ICRS2GAL : Transformation
-        ICRS to Galactic coordinate transformation.
-    ECL2ICRS : Transformation
-        Ecliptic to ICRS coordinate transformation.
-    ICRS2ECL : Transformation
-        ICRS to Ecliptic coordinate transformation.
-    ECL2ICRS : Transformation
-        Ecliptic to ICRS coordinate transformation.
-    ICRS2ECL : Transformation
-        ICRS to Ecliptic coordinate transformation.
     """
 
-    GAL2ICRS = auto()
-    ICRS2GAL = auto()
-    ECL2ICRS = auto()
-    ICRS2ECL = auto()
-    GAL2ECL = auto()
-    ECL2GAL = auto()
+    GAL2ICRS = ("Galactic", "ICRS")
+    """
+    Transform from Galactic to ICRS coordinates.
+    """
+    ICRS2GAL = ("ICRS", "Galactic")
+    """
+    Transform from ICRS to Galactic coordinates.
+    """
+    ECL2ICRS = ("Ecliptic", "ICRS")
+    """
+    Transform from Ecliptic to ICRS coordinates.
+    """
+    ICRS2ECL = ("ICRS", "Ecliptic")
+    """
+    Transform from ICRS to Ecliptic coordinates.
+    """
+    GAL2ECL = ("Galactic", "Ecliptic")
+    """
+    Transform from Galactic to Ecliptic coordinates.
+    """
+    ECL2GAL = ("Ecliptic", "Galactic")
+    """
+    Transform from Ecliptic to Galactic coordinates.
+    """
+
+    def __init__(self, fromsys, tosys):
+        self.fromsystem = fromsys
+        self.tosystem = tosys
+
+    @property
+    def from_system(self):
+        """
+        Coordinate system from which the transformation starts.
+
+        Returns
+        -------
+        fromsystem : str
+            String representation of the starting system.
+        """
+        return self.fromsystem
+
+    @property
+    def to_system(self):
+        """
+        Target coordinate system of the transformation.
+
+        Returns
+        -------
+        tosystem : str
+            String representation of the target system.
+        """
+        return self.tosystem
 
 
 _rotation_matrix_dict = {
@@ -205,6 +236,28 @@ class CoordinateTransformation:
         """
         self.transformation = desired_transformation
         self.rotationMatrix = _rotation_matrix_dict[desired_transformation]
+
+    def start_coordinates(self):
+        """
+        Query which is the starting coordinate system of this transformation.
+
+        Returns
+        -------
+        from_sys : str
+            String with starting coordinate system.
+        """
+        return self.transformation.from_system
+
+    def target_coordinates(self):
+        """
+        Query which is the target coordinate system of this transformation.
+
+        Returns
+        -------
+        to_sys : str
+            String with target coordinate system.
+        """
+        return self.transformation.to_system
 
     def transform_cartesian_coordinates(self, x, y, z):
         """

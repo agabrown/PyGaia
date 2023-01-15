@@ -8,10 +8,4 @@ as well as transformations between sky coordinate systems. Only (very) basic
 functionality is provided. Full blown simulations of Gaia data in all their gory detail
 requires the Java tools developed by the Gaia Data Processing and Analysis Consortium
 (DPAC) in particular its Coordination Unit 2 (CU2).
-
-pygaia requires numpy, matplotlib, and cartopy.
 """
-import pygaia.astrometry
-import pygaia.errors
-import pygaia.photometry
-import pygaia.plot
