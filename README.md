@@ -59,6 +59,10 @@ For the plotting tools:
 
 * [matplotlib](https://matplotlib.org/)
 
+## Acknowledgements
+
+PyGaia is based on the effort by Jos de Bruijne to create and maintain the Gaia Science Performance pages (with support from David Katz, Marco Riello, and Josep Manel Carrasco), and benefits from the suggestions and contributions by Morgan Fouesneau and Tom Callingham.
+
 ## Attribution
 
 Please acknowledge the Gaia Project Scientist Support Team and the Gaia Data Processing and Analysis Consortium 
