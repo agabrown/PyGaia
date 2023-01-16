@@ -61,7 +61,7 @@ For the plotting tools:
 
 ## Acknowledgements
 
-PyGaia is based on the effort by Jos de Bruijne to create and maintain the Gaia Science Performance pages (with support from David Katz, Marco Riello, and Josep Manel Carrasco), and benefits from the suggestions and contributions by Morgan Fouesneau and Tom Callingham.
+PyGaia is based on the effort by Jos de Bruijne to create and maintain the Gaia Science Performance pages (with support from David Katz, Paola Sartoretti, Francesca De Angeli, Dafydd Evans, [Marco Riello](https://github.com/marc0uk), and Josep Manel Carrasco), and benefits from the suggestions and contributions by [Morgan Fouesneau](https://github.com/mfouesneau) and [Tom Callingham](https://github.com/TomCallingham).
 
 ## Attribution
 

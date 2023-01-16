@@ -17,7 +17,7 @@ import pygaia
 
 # -- Project information -----------------------------------------------------
 
-project = "PyGaia"
+project = "pygaia"
 copyright = "2012-2023, Anthony Brown, Leiden University, Gaia Data Processing and Analysis Consortium"
 author = "Anthony Brown"
 
