@@ -105,10 +105,10 @@ def gabs_from_spt(spt):
     """
     if spt in _spt_to_vminic_vabs:
         vminic = vminic_from_spt(spt)
-        gminv, _, _ = gbrminv_from_vminic(vminic)
+        gminv, _, _, _ = gbrminv_from_vminic(vminic)
         return vabs_from_spt(spt) + gminv
     else:
         message = "Unknown spectral type. Allowed values are: "
         for key in _spt_to_vminic_vabs.keys():
             message += key + " "
-        raise Exception(message)
+        raise ValueError(message)
