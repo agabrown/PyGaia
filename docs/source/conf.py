@@ -10,15 +10,14 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+# import os
+# import sys
+# sys.path.insert(0, os.path.abspath('.'))
 import pygaia
-import os
-import sys
-
-sys.path.insert(0, os.path.abspath("."))
 
 # -- Project information -----------------------------------------------------
 
-project = "pygaia"
+project = "PyGaia"
 copyright = "2012-2023, Anthony Brown, Leiden University, Gaia Data Processing and Analysis Consortium"
 author = "Anthony Brown"
 
@@ -55,7 +54,7 @@ exclude_patterns = []
 # a list of builtin themes.
 #
 html_theme = "sphinx_book_theme"
-html_title = "pygaia"
+html_title = "PyGaia"
 # Not needed for now
 # html_static_path = ["_static"]
 html_show_sourcelink = False
