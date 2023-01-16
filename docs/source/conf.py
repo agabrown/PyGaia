@@ -13,9 +13,9 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-import pygaia
 
 # -- Project information -----------------------------------------------------
+import pygaia
 
 project = "pygaia"
 copyright = "2012-2023, Anthony Brown, Leiden University, Gaia Data Processing and Analysis Consortium"
