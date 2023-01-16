@@ -9,3 +9,8 @@ functionality is provided. Full blown simulations of Gaia data in all their gory
 requires the Java tools developed by the Gaia Data Processing and Analysis Consortium
 (DPAC) in particular its Coordination Unit 2 (CU2).
 """
+import pygaia.astrometry
+import pygaia.errors
+import pygaia.photometry
+import pygaia.plot
+import pygaia.utils
