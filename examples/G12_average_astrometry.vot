@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VOTABLE version="1.4" xmlns="http://www.ivoa.net/xml/VOTable/v1.3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ivoa.net/xml/VOTable/v1.3 http://www.ivoa.net/xml/VOTable/v1.3">
+<RESOURCE type="results">
+<INFO name="QUERY_STATUS" value="OK" />
+
+<INFO name="QUERY" value="select count(*) as n, 
+avg(ra) as ra_avg, avg(dec) as dec_avg, 
+avg(parallax) as parallax_avg, 
+avg(pmra) as pmra_avg, avg(pmdec) as pmdec_avg
+from gaiadr3.gaia_source
+where phot_g_mean_mag between 11.95 and 12.05
+and random_index&lt;100000000
+and astrometric_params_solved&gt;3"><![CDATA[select count(*) as n, 
+avg(ra) as ra_avg, avg(dec) as dec_avg, 
+avg(parallax) as parallax_avg, 
+avg(pmra) as pmra_avg, avg(pmdec) as pmdec_avg
+from gaiadr3.gaia_source
+where phot_g_mean_mag between 11.95 and 12.05
+and random_index<100000000
+and astrometric_params_solved>3]]></INFO>
+<INFO name="CAPTION" value="How to cite and acknowledge Gaia: https://gea.esac.esa.int/archive/documentation/credits.html"><![CDATA[How to cite and acknowledge Gaia: https://gea.esac.esa.int/archive/documentation/credits.html]]></INFO>
+<INFO name="PAGE" value="" />
+<INFO name="PAGE_SIZE" value="" />
+<INFO name="JOBID" value="1674213946849O"><![CDATA[1674213946849O]]></INFO>
+<INFO name="JOBNAME" value="G12_average_astrometry"><![CDATA[G12_average_astrometry]]></INFO>
+
+<TABLE>
+<FIELD datatype="long" name="n"/>
+<FIELD datatype="double" name="ra_avg"/>
+<FIELD datatype="double" name="dec_avg"/>
+<FIELD datatype="double" name="parallax_avg"/>
+<FIELD datatype="double" name="pmra_avg"/>
+<FIELD datatype="double" name="pmdec_avg"/>
+<DATA>
+<BINARY2>
+<STREAM encoding='base64'>
+AAAAAAAAADriQGiphaj4KWHAHLeMPcIUyD/6DRx6TEpfv/0eAIuShM7AEU80xOwA
+CA==
+</STREAM>
+</BINARY2>
+</DATA>
+</TABLE>
+</RESOURCE>
+</VOTABLE>

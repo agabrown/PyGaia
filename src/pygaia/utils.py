@@ -47,7 +47,7 @@ def construct_covariance_matrix(cvec, parallax, radial_velocity, radial_velocity
         cmat = np.zeros((nsources, 6, 6))
         cv = cvec
     for k in range(nsources):
-        cmat[k, 0:5, 0:5] = cv[k, 0:5] ** 2
+        np.fill_diagonal(cmat[k], cv[k, 0:5] ** 2)
 
     iu = np.triu_indices(5, k=1)
     for k in range(10):
