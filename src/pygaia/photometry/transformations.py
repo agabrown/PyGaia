@@ -49,7 +49,7 @@ def gbrminv_from_vminic(vminic):
 
 
 def gminic_from_vminic(vminic):
-    """
+    r"""
     Transformation from Johnson-Cousins :math:`V-I_\mathrm{c}` to :math:`G-I_\mathrm{c}`.
 
     Calculate :math:`G-I_\mathrm{c}` from the input values of :math:`V-I_\mathrm{c}`
