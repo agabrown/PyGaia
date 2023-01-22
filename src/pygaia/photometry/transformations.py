@@ -7,6 +7,7 @@ import numpy as np
 
 __all__ = [
     "gbrminv_from_vminic",
+    "gminic_from_vminic",
     "grvs_from_gmingrp",
     "grvs_from_vminic",
 ]
@@ -45,6 +46,25 @@ def gbrminv_from_vminic(vminic):
     grpminv = 0.01868 - 0.9028 * vminic - 0.005321 * vminic2 - 0.004186 * vminic3
     gbpmingrp = -0.03298 + 1.259 * vminic - 0.1279 * vminic2 + 0.01631 * vminic3
     return gminv, gbpminv, grpminv, gbpmingrp
+
+
+def gminic_from_vminic(vminic):
+    """
+    Transformation from Johnson-Cousins :math:`V-I_\mathrm{c}` to :math:`G-I_\mathrm{c}`.
+
+    Calculate :math:`G-I_\mathrm{c}` from the input values of :math:`V-I_\mathrm{c}`
+
+    Parameters
+    ----------
+    vminic : ndarray, float
+        Value(s) of :math:`V-I_\mathrm{c}` for which to calculate the :math:`G-I_\mathrm{c}` values.
+
+    Returns
+    -------
+    gminic : ndarray, float
+        The value(s) of :math:`G-I_\mathrm{c}`.
+    """
+    return 0.01753 + 0.76 * vminic - 0.0991 * vminic**2
 
 
 def grvs_from_gmingrp(gminrp):
