@@ -564,7 +564,7 @@ class EpochPropagation:
         mutheta : float
             Proper motion in latitude at reference epoch (mas/yr).
         vrad : float
-            Radial velocity at reference epoch (km/s).
+            Radial velocity at reference epoch (km/s). Can be set to 0 km/s if not known.
         t0 : float
             Reference epoch (Julian years).
         t1 : float
@@ -623,7 +623,7 @@ class EpochPropagation:
         mutheta : float
             Proper motion in latitude at reference epoch (mas/yr).
         vrad : float
-            Radial velocity at reference epoch (km/s).
+            Radial velocity at reference epoch (km/s). Can be set to 0 km/s if not known.
         t0 : float
             Reference epoch (Julian years).
         t1 : float
@@ -652,7 +652,7 @@ class EpochPropagation:
             6-element vector: (phi, theta, parallax, muphistar, mutheta, vrad) in units
             of (radians, radians, mas, mas/yr, mas/yr, km/s). Shape of a should be (6,)
             or (6,N), with N the number of sources for which the astrometric parameters
-            are provided.
+            are provided. The value of vrad can be set to 0 km/s if the radial velocity is not know. An appropriate uncertainty should then be provided (see below).
         c0 : array_like
             Covariance matrix stored in a 6x6 element array. This can be constructed
             from the columns listed in the Gaia catalogue. The units are [mas^2,
@@ -662,7 +662,7 @@ class EpochPropagation:
             for i = 1,..,5 and
             c[6,6] = c[3,3] * (vrad^2+vrad_error^2) / auKmYearPerSec^2 +
             (parallax*vrad_error/auKmYearPerSec)^2
-            The shape of c0 should be (6,6) or (N,6,6).
+            The shape of c0 should be (6,6) or (N,6,6). If the radial velocity is not know the uncertainty on the radial velocity (vrad_error) should be set to the velocity dispersion of the population the source is drawn from.
         t0 : float
             Reference epoch (Julian years).
         t1 : float
