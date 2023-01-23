@@ -192,7 +192,5 @@ def plot_coordinate_transformation_on_sky(
                 color=tc,
             )
 
-    ax.invert_xaxis()
-
     if outfile is not None:
         plt.savefig(outfile)

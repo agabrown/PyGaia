@@ -29,7 +29,7 @@ An example coordinate transformation (from Galactic to Ecliptic):
 .. code-block:: python
     
     import numpy as np
-    from pygaia.astrometry.coordinates import CoordinateTransformation
+    from pygaia.astrometry.coordinates import CoordinateTransformation, Transformations
     ct = CoordinateTransformation(Transformations.GAL2ECL)
     
     l = np.deg2rad(30.0)

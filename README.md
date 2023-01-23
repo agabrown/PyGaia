@@ -1,6 +1,6 @@
 # PyGaia
 
-Python toolkit for basic Gaia data simulation and data manipulation.
+Python toolkit for Gaia science performance simulation and astrometric catalogue data manipulation.
 
 > **Warning**
 > __2022.11.29__ I'm in the process of modifying the code to version 3, intended for Gaia DR3+ performance simulations. The changes to implement the most recent astrometry, photometry, and radial velocity uncertainty models from the [Gaia science performance pages](https://www.cosmos.esa.int/web/gaia/science-performance) are in place. However the code is not yet fully tested and documented, so for now use at your own risk. If you don't want to do this, use the most recent stable version 2.2 from PyPi.
@@ -13,8 +13,7 @@ variables are provided as well as transformations between sky coordinate systems
 provided. Full blown simulations of Gaia data in all their gory detail requires the Java tools developed by the Gaia
 Data Processing and Analysis Consortium (DPAC) in particular its Coordination Unit 2 (CU2).
 
-This toolkit is basically an implementation of the performance models for Gaia
-which are publicly available at:
+This toolkit is basically an implementation of the performance models for Gaia which are publicly available at:
 [http://www.cosmos.esa.int/web/gaia/science-performance](http://www.cosmos.esa.int/web/gaia/science-performance). In
 addition much of the material in chapter 4 of the book [Astrometry for Astrophysics: Methods, Models, and
  Applications (2012, van Altena et al.)](http://www.cambridge.org/9780521519205) is implemented.
