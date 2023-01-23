@@ -40,6 +40,12 @@ cd PyGaia
 python -m pip install .
 ```
 
+From PyPI:
+
+```bash
+pip install pygaia
+```
+
 ## Dependencies
 
 This package is intended for Python3.
