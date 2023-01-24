@@ -18,14 +18,11 @@ some general tools for working with astrometric data. Such tools can also be fou
 Astropy. It is in fact highly recommended to use the `Astropy
 <https://www.astropy.org/>`_ facilities for handling astrometric data, including
 transformations from (Cartesian) phase space coordinates to astrometric observables and
-vice versa. See the `astropy.coordinates
-<https://docs.astropy.org/en/stable/coordinates/index.html>`_ package. Compared to the
-``pygaia.astrometry`` package this gives you more functionality, the use of units, and
-much better, and much better maintained, code.
+vice versa. See the `astropy.coordinates <https://docs.astropy.org/en/stable/coordinates/index.html>`_ package. Compared to the :py:mod:`pygaia.astrometry` package this gives you more functionality, the use of units, and much better, and much better maintained, code.
 
 The only functionality not (yet) provided in Astropy is the propagation of the
 covariance matrix of the astrometric observables to to a different epoch. This is
-implemented in the class ``pygaia.astrometry.coordinates.EpochPropagation``.  Epoch propagation as such is implemented in Astropy as the `apply_space_motion
+implemented in the class :py:class:`pygaia.astrometry.coordinates.EpochPropagation`.  Epoch propagation as such is implemented in Astropy as the `apply_space_motion
 <https://docs.astropy.org/en/stable/coordinates/apply_space_motion.html>`_ function of
 the `SkyCoord
 <https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord>`_
