@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "pygaia"
 description = "Gaia science performance simulation toolkit"
-version = "3.0.2"
+version = "3.0.3"
 authors = [{ name = "Anthony G.A. Brown", email = "brown@strw.leidenuniv.nl" }]
 readme = "README.md"
 requires-python = ">=3.6"
