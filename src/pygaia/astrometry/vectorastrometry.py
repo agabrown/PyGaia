@@ -313,12 +313,10 @@ def astrometry_to_phase_space(phi, theta, parallax, muphistar, mutheta, vrad):
         vx = np.zeros_like(parallax)
         vy = np.zeros_like(parallax)
         vz = np.zeros_like(parallax)
-        for i in range(parallax.size):
-            velocityArray = np.dot(
-                np.transpose(np.array([p[:, i], q[:, i], r[:, i]])),
-                transverseMotionArray[:, i],
-            )
-            vx[i] = velocityArray[0]
-            vy[i] = velocityArray[1]
-            vz[i] = velocityArray[2]
+        velocityArray = np.einsum(
+            "kij,ji->ki", np.stack((p, q, r), axis=-1), transverseMotionArray
+        )
+        vx = velocityArray[0]
+        vy = velocityArray[1]
+        vz = velocityArray[2]
     return x, y, z, vx, vy, vz
