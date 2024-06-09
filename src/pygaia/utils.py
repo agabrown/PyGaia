@@ -1,11 +1,47 @@
 """
 Utility functions for PyGaia.
 """
+
 import numpy as np
 
 from pygaia.astrometry.constants import au_km_year_per_sec
+from astropy.time import Time
 
-__all__ = ["construct_covariance_matrix"]
+__all__ = ["construct_covariance_matrix", "gaiadr_timespan"]
+
+_supported_releases = ["dr1", "dr2", "dr3", "dr4", "dr5"]
+_default_release = "dr4"
+_jdref = Time("2010-01-01T00:00:00", scale="tcb").jd
+_dpac_times = {
+    "start": {
+        "obmt": 23292998211919880,
+        "tcb": Time("2014-07-25T10:31:25.554960001", scale="tcb"),
+    },
+    "end_epsl": {
+        "obmt": 25749998222167256,
+        "tcb": Time("2014-08-22T21:01:25.599970336", scale="tcb"),
+    },
+    "dr1": {
+        "obmt": 59429199262402272,
+        "tcb": Time("2015-09-16T16:21:27.121893186", scale="tcb"),
+    },
+    "dr2": {
+        "obmt": 81012099291189247,
+        "tcb": Time("2016-05-23T11:36:27.459006034", scale="tcb"),
+    },
+    "dr3": {
+        "obmt": 112969900338538592,
+        "tcb": Time("2017-05-28T08:46:28.954612431", scale="tcb"),
+    },
+    "dr4": {
+        "obmt": 196566400491690272,
+        "tcb": Time("2020-01-20T22:01:30.250520158", scale="tcb"),
+    },
+    "dr5": {
+        "obmt": 353907908175187136,
+        "tcb": Time("2025-01-15T00:00:00", scale="tcb"),
+    },
+}
 
 
 def construct_covariance_matrix(cvec, parallax, radial_velocity, radial_velocity_error):
@@ -69,3 +105,63 @@ def construct_covariance_matrix(cvec, parallax, radial_velocity, radial_velocity
     )
 
     return np.squeeze(cmat)
+
+
+def _check_release(release):
+    """
+    Check if the release requested by the user is supported.
+
+    Parameters
+    ----------
+    release : str
+        Release for which performance predictions are requested.
+
+    Raises
+    ------
+    ValueError
+        When an invalid string is specified for the release parameter.
+    """
+    if not (release in _supported_releases):
+        raise ValueError("Release must be one of dr1, dr2, dr3, dr4, dr5")
+
+
+def gaiadr_timespan(release=_default_release, epsl=True, absolute=True):
+    """
+    Provides the observation time spans for Gaia data releases. These are based on the exact time boundaries in Gaia's on board mission timeline (OBMT), see [Gaia Collaboration (2016)](https://ui.adsabs.harvard.edu/abs/2016A%26A...595A...1G/abstract) for the details on OBMT.
+
+    Parameters
+    ----------
+
+    release : str
+        Data release. One of dr1, dr2, dr3, dr4, dr5.
+    epsl : boolean
+        Include the EPSL period (default True)
+    absolute : boolean
+        Return absolute time as astropy.time.Time objects, if false return times as Julian days referred to J2010.0.
+
+    Returns
+    -------
+    start, end : tuple
+        Start and end times in as astropy.time.Time instances, or in Julian days refered to J2010.0
+
+    Notes
+    -----
+    The end time for DR5 is an estimate.
+    """
+    _check_release(release)
+    if epsl:
+        if absolute:
+            return _dpac_times["start"]["tcb"], _dpac_times[release]["tcb"]
+        else:
+            return (
+                _dpac_times["start"]["tcb"].jd - _jdref,
+                _dpac_times[release]["tcb"].jd - _jdref,
+            )
+    else:
+        if absolute:
+            return _dpac_times["epsl"]["tcb"], _dpac_times[release]["tcb"]
+        else:
+            return (
+                _dpac_times["epsl"]["tcb"].jd - _jdref,
+                _dpac_times[release]["tcb"].jd - _jdref,
+            )

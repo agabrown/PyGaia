@@ -1,3 +1,7 @@
+## 3.04 (June 2024)
+
+* Added the Gaia data release time spans to the utils module.
+
 ## 3.0 (September 2022)
 
 * Renamed master branch to main.

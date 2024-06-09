@@ -56,6 +56,7 @@ The following python packages are required:
 * [scipy](https://scipy.org/)
 * [pandas](https://pandas.pydata.org/)
 * [UltraJSON](https://github.com/ultrajson/ultrajson)
+* [Astropy](https://www.astropy.org/)
 
 For the plotting tools:
 
@@ -76,4 +77,4 @@ Please acknowledge the Gaia Project Scientist Support Team and the Gaia Data Pro
 
 ## License
 
-Copyright (c) 2012-2023 Anthony Brown, Leiden University, Gaia Data Processing and Analysis Consortium
+Copyright (c) 2012-2024 Anthony Brown, Leiden University, Gaia Data Processing and Analysis Consortium
