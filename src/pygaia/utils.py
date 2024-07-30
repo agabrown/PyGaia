@@ -159,9 +159,9 @@ def gaiadr_timespan(release=_default_release, epsl=True, absolute=True):
             )
     else:
         if absolute:
-            return _dpac_times["epsl"]["tcb"], _dpac_times[release]["tcb"]
+            return _dpac_times["end_epsl"]["tcb"], _dpac_times[release]["tcb"]
         else:
             return (
-                _dpac_times["epsl"]["tcb"].jd - _jdref,
+                _dpac_times["end_epsl"]["tcb"].jd - _jdref,
                 _dpac_times[release]["tcb"].jd - _jdref,
             )

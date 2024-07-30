@@ -30,3 +30,6 @@ Detailed API documentation
 
 .. automodapi:: pygaia.plot.sky
     :no-inheritance-diagram:
+
+.. automodapi:: pygaia.utils
+    :no-inheritance-diagram:
