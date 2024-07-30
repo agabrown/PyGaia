@@ -8,4 +8,5 @@ User documentation
     photometry
     errors
     plot
+    utils
     examples

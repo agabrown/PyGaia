@@ -1,6 +1,7 @@
 """
 Provides tools for coordinate transformation and epoch propagation.
 """
+
 import numpy as np
 from enum import Enum, auto
 
@@ -634,7 +635,14 @@ class EpochPropagation:
         phi, theta : float
             Coordinates the new epoch (in radians)
         """
-        (phi1, theta1, _, _, _, _,) = self.propagate_astrometry(
+        (
+            phi1,
+            theta1,
+            _,
+            _,
+            _,
+            _,
+        ) = self.propagate_astrometry(
             phi, theta, parallax, muphistar, mutheta, vrad, t0, t1
         )
         return phi1, theta1
@@ -663,6 +671,7 @@ class EpochPropagation:
             c[6,6] = c[3,3] * (vrad^2+vrad_error^2) / auKmYearPerSec^2 +
             (parallax*vrad_error/auKmYearPerSec)^2
             The shape of c0 should be (6,6) or (N,6,6). If the radial velocity is not know the uncertainty on the radial velocity (vrad_error) should be set to the velocity dispersion of the population the source is drawn from.
+            To construct the covariance matrix the convenience function :py:meth:`pygaia.utils.construct_covariance_matrix` is provided.
         t0 : float
             Reference epoch (Julian years).
         t1 : float
@@ -670,11 +679,11 @@ class EpochPropagation:
 
         Returns
         -------
-        a, c : array
+        a1, c1 : array
             Astrometric parameters, including the "radial proper motion" (NOT the radial
             velocity), and the covariance matrix at the new epoch as a 2D matrix with
             the new variances on the diagonal and the covariance in the off-diagonal
-            elements.
+            elements. Matrix shapes are (6, N) and (N, 6, 6).
         """
 
         zero, one, two, three = 0, 1, 2, 3

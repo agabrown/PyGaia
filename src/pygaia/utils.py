@@ -71,7 +71,7 @@ def construct_covariance_matrix(cvec, parallax, radial_velocity, radial_velocity
     Returns
     -------
     cmat : float array
-        Covariance matrix as a 6x6 array.
+        Covariance matrix as a Nx6x6 array.
     """
 
     if np.ndim(cvec) == 1:
