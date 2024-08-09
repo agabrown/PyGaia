@@ -22,9 +22,9 @@ addition much of the material in chapter 4 of the book [Astrometry for Astrophys
  
 ## Astropy astrometry modules versus pygaia.astrometry
 
-It is recommended to use the [Astropy](https://www.astropy.org/) facilities for handling astrometric data, including transformations from (Cartesian) phase space coordinates to astrometric observables and vice versa. See the [`astropy.coordinates`](https://docs.astropy.org/en/stable/coordinates/index.html) package. Compared to the [`pygaia.astrometry`](./pygaia/astrometry) package this gives you more functionality, the use of units, and much better maintained code.
+It is recommended to use the [Astropy](https://www.astropy.org/) facilities for handling astrometric data, including transformations from (Cartesian) phase space coordinates to astrometric observables and vice versa. See the [`astropy.coordinates`](https://docs.astropy.org/en/stable/coordinates/index.html) package. Compared to the [`pygaia.astrometry`](./src/pygaia/astrometry) package this gives you more functionality, the use of units, and much better maintained code.
  
-The only functionality not (yet) provided in Astropy is the propagation of the covariance matrix of the astrometric observables to to a different epoch. This is implemented in the class [`pygaia.astrometry.coordinates.EpochPropagation`](./pygaia/astrometry/coordinates.py). Epoch propagation as such is implemented in Astropy as the [`apply_space_motion()`](https://docs.astropy.org/en/stable/coordinates/apply_space_motion.html) function of the [`SkyCoord`](https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord) class.
+The only functionality not (yet) provided in Astropy is the propagation of the covariance matrix of the astrometric observables to to a different epoch. This is implemented in the class [`pygaia.astrometry.coordinates.EpochPropagation`](./src/pygaia/astrometry/coordinates.py). Epoch propagation as such is implemented in Astropy as the [`apply_space_motion()`](https://docs.astropy.org/en/stable/coordinates/apply_space_motion.html) function of the [`SkyCoord`](https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord) class.
 
 ## Documentation
 
