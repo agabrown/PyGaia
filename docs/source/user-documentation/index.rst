@@ -9,4 +9,3 @@ User documentation
     errors
     plot
     utils
-    examples
