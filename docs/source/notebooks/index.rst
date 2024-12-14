@@ -2,7 +2,13 @@ Tutorials and examples
 ======================
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
+    AstrometricPrecisionHorizons
+    AstrometricUncertainties
+    CoordinateTransformationsOnSky
     EpochPropagationExample
+    PhotometricUncertainties
+    RadialVelocityUncertainties
+    RelativePrecisionDistances
     
