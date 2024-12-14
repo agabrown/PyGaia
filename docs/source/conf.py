@@ -18,7 +18,7 @@ import pygaia
 # -- Project information -----------------------------------------------------
 
 project = "PyGaia"
-copyright = "2012-2023, Anthony Brown, Leiden University, Gaia Data Processing and Analysis Consortium"
+copyright = "2012-2024, Anthony Brown, Leiden University, Gaia Data Processing and Analysis Consortium"
 author = "Anthony Brown"
 
 # The full version, including alpha/beta/rc tags
@@ -36,8 +36,15 @@ extensions = [
     "sphinx_automodapi.automodapi",
     "matplotlib.sphinxext.plot_directive",
     "sphinx.ext.napoleon",
+    "myst_nb",
 ]
 numpydoc_show_class_members = False
+
+source_suffix = {
+    ".rst": "restructuredtext",
+    ".ipynb": "myst-nb",
+    ".myst": "myst-nb",
+}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -73,10 +80,3 @@ html_theme_options = {
     "use_download_button": True,
 }
 html_baseurl = "https://pygaia.readthedocs.io/en/latest/"
-
-extensions = ["myst_nb"]
-source_suffix = {
-    ".rst": "restructuredtext",
-    ".ipynb": "myst-nb",
-    ".myst": "myst-nb",
-}
