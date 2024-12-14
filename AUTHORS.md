@@ -8,4 +8,11 @@ Gaia performance modelling from:
 
 Direct contributions to the code base:
 
+* [John Helly](https://github.com/jchelly)
+* [Javier Olivares](https://github.com/olivares-j)
+* [Tom Callingham](https://github.com/TomCallingham)
+* [Henry Leung](https://github.com/henrysky)
+* [Morgan Fouesneau](https://github.com/mfouesneau)
+* [Johannes Sahlmann](https://github.com/Johannes-Sahlmann)
+
 Comments, corrections & suggestions:

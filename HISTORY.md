@@ -1,6 +1,8 @@
-## 3.04 (June 2024)
+## 3.1 (Dec 2024)
 
 * Added the Gaia data release time spans to the utils module.
+* [Error in epoch propagation code fixed](https://github.com/agabrown/PyGaia/pull/14)
+* Unit tests updated to work with [pytest](https://docs.pytest.org/en/stable/index.html)
 
 ## 3.0 (September 2022)
 
