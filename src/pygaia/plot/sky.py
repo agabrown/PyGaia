@@ -1,6 +1,7 @@
 """
 Function for visualizing coordinate transformations on the sky.
 """
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -40,8 +41,8 @@ def plot_coordinate_transformation_on_sky(
     outfile=None,
     notitle=False,
     nolabels=False,
-    lc=plt.cm.get_cmap("tab10").colors[0],
-    tc=plt.cm.get_cmap("tab10").colors[1],
+    lc=plt.get_cmap("tab10").colors[0],
+    tc=plt.get_cmap("tab10").colors[1],
     lonpos=True,
     skyproj="hammer",
 ):
