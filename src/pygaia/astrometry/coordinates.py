@@ -597,7 +597,7 @@ class EpochPropagation:
         _, phi1, theta1 = cartesian_to_spherical(u[0], u[1], u[2])
         parallax1 = parallax * f
         pmr1 = (pmr0 + (pmtot0sqr + pmr0**2) * t) * f**2
-        pmvec1 = (pmvec0 * (1 + pmr0 * t) - r0 * pmr0**2 * t) * f**3
+        pmvec1 = (pmvec0 * (1 + pmr0 * t) - r0 * pmtot0sqr * t) * f**3
         p1, q1, r1 = normal_triad(phi1, theta1)
         muphistar1 = np.sum(p1 * pmvec1 / self.mastorad, axis=0)
         mutheta1 = np.sum(q1 * pmvec1 / self.mastorad, axis=0)
@@ -716,7 +716,7 @@ class EpochPropagation:
         par = par0 * f
 
         # Proper motion vector and radial proper motion at t1
-        pmvec = (pmvec0 * (one + pmr0 * tau) - r0 * pmr0**2 * tau) * f3
+        pmvec = (pmvec0 * (one + pmr0 * tau) - r0 * pm02 * tau) * f3
         pmr = (pmr0 + (pm02 + pmr0**2) * tau) * f2
 
         # Normal triad at t1
