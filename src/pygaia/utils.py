@@ -127,7 +127,7 @@ def _check_release(release):
 
 def gaiadr_timespan(release=_default_release, epsl=True, absolute=True):
     """
-    Provides the observation time spans for Gaia data releases. These are based on the exact time boundaries in Gaia's on board mission timeline (OBMT), see [Gaia Collaboration (2016)](https://ui.adsabs.harvard.edu/abs/2016A%26A...595A...1G/abstract) for the details on OBMT.
+    Provides the observation time spans for Gaia data releases. These are based on the exact time boundaries in Gaia's on board mission timeline (OBMT), see `Gaia Collaboration (2016) <https://ui.adsabs.harvard.edu/abs/2016A%26A...595A...1G/abstract>`_ for the details on OBMT.
 
     Parameters
     ----------
@@ -135,7 +135,7 @@ def gaiadr_timespan(release=_default_release, epsl=True, absolute=True):
     release : str
         Data release. One of dr1, dr2, dr3, dr4, dr5.
     epsl : boolean
-        Include the EPSL period (default True)
+        Include the Ecliptic Pole Scanning  Law (EPSL) period (default True)
     absolute : boolean
         Return absolute time as astropy.time.Time objects, if false return times as Julian days referred to J2010.0.
 
