@@ -2,6 +2,7 @@
 Unit tests for the vectorastrometry module.
 """
 
+import unittest
 import numpy as np
 
 from pygaia.astrometry.vectorastrometry import cartesian_to_spherical
@@ -14,7 +15,7 @@ from pygaia.astrometry.vectorastrometry import astrometry_to_phase_space
 rng = np.random.default_rng()
 
 
-class test_vectorAstrometry(np.testing.TestCase):
+class test_vectorAstrometry(unittest.TestCase):
     def test_cartesianToSpherical(self):
         """
         Check correct working of the Cartesian to Spherical coordinates transformation.

@@ -2,13 +2,14 @@
 Unit tests for the utils module.
 """
 
+import unittest
 import numpy as np
 
 from pygaia.utils import construct_covariance_matrix
 from pygaia.astrometry.constants import au_km_year_per_sec
 
 
-class test_utils(np.testing.TestCase):
+class TestUtils(unittest.TestCase):
     def test_construct_covariance_matrix_onesource(self):
         """
         Check that the covariance matrix is constructed correctly from the inputs
@@ -22,8 +23,8 @@ class test_utils(np.testing.TestCase):
 
         cmat = construct_covariance_matrix(cvec, parallax, vrad, vrad_error)
 
-        self.assertEquals(6, cmat.shape[0])
-        self.assertEquals(6, cmat.shape[1])
+        self.assertEqual(6, cmat.shape[0])
+        self.assertEqual(6, cmat.shape[1])
 
         iu = np.triu_indices(6, k=1)
 
@@ -56,9 +57,9 @@ class test_utils(np.testing.TestCase):
 
         cmat = construct_covariance_matrix(cvec, parallax, vrad, vrad_error)
 
-        self.assertEquals(2, cmat.shape[0])
-        self.assertEquals(6, cmat.shape[1])
-        self.assertEquals(6, cmat.shape[2])
+        self.assertEqual(2, cmat.shape[0])
+        self.assertEqual(6, cmat.shape[1])
+        self.assertEqual(6, cmat.shape[2])
 
         iu = np.triu_indices(6, k=1)
 

@@ -1,8 +1,9 @@
 """
 Unit tests for the coordinates module.
 """
+
+import unittest
 import numpy as np
-from numpy.random import rand
 import numpy.testing as npt
 
 from pygaia.astrometry.constants import au_km_year_per_sec
@@ -22,7 +23,7 @@ from pygaia.utils import construct_covariance_matrix
 rng = np.random.default_rng()
 
 
-class TestCoordinates(np.testing.TestCase):
+class TestCoordinates(unittest.TestCase):
     def setUp(self):
         self.basisVectorXValues = np.array([1, 0, 0])
         self.basisVectorYValues = np.array([0, 1, 0])
@@ -377,10 +378,10 @@ class TestCoordinates(np.testing.TestCase):
             phi, theta, parallax, muphistar, mutheta, vrad, t0, t1
         )
         self.assertGreater(phi1, 0.0)
-        self.assertEquals(theta1, 0.0)
+        self.assertEqual(theta1, 0.0)
         self.assertLess(parallax1, parallax)
         self.assertLess(muphistar1, muphistar)
-        self.assertEquals(mutheta1, 0.0)
+        self.assertEqual(mutheta1, 0.0)
         self.assertGreater(pmr1, 0.0)
 
         # For propagation into the future check that in absence of radial motion the
@@ -397,9 +398,7 @@ class TestCoordinates(np.testing.TestCase):
             phi, theta, parallax, muphistar, mutheta, vrad, t0, t1
         )
         npt.assert_array_less(parallax1, parallax)
-        npt.assert_array_less(
-            muphistar1**2 + mutheta1**2, muphistar**2 + mutheta**2
-        )
+        npt.assert_array_less(muphistar1**2 + mutheta1**2, muphistar**2 + mutheta**2)
         npt.assert_array_less(0.0, pmr1)
 
         # For propagation into the past check that in absence of radial motion the
@@ -409,9 +408,7 @@ class TestCoordinates(np.testing.TestCase):
             phi, theta, parallax, muphistar, mutheta, vrad, t0, t2
         )
         npt.assert_array_less(parallax2, parallax)
-        npt.assert_array_less(
-            muphistar2**2 + mutheta2**2, muphistar**2 + mutheta**2
-        )
+        npt.assert_array_less(muphistar2**2 + mutheta2**2, muphistar**2 + mutheta**2)
         npt.assert_array_less(pmr2, 0.0)
 
         # For propagation into the future check that In the absence of proper motion and
@@ -575,6 +572,43 @@ class TestCoordinates(np.testing.TestCase):
         npt.assert_almost_equal(muphistar2, muphistar, 12)
         npt.assert_almost_equal(mutheta2, mutheta, 12)
         npt.assert_array_less(pmr, pmr2)
+
+        # Check that the total velocity remains unchanged when doing epoch propagation. The total velocity should be invariant under the assumption of straight line motion with no acceleration. Use astrometric parameters close to those of Barnard's star. Thanks to Henry Leung for spotting the error that led to the addition of this test.
+        phib, thetab = 269.4, 4.7
+        parallaxb = 547.0
+        muphistarb, muthetab = -801.6, 10362.4
+        vradb = -110.5
+        t3 = t0 + 100000
+        vtotb = np.sqrt(
+            (muphistarb**2 + muthetab**2) * (au_km_year_per_sec / parallaxb) ** 2
+            + vradb**2
+        )
+        phi2, theta2, parallax2, muphistar2, mutheta2, pmr2 = ep.propagate_astrometry(
+            phib, thetab, parallaxb, muphistarb, muthetab, vradb, t0, t3
+        )
+        vtot2 = np.sqrt(
+            (muphistar2**2 + mutheta2**2 + pmr2**2)
+            * (au_km_year_per_sec / parallax2) ** 2
+        )
+        npt.assert_almost_equal(vtot2, vtotb, 12)
+
+        # Now with Arturus-like astrometry
+        phib, thetab = 213.9, 19.2
+        parallaxb = 88.8
+        muphistarb, muthetab = -1093.4, -2000.1
+        vradb = -5.2
+        vtotb = np.sqrt(
+            (muphistarb**2 + muthetab**2) * (au_km_year_per_sec / parallaxb) ** 2
+            + vradb**2
+        )
+        phi2, theta2, parallax2, muphistar2, mutheta2, pmr2 = ep.propagate_astrometry(
+            phib, thetab, parallaxb, muphistarb, muthetab, vradb, t0, t3
+        )
+        vtot2 = np.sqrt(
+            (muphistar2**2 + mutheta2**2 + pmr2**2)
+            * (au_km_year_per_sec / parallax2) ** 2
+        )
+        npt.assert_almost_equal(vtot2, vtotb, 12)
 
     def test_propagate_astrometry_and_covariance_matrix(self):
         """
