@@ -5,6 +5,8 @@ sandbox/
 examples/*.pdf
 examples/*.png
 
+PyGaiaVsAstropy.ipynb
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
