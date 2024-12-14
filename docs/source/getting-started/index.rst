@@ -30,6 +30,7 @@ The following python packages are required:
 * `scipy <https://scipy.org/>`_
 * `pandas <https://pandas.pydata.org/>`_
 * `UltraJSON <https://github.com/ultrajson/ultrajson>`_
+* `Astropy <https://www.astropy.org/>`_
 
 For the plotting tools the following packages are required:
 
