@@ -73,3 +73,10 @@ html_theme_options = {
     "use_download_button": True,
 }
 html_baseurl = "https://pygaia.readthedocs.io/en/latest/"
+
+extensions = ["myst_nb"]
+source_suffix = {
+    ".rst": "restructuredtext",
+    ".ipynb": "myst-nb",
+    ".myst": "myst-nb",
+}

@@ -26,18 +26,13 @@ implemented.
    
 .. toctree::
    :maxdepth: 1
-   :caption: Contents
+   :caption: Contents:
 
    getting-started/index
    context/index
+   notebooks/index
    user-documentation/index
    api
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Tutorials and examples
-
-   notebooks/EpochPropagation.ipynb
 
 Indices and tables
 ------------------
