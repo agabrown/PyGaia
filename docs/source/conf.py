@@ -45,6 +45,15 @@ source_suffix = {
     ".ipynb": "myst-nb",
     ".myst": "myst-nb",
 }
+nb_execution_mode = "off"
+myst_enable_extensions = [
+    "amsmath",
+    "colon_fence",
+    "deflist",
+    "dollarmath",
+    "html_image",
+]
+
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
