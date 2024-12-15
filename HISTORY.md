@@ -1,3 +1,7 @@
+## 3.2.2 (Dec 2024)
+
+* Fixed error in DR5 estimatd end of data collection time.
+
 ## 3.2.1 (Dec 2024)
 
 * Version change to fix automated PyPI publication.

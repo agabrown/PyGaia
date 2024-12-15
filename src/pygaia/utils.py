@@ -38,8 +38,8 @@ _dpac_times = {
         "tcb": Time("2020-01-20T22:01:30.250520158", scale="tcb"),
     },
     "dr5": {
-        "obmt": 353907908175187136,
-        "tcb": Time("2025-01-15T06:30:00", scale="tcb"),
+        "obmt": 353931400866777600,
+        "tcb": Time("2025-01-15T06:31:32.690919588", scale="tcb"),
     },
 }
 
@@ -142,11 +142,11 @@ def gaiadr_timespan(release=_default_release, epsl=True, absolute=True):
     Returns
     -------
     start, end : tuple
-        Start and end times in as astropy.time.Time instances, or in Julian days refered to J2010.0
+        Start and end times as astropy.time.Time instances, or in Julian days refered to J2010.0
 
     Notes
     -----
-    The end time for DR5 is an estimate.
+    The end time for DR5 is an estimate. The definitive time will be know after the end of observations, which is planned for 2025-01-15.
     """
     _check_release(release)
     if epsl:
