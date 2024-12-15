@@ -1,4 +1,4 @@
-## 3.21 (Dec 2024)
+## 3.2.1 (Dec 2024)
 
 * Version change to fix automated PyPI publication.
 
