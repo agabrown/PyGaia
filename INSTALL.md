@@ -1,13 +1,13 @@
-To install this package in your site-wide python installation use:
+To install from source.
 
-```
-python setup.py install
-```
-
-If you do not have root access the following should work:
-
-```
-python setup.py install --user
+```bash
+git clone https://github.com/agabrown/PyGaia.git
+cd PyGaia
+python -m pip install .
 ```
 
-The installation will then end up in the ~/.local folder
+From PyPI:
+
+```bash
+pip install pygaia
+```

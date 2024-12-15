@@ -1,3 +1,11 @@
+## 3.21 (Dec 2024)
+
+* Version change to fix automated PyPI publication.
+
+## 3.2 (Dec 2024)
+
+* Notebooks with examples integrated into documentation.
+
 ## 3.1 (Dec 2024)
 
 * Added the Gaia data release time spans to the utils module.
