@@ -129,6 +129,8 @@ def gaiadr_timespan(release=_default_release, epsl=True, absolute=True):
     """
     Provides the observation time spans for Gaia data releases. These are based on the exact time boundaries in Gaia's on board mission timeline (OBMT), see `Gaia Collaboration (2016) <https://ui.adsabs.harvard.edu/abs/2016A%26A...595A...1G/abstract>`_ for the details on OBMT.
 
+    The time spans can be used, for example, when simulating Gaia observation times with the `Gaia Observation Forecast Tool <https://gaia.esac.esa.int/gost/>`_.
+
     Parameters
     ----------
 

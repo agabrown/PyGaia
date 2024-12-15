@@ -1,3 +1,7 @@
+## 3.2.3 (Dec 2024)
+
+* Documentation enhancements and fixes.
+
 ## 3.2.2 (Dec 2024)
 
 * Fixed error in DR5 estimated end of data collection time.
