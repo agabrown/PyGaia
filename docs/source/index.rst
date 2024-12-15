@@ -34,6 +34,19 @@ implemented.
    user-documentation/index
    api
 
+Acknowledgements
+----------------
+
+PyGaia is based on the effort by Jos de Bruijne to create and maintain the `Gaia Science Performance pages <https://www.cosmos.esa.int/web/gaia/science-performance>`_` (with support from David Katz, Paola Sartoretti, Francesca De Angeli, Dafydd Evans, `Marco Riello <https://github.com/marc0uk>`_, and Josep Manel Carrasco), and benefits from the suggestions and contributions by `Morgan Fouesneau <https://github.com/mfouesneau>`_, `Tom Callingham <https://github.com/TomCallingham>`_, `John Helly <https://github.com/jchelly>`_, `Javier Olivares <https://github.com/olivares-j>`_, `Henry Leung <https://github.com/henrysky>`_, `Johannes Sahlmann <https://github.com/Johannes-Sahlmann>`_.
+
+The photometric uncertainties code in PyGaia is based on the `tool provided by Gaia DPAC <https://www.cosmos.esa.int/web/gaia/dr3-software-tools>`_` to reproduce (E)DR3 Gaia photometric uncertainties described in the `GAIA-C5-TN-UB-JMC-031 <https://dms.cosmos.esa.int/COSMOS/doc_fetch.php?id=1404728>`_` technical note using data presented in `Riello et al (2021) <https://doi.org/10.1051/0004-6361/202039587>`_.
+
+Attribution
+-----------
+
+Please acknowledge the Gaia Project Scientist Support Team and the Gaia Data Processing and Analysis Consortium 
+(DPAC) if you used this code in your research.
+
 Indices and tables
 ------------------
 
