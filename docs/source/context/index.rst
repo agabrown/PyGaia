@@ -12,12 +12,9 @@ Other Gaia catalogue data simulators
 PyGaia and astrometry
 =====================
 
-PyGaia is primarily intended as a Python implementation of the `Gaia science performance
-predictions <http://www.cosmos.esa.int/web/gaia/science-performance>`_ but does contain
-some general tools for working with astrometric data. Such tools can also be found in
-Astropy. It is in fact highly recommended to use the `Astropy
-<https://www.astropy.org/>`_ facilities for handling astrometric data, including
-transformations from (Cartesian) phase space coordinates to astrometric observables and
+PyGaia is primarily intended as a Python implementation of the `Gaia science performance predictions <http://www.cosmos.esa.int/web/gaia/science-performance>`_ but does contain
+some general tools for working with astrometric data. Such tools can also be found in Astropy. It is in fact highly recommended to use the `Astropy
+<https://www.astropy.org/>`_ facilities for handling astrometric data, including transformations from (Cartesian) phase space coordinates to astrometric observables and
 vice versa. See the `astropy.coordinates <https://docs.astropy.org/en/stable/coordinates/index.html>`_ package. Compared to the :py:mod:`pygaia.astrometry` package this gives you more functionality, the use of units, and much better, and much better maintained, code.
 
 The only functionality not (yet) provided in Astropy is the propagation of the
@@ -37,3 +34,8 @@ Other Python packages for astrometry
 * `HTOF <https://github.com/gmbrandt/HTOF>`_ HTOF: Code which parses the intermediate data from Hipparcos and Gaia and fits astrometric solutions to those data. Capable of computing likelyhoods and parameter errors in line with the catalog.
 * `orvara <https://github.com/t-brandt/orvara>`_ Package for fitting orbits of bright stars and their faint companions (exoplanets, brown dwarfs, white dwarfs, and low-mass stars).
 * `orbitize <https://orbitize.readthedocs.io/en/latest/>`_ Package for fitting orbits of directly imaged planets.
+
+Gaia community tools
+====================
+
+A list of community tools (including some of the above listed tools) for simulating or analyzing Gaia data is available on the `ESA Gaia web pages <https://www.cosmos.esa.int/web/gaia/community-tools>`_.
