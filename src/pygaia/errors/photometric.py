@@ -8,6 +8,7 @@ pages.
 Code taken (with permission) from the notebook at
 https://github.com/gaia-dpci/gaia-dr3-photometric-uncertainties
 """
+
 import os
 import pandas as pd
 import numpy as np
@@ -47,7 +48,11 @@ class LogMagUncertainty:
         self.__nobs_drs = _nobs_drs_bands
 
     def estimate(
-        self, band, nobs: np.array([], int) = 0, mag_range=None, mag_samples=1000
+        self,
+        band,
+        nobs: np.ndarray[tuple[int], np.dtype[int]] = 0,
+        mag_range=None,
+        mag_samples=1000,
     ):
         """
         Estimate the log(mag) vs mag uncertainty
@@ -101,7 +106,10 @@ class LogMagUncertainty:
         return pd.DataFrame(data=__dc)
 
     def estimate_for_maglist(
-        self, band, maglist: np.array([], float) = 15.0, release=_default_release
+        self,
+        band,
+        maglist: np.ndarray[tuple[int], np.dtype[float]] = 15.0,
+        release=_default_release,
     ):
         """
         Estimate the log(mag) vs mag uncertainty
@@ -167,7 +175,9 @@ class LogMagUncertainty:
 
 
 def magnitude_uncertainty(
-    band, maglist: np.array([], float) = 15.0, release=_default_release
+    band,
+    maglist: np.ndarray[tuple[int], np.dtype[float]] = 15.0,
+    release=_default_release,
 ):
     r"""
     Provide the uncertainty for :math:`G`, :math:`G_\mathrm{BP}`, and

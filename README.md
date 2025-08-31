@@ -55,7 +55,7 @@ The following python packages are required:
 * [numpy](https://numpy.org/)
 * [scipy](https://scipy.org/)
 * [pandas](https://pandas.pydata.org/)
-* [UltraJSON](https://github.com/ultrajson/ultrajson)
+* [orjson](https://github.com/ijl/orjson)
 * [Astropy](https://www.astropy.org/)
 
 For the plotting tools:

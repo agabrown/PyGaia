@@ -2,6 +2,7 @@
 Provides functions for simulation the astrometric uncertainties in the Gaia catalogue
 data for Gaia DR3+. The code reproduces the uncertainty model described on the `Gaia science performance pages <https://www.cosmos.esa.int/web/gaia/science-performance#astrometric%20performance>`_.
 """
+
 import numpy as np
 
 from pygaia.errors.utils import calc_z_plx
@@ -60,7 +61,7 @@ def _check_release(release):
         When an invalid string is specified for the release parameter.
     """
     if not (release in _supported_releases):
-        raise ValueError("Release must be one of dr3, dr4, dr5, dr2")
+        raise ValueError("Release must be one of dr3, dr4, or dr5")
 
 
 def parallax_uncertainty(gmag, release=_default_release):

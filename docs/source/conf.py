@@ -18,11 +18,11 @@ import pygaia
 # -- Project information -----------------------------------------------------
 
 project = "PyGaia"
-copyright = "2012-2024, Anthony Brown, Leiden University, Gaia Data Processing and Analysis Consortium"
+copyright = "2012-2025, Anthony Brown, Leiden University, Gaia Data Processing and Analysis Consortium"
 author = "Anthony Brown"
 
 # The full version, including alpha/beta/rc tags
-# release = "3.0"
+# release = "3.2.3"
 
 
 # -- General configuration ---------------------------------------------------

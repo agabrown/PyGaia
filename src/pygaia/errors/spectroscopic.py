@@ -4,8 +4,9 @@ catalogue data. The code reproduces the uncertainty model described on the Gaia 
 performance pages
 <https://www.cosmos.esa.int/web/gaia/science-performance#spectroscopic%20performance>`_.
 """
+
 import numpy as np
-import ujson
+import orjson
 import os
 
 __all__ = ["radial_velocity_uncertainty"]
@@ -14,7 +15,7 @@ _default_release = "dr4"
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(_ROOT, "data", "rv_uncertainty_model_coeffs.json")) as fp:
-    _rv_unc_model = ujson.load(fp)
+    _rv_unc_model = orjson.loads(fp.read())
     fp.close()
 
 _rv_nb_transits_dr4 = 32
@@ -30,7 +31,12 @@ _n_ac_samples_faint = 1
 _ron = 3.2
 
 
-def _in_interval(a: np.array([], float), left, right, closed="both"):
+def _in_interval(
+    a: np.ndarray[tuple[int], np.dtype[float]],
+    left: float,
+    right: float,
+    closed: str = "both",
+) -> np.ndarray[tuple[int], np.dtype[np.bool]]:
     """
     Check whether the input number or array elements lie within the given interval.
 
@@ -65,13 +71,13 @@ def _in_interval(a: np.array([], float), left, right, closed="both"):
 
 
 def radial_velocity_uncertainty(
-    grvs: np.array([], float),
-    teff: np.array([], float),
-    logg: np.array([], float),
-    release=_default_release,
-):
+    grvs: np.ndarray[tuple[int], np.dtype[float]],
+    teff: np.ndarray[tuple[int], np.dtype[float]],
+    logg: np.ndarray[tuple[int], np.dtype[float]],
+    release: str = _default_release,
+) -> np.ndarray[tuple[int], np.dtype[float]]:
     r"""
-    Simulate the Gaia DR3 radial velocity uncertainty for the input list of
+    Simulate the Gaia radial velocity uncertainties for the input list of
     :math:`G_\mathrm{RVS}`, :math:`T_\mathrm{eff}`, and :math:`\log(g)` values.
 
     Parameters
@@ -82,6 +88,8 @@ def radial_velocity_uncertainty(
         Value(s) of :math:`T_\mathrm{eff}` (in K) for which to calculate the radial velocity uncertainty.
     logg : ndarray, float
         Value(s) of :math:`\log(g)` for which to calculate the radial velocity uncertainty.
+    release : str
+        Gaia data release to simulate
 
     Returns
     -------

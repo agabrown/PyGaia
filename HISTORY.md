@@ -1,6 +1,8 @@
-## 3.2.3 (Dec 2024)
+## 3.2.3 (Aug 2025)
 
 * Documentation enhancements and fixes.
+* Switched to orjson.
+* Fixed type annotations and documentation in spectroscopic.py and photometric.py
 
 ## 3.2.2 (Dec 2024)
 
