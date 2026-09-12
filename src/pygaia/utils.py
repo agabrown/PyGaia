@@ -3,9 +3,9 @@ Utility functions for PyGaia.
 """
 
 import numpy as np
+from astropy.time import Time
 
 from pygaia.astrometry.constants import au_km_year_per_sec
-from astropy.time import Time
 
 __all__ = ["construct_covariance_matrix", "gaiadr_timespan"]
 

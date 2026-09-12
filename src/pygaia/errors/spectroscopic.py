@@ -5,9 +5,10 @@ performance pages
 <https://www.cosmos.esa.int/web/gaia/science-performance#spectroscopic%20performance>`_.
 """
 
-import numpy as np
-import orjson
+import json
 import os
+
+import numpy as np
 
 __all__ = ["radial_velocity_uncertainty"]
 
@@ -15,7 +16,7 @@ _default_release = "dr4"
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(_ROOT, "data", "rv_uncertainty_model_coeffs.json")) as fp:
-    _rv_unc_model = orjson.loads(fp.read())
+    _rv_unc_model = json.loads(fp.read())
     fp.close()
 
 _rv_nb_transits_dr4 = 32
@@ -121,7 +122,7 @@ def radial_velocity_uncertainty(
         else:
             rv_nb_transits = _rv_nb_transits_dr5
 
-    for group in _rv_unc_model.keys():
+    for group in _rv_unc_model:
         slots = _in_interval(
             tteff,
             _rv_unc_model[group]["teff"][0],
