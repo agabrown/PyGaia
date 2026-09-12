@@ -7,7 +7,4 @@ expected on the Gaia catalogue data. The formulae and tables are taken from the
 <https://www.cosmos.esa.int/web/gaia/science-performance>`_.
 """
 
-from . import astrometric
-from . import photometric
-from . import spectroscopic
-from . import utils
+from . import astrometric, photometric, spectroscopic, utils
