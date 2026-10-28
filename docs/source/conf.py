@@ -22,7 +22,7 @@ copyright = "2012-2025, Anthony Brown, Leiden University, Gaia Data Processing a
 author = "Anthony Brown"
 
 # The full version, including alpha/beta/rc tags
-# release = "3.2.3"
+release = pygaia.__version__
 
 
 # -- General configuration ---------------------------------------------------

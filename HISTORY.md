@@ -3,6 +3,10 @@
 * Documentation enhancements and fixes.
 * Switched to orjson.
 * Fixed type annotations and documentation in spectroscopic.py and photometric.py
+* Moved all packaging configuration to pyproject.toml (removed setup.py and setup.cfg) and switched to hatchling with version numbers derived from git tags (hatch-vcs).
+* Added a CI workflow running the tests on Python 3.10-3.13.
+* Added CITATION.cff (replaces AUTHORS.md), CONTRIBUTING.md, and issue/PR templates.
+* Minimum supported Python version is now 3.10.
 
 ## 3.2.2 (Dec 2024)
 

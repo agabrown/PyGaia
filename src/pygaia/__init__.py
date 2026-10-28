@@ -9,3 +9,10 @@ functionality is provided. Full blown simulations of Gaia data in all their gory
 requires the Java tools developed by the Gaia Data Processing and Analysis Consortium
 (DPAC) in particular its Coordination Unit 2 (CU2).
 """
+
+from importlib.metadata import PackageNotFoundError, version
+
+try:
+    __version__ = version("pygaia")
+except PackageNotFoundError:  # package is not installed
+    __version__ = "unknown"
