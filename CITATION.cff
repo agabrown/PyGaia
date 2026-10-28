@@ -1,0 +1,57 @@
+cff-version: 1.2.0
+message: "If you use PyGaia in your research, please cite this software using the metadata below."
+type: software
+title: "PyGaia: Gaia science performance simulation toolkit"
+abstract: >-
+  PyGaia provides Python modules for the simulation of Gaia data and their
+  uncertainties, as well as modules for the manipulation of the Gaia catalogue
+  data, including transformations between astrometric observables and phase
+  space variables, transformations between sky coordinate systems, and the
+  propagation of the astrometric covariance matrix to different epochs.
+authors:
+  - family-names: Brown
+    given-names: Anthony G. A.
+    orcid: "https://orcid.org/0000-0002-7419-9679"
+    affiliation: "Leiden Observatory, Leiden University, Netherlands"
+    email: brown@strw.leidenuniv.nl
+  - family-names: Helly
+    given-names: John
+    website: "https://github.com/jchelly"
+  - family-names: Olivares
+    given-names: Javier
+    website: "https://github.com/olivares-j"
+  - family-names: Callingham
+    given-names: Tom
+    website: "https://github.com/TomCallingham"
+  - family-names: Leung
+    given-names: Henry
+    website: "https://github.com/henrysky"
+  - family-names: Fouesneau
+    given-names: Morgan
+    website: "https://github.com/mfouesneau"
+  - family-names: Sahlmann
+    given-names: Johannes
+    website: "https://github.com/Johannes-Sahlmann"
+version: 3.2.3
+license: BSD-3-Clause
+repository-code: "https://github.com/agabrown/PyGaia"
+url: "https://pygaia.readthedocs.io"
+keywords:
+  - astronomy
+  - astrometry
+  - Gaia
+  - photometry
+  - radial velocities
+  - simulation
+references:
+  - type: article
+    title: "Gaia Early Data Release 3. Photometric content and validation"
+    authors:
+      - family-names: Riello
+        given-names: M.
+      - name: "et al."
+    journal: "Astronomy & Astrophysics"
+    volume: 649
+    start: A3
+    year: 2021
+    doi: 10.1051/0004-6361/202039587

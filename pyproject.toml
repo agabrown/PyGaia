@@ -1,30 +1,42 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel", "setuptools_scm"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling>=1.27", "hatch-vcs"]
+build-backend = "hatchling.build"
 
 [project]
 name = "pygaia"
 description = "Gaia science performance simulation toolkit"
-version = "3.2.3"
+dynamic = ["version"]
 authors = [{ name = "Anthony G.A. Brown", email = "brown@strw.leidenuniv.nl" }]
 readme = "README.md"
-requires-python = ">=3.6"
-license = { text = "" }
-keywords = ["plotting, data analysis, numerical tools"]
+requires-python = ">=3.10"
+license = "BSD-3-Clause"
+license-files = ["LICENSE"]
+keywords = [
+    "astronomy",
+    "astrometry",
+    "Gaia",
+    "photometry",
+    "radial velocities",
+    "simulation",
+]
 classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Development Status :: 4 - Beta",
-    "License :: OSI Approved :: BSD License",
     "Topic :: Scientific/Engineering :: Astronomy",
     "Intended Audience :: Science/Research",
+    "Typing :: Typed",
 ]
 dependencies = [
     "numpy>=1.19",
     "scipy>=1.7",
     "pandas>=1.3",
     "matplotlib>=3.0",
-    "orjson>=3.11",
     "astropy>=5",
 ]
 
@@ -33,8 +45,10 @@ dependencies = [
 "Documentation" = "https://PyGaia.readthedocs.io/en/latest/"
 "Source" = "https://github.com/agabrown/PyGaia"
 "Bug Tracker" = "https://github.com/agabrown/PyGaia/issues"
+"Changelog" = "https://github.com/agabrown/PyGaia/blob/master/HISTORY.md"
 
 [project.optional-dependencies]
+test = ["pytest>=7", "pytest-cov>=4"]
 docs = [
     "sphinx>=4.4.0",
     "myst-parser>=0.18",
@@ -42,3 +56,17 @@ docs = [
     "sphinx-book-theme>=0.3.3",
     "sphinx-automodapi>=0.14",
 ]
+
+[tool.hatch.version]
+source = "vcs"
+raw-options = { local_scheme = "no-local-version" }
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/pygaia/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pygaia"]
+
+[tool.pytest.ini_options]
+testpaths = ["src/pygaia/tests"]
+addopts = "--verbose --cov=pygaia --cov-report=term-missing"

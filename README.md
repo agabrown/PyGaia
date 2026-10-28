@@ -1,5 +1,11 @@
 # PyGaia
 
+[![PyPI](https://img.shields.io/pypi/v/pygaia.svg)](https://pypi.org/project/PyGaia/)
+[![Python versions](https://img.shields.io/pypi/pyversions/pygaia.svg)](https://pypi.org/project/PyGaia/)
+[![CI](https://github.com/agabrown/PyGaia/actions/workflows/ci.yaml/badge.svg?branch=master)](https://github.com/agabrown/PyGaia/actions/workflows/ci.yaml)
+[![Documentation](https://readthedocs.org/projects/pygaia/badge/?version=latest)](https://pygaia.readthedocs.io/en/latest/)
+[![License: BSD-3-Clause](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE)
+
 Python toolkit for Gaia science performance simulation and astrometric catalogue data manipulation.
 
 ## Description
@@ -28,7 +34,7 @@ The only functionality not (yet) provided in Astropy is the propagation of the c
 
 ## Documentation
 
-All classes and methods/functions are documented so use the python help() function to find out more.
+The documentation, including example notebooks, is available at [pygaia.readthedocs.io](https://pygaia.readthedocs.io/en/latest/). All classes and methods/functions are also documented, so you can use the python `help()` function to find out more.
 
 ## Installation
 
@@ -46,16 +52,23 @@ From PyPI:
 pip install pygaia
 ```
 
+For development, install the package in editable mode with the test dependencies:
+
+```bash
+python -m pip install -e ".[test]"
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for more details.
+
 ## Dependencies
 
-This package is intended for Python3.
+PyGaia requires Python 3.10 or later.
 
 The following python packages are required:
 
 * [numpy](https://numpy.org/)
 * [scipy](https://scipy.org/)
 * [pandas](https://pandas.pydata.org/)
-* [orjson](https://github.com/ijl/orjson)
 * [Astropy](https://www.astropy.org/)
 
 For the plotting tools:
@@ -68,10 +81,13 @@ PyGaia is based on the effort by Jos de Bruijne to create and maintain the [Gaia
 
 The photometric uncertainties code in PyGaia is based on the [tool provided by Gaia DPAC](https://www.cosmos.esa.int/web/gaia/dr3-software-tools) to reproduce (E)DR3 Gaia photometric uncertainties described in the [GAIA-C5-TN-UB-JMC-031](https://dms.cosmos.esa.int/COSMOS/doc_fetch.php?id=1404728) technical note using data presented in [Riello et al (2021)](https://doi.org/10.1051/0004-6361/202039587).
 
-## Attribution
+## Contributors
 
-Please acknowledge the Gaia Project Scientist Support Team and the Gaia Data Processing and Analysis Consortium 
-(DPAC) if you used this code in your research.
+Direct contributions to the code base by [John Helly](https://github.com/jchelly), [Javier Olivares](https://github.com/olivares-j), [Tom Callingham](https://github.com/TomCallingham), [Henry Leung](https://github.com/henrysky), [Morgan Fouesneau](https://github.com/mfouesneau), and [Johannes Sahlmann](https://github.com/Johannes-Sahlmann). Contributions are welcome, see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Citation
+
+If you use PyGaia in your research, please cite it using the metadata in [CITATION.cff](CITATION.cff) (GitHub shows a "Cite this repository" button in the sidebar). Please also acknowledge the Gaia Project Scientist Support Team and the Gaia Data Processing and Analysis Consortium (DPAC).
 
 ## License
 

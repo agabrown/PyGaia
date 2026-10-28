@@ -1,0 +1,41 @@
+# Data files and Windows batch files are kept byte-for-byte as they are.
+exclude: (^|/)data/|\.bat$
+
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.7
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/rbubley/mirrors-prettier
+    rev: v3.6.2
+    hooks:
+      - id: prettier
+        types_or: [yaml, markdown, json]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-docstring-first
+      - id: check-merge-conflict
+      - id: check-toml
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: trailing-whitespace
+
+  - repo: local
+    hooks:
+      - id: ty
+        name: ty
+        entry: ty check
+        language: python
+        additional_dependencies:
+          ["ty==0.0.84", "numpy", "scipy", "pandas", "matplotlib", "astropy"]
+        pass_filenames: false # scope is set by [tool.ty.src] in pyproject.toml
+        types: [python]
